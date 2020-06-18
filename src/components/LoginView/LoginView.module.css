@@ -1,0 +1,52 @@
+.grid{
+    height:100%;
+    padding-top: 2rem !important;
+}
+
+.gridRow{
+    padding: 0px 20% !important;
+}
+
+.image img{
+    animation:  phones-animation 3s,
+                phones-wiggle 5s;
+    animation-delay: 0s, 3s;
+    animation-iteration-count: 1, infinite;
+    position: relative;
+}
+
+@media screen and (max-width:767px){
+    .image img{
+        display: none !important;
+    }
+}
+
+.header{
+    font-size: 5rem !important;
+}
+
+@keyframes phones-animation{
+    0%{
+        opacity: 0;
+        top: -100px;
+    }
+
+    100%{
+        opacity: 1;
+        top:20px;
+    }
+}
+
+@keyframes phones-wiggle{
+    0%{
+        top: 20px;
+    }
+
+    50%{
+        top:-20px;
+    }
+
+    100%{
+        top:20px;
+    }
+}
