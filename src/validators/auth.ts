@@ -11,8 +11,6 @@ export function validateRegister(state:IRegisterState){
         errors:{}
     }
 
-    //TODO check if the email and/or username are used already
-    
     //  EMAIL
     if(!isEmail(state.email)){
         result.errors.email = {content:'Invalid Email'} 
@@ -43,8 +41,6 @@ export function validateLogin(state:ILoginState){
         errors:{}
     }
 
-    //TODO check if the email and/or username are used already
-    
     //  EMAIL
     if(!isEmail(state.email)){
         result.errors.email = {content:'Invalid Email'} 
