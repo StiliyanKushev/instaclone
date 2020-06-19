@@ -1,4 +1,5 @@
 import React, { FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import styles from './LoginView.module.css';
@@ -14,7 +15,7 @@ import { login } from '../../handlers/auth';
 class LoginView extends React.Component<any,IState>{
     state:IState = {email:'',password:'',errors:{}}
 
-    async handleSubmit(e: FormEvent<HTMLFormElement>){
+    private async handleSubmit(e: FormEvent<HTMLFormElement>){
         e.preventDefault();
 
         let result: IValidationResult = validateLogin(this.state);
@@ -22,7 +23,6 @@ class LoginView extends React.Component<any,IState>{
 
         if(result.success){
             let response: IAuthResponse = await login(this.state);
-            console.log(response);
             if(response.success){
                 toast.success(response.messege);
             }
@@ -32,7 +32,7 @@ class LoginView extends React.Component<any,IState>{
         }
     }
 
-    render(){
+    public render(){
         return (
             <Grid className={styles.grid} stackable centered>
                 <Grid.Row className={styles.gridRow}>
@@ -73,10 +73,9 @@ class LoginView extends React.Component<any,IState>{
                             <Segment>
                                 <a className={styles.forgotPass} href='#'>Forgot password?</a>
                             </Segment>
-                            {/* <div className="ui error message"></div> */}
                         </Form>
                         <div className="ui message">
-                            New to us? <a href="#">Sign Up</a>
+                            New to us? <Link to='/register'>Sign Up</Link>
                         </div>
                     </Grid.Column>
                 </Grid.Row>

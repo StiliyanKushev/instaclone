@@ -1,4 +1,5 @@
 import React, { createRef, FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import $ from 'jquery';
 
@@ -23,7 +24,7 @@ class RegisterView extends React.Component<any,IState> {
 
     private imageInterval: NodeJS.Timeout = setInterval(this.intervalHandler.bind(this)(),10000);
 
-    intervalHandler(){
+    private intervalHandler(){
         let arr: Array<HTMLImageElement> = [];
         let currentIndex = 0;
     
@@ -41,7 +42,7 @@ class RegisterView extends React.Component<any,IState> {
         return evaluate;
     }
 
-    componentDidMount(){
+    public componentDidMount(){
         //hide all images but the first one
         if(this.s1.current && this.s2.current && this.s3.current){
             let [s2,s3] = [this.s2.current,this.s3.current];
@@ -50,11 +51,11 @@ class RegisterView extends React.Component<any,IState> {
         }
     }
 
-    componentWillUnmount(){
+    public componentWillUnmount(){
         clearInterval(this.imageInterval);
     }
 
-    async handleSubmit(e:FormEvent<HTMLFormElement>){
+    private async handleSubmit(e:FormEvent<HTMLFormElement>){
         e.preventDefault();
 
         let result:IValidationResult = validateRegister(this.state);
@@ -71,7 +72,7 @@ class RegisterView extends React.Component<any,IState> {
         }
     }
 
-    render() {
+    public render() {
         return (
             <Grid className={styles.grid} stackable centered>
                 <Grid.Row className={styles.gridRow}>
@@ -138,7 +139,7 @@ class RegisterView extends React.Component<any,IState> {
                         <Button form='register-form' type='submit' fluid color="twitter">Register</Button>
 
                         <div className="ui message">
-                            Already a user? <a href="#">Login In</a>
+                            Already a user? <Link to='/login'>Login In</Link>
                         </div>
                     </Grid.Column>
                 </Grid.Row>
