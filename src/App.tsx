@@ -1,13 +1,17 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, Suspense } from 'react';
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'semantic-ui-css/semantic.min.css';
 import './App.css';
 
-import LoginView from './components/LoginView/LoginView';
-import RegisterView from './components/RegisterView/RegisterView';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import CustomRoute, { CustomRouteProps } from './shared/PrivateRoute';
+
+import LoadingView from './shared/LoadingView';
+
+// IMPORT ALL VIEWS
+const LoginView = React.lazy(() => import('./components/LoginView/LoginView'));
+const RegisterView = React.lazy(() => import('./components/RegisterView/RegisterView'));
 
 
 /** TODO START */
@@ -29,16 +33,18 @@ const publicOnly:CustomRouteProps = {
 
 function App() {
   return (
-    <Router>
-      <ToastContainer />
-      <main>
-        <Switch>
-          <CustomRoute exact path='/' component={HomeView} condition={isLogged} redirectPath="/login"/>
-          <CustomRoute exact path='/login' component={LoginView} {...publicOnly}/>
-          <CustomRoute exact path='/register' component={RegisterView} {...publicOnly}/>
-        </Switch>
-      </main>
-    </Router>
+    <Suspense fallback={<LoadingView/>}>
+      <Router>
+        <ToastContainer />
+        <main>
+          <Switch>
+            <CustomRoute exact path='/' component={HomeView} condition={isLogged} redirectPath="/login"/>
+            <CustomRoute exact path='/login' component={LoginView} {...publicOnly}/>
+            <CustomRoute exact path='/register' component={RegisterView} {...publicOnly}/>
+          </Switch>
+        </main>
+      </Router>
+    </Suspense>
   );
 }
 
