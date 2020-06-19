@@ -4,6 +4,5 @@ export interface IValidationResultErrors{
 
 export interface IValidationResult{
     success:boolean,
-    messege:string,
     errors: IValidationResultErrors // key - error
 }

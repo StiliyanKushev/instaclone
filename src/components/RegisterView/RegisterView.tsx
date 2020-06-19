@@ -8,10 +8,11 @@ import selfie2 from '../../assets/selfie2.png';
 import selfie3 from '../../assets/selfie3.png';
 
 import {validateRegister} from '../../validators/auth';
-import {IRegisterState as IState} from '../../interfaces/auth';
+import {IRegisterState as IState, IAuthResponse} from '../../interfaces/auth';
 import { IValidationResult } from '../../interfaces/validation';
 
 import { Image, Grid, Header, Form, Button, Segment, Icon, Divider, Ref } from 'semantic-ui-react';
+import { register } from '../../handlers/auth';
 
 class RegisterView extends React.Component<any,IState> {
     state:IState = {email:'',username:'',password:'',r_password:'',errors:{}}
@@ -53,14 +54,20 @@ class RegisterView extends React.Component<any,IState> {
         clearInterval(this.imageInterval);
     }
 
-    handleSubmit(e:FormEvent<HTMLFormElement>){
+    async handleSubmit(e:FormEvent<HTMLFormElement>){
         e.preventDefault();
 
         let result:IValidationResult = validateRegister(this.state);
         this.setState({errors:result.errors});
 
         if(result.success){
-            toast.success(result.messege);
+            let response:IAuthResponse = await register(this.state);
+            if(response.success){
+                toast.success(response.messege);
+            }
+            else{
+                toast.error(response.messege);
+            }
         }
     }
 

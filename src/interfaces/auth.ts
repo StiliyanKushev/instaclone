@@ -13,3 +13,12 @@ export interface ILoginState{
     password:string,
     errors:IValidationResultErrors
 }
+
+export interface IAuthResponse{
+    messege:string,
+    success:boolean,
+    token:string,
+    user:{
+        username:string
+    }
+}

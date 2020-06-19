@@ -4,23 +4,31 @@ import { toast } from 'react-toastify';
 import styles from './LoginView.module.css';
 import SideImage from '../../assets/image-login.png';
 
-import {ILoginState as IState} from '../../interfaces/auth';
+import {ILoginState as IState, IAuthResponse} from '../../interfaces/auth';
 import { IValidationResult } from '../../interfaces/validation';
 import { validateLogin } from '../../validators/auth';
 
 import { Image, Grid, Header, Form, Button, Segment, Icon, Divider } from 'semantic-ui-react';
+import { login } from '../../handlers/auth';
 
 class LoginView extends React.Component<any,IState>{
     state:IState = {email:'',password:'',errors:{}}
 
-    handleSubmit(e: FormEvent<HTMLFormElement>){
+    async handleSubmit(e: FormEvent<HTMLFormElement>){
         e.preventDefault();
 
         let result: IValidationResult = validateLogin(this.state);
         this.setState({errors:result.errors});
 
         if(result.success){
-            toast.success(result.messege);
+            let response: IAuthResponse = await login(this.state);
+            console.log(response);
+            if(response.success){
+                toast.success(response.messege);
+            }
+            else{
+                toast.error(response.messege);
+            }
         }
     }
 

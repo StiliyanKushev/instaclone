@@ -8,7 +8,6 @@ const isEmail = (str:string) => str.match(emailRegex) !== null;
 export function validateRegister(state:IRegisterState){
     let result:IValidationResult = {
         success:false,
-        messege:'There was an error in the validation of the form.',
         errors:{}
     }
 
@@ -27,14 +26,12 @@ export function validateRegister(state:IRegisterState){
         result.errors.password = {content:'Password must be at least 8 charachters long.'}
     }
     // REPEAT PASSWORD
-    console.log(state.r_password !== state.password);
     if((state.password.length === 0 && state.r_password.length === 0) || (state.r_password !== state.password)){
         result.errors.r_password = {content:'Password don\'t match.'}
     }
     //  NO ERROS
     if(Object.keys(result.errors).length === 0){
         result.success = true;
-        result.messege = `Welcome ${state.username}! Glad you joined!`;
     }
 
     return result;
@@ -43,7 +40,6 @@ export function validateRegister(state:IRegisterState){
 export function validateLogin(state:ILoginState){
     let result:IValidationResult = {
         success:false,
-        messege:'There was an error in the validation of the form.',
         errors:{}
     }
 
@@ -60,7 +56,6 @@ export function validateLogin(state:ILoginState){
     //  NO ERROS
     if(Object.keys(result.errors).length === 0){
         result.success = true;
-        result.messege = `Welcome back!`;
     }
 
     return result;
