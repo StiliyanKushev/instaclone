@@ -1,4 +1,5 @@
 import React, { createRef, FormEvent } from 'react';
+import { withCookies, ReactCookieProps } from 'react-cookie';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import $ from 'jquery';
@@ -15,7 +16,7 @@ import { IValidationResult } from '../../interfaces/validation';
 import { Image, Grid, Header, Form, Button, Segment, Icon, Divider, Ref } from 'semantic-ui-react';
 import { register } from '../../handlers/auth';
 
-class RegisterView extends React.Component<any,IState> {
+class RegisterView extends React.Component<ReactCookieProps,IState> {
     state:IState = {email:'',username:'',password:'',r_password:'',errors:{}}
 
     private s1 = createRef<HTMLImageElement>();
@@ -64,6 +65,11 @@ class RegisterView extends React.Component<any,IState> {
         if(result.success){
             let response:IAuthResponse = await register(this.state);
             if(response.success){
+                //save user data
+                this.props.cookies?.set('username',response.user.username);
+                this.props.cookies?.set('token',response.token);
+                this.props.cookies?.set('isLogged',true);
+
                 toast.success(response.messege);
             }
             else{
@@ -149,4 +155,4 @@ class RegisterView extends React.Component<any,IState> {
 }
 
 
-export default RegisterView;
+export default withCookies(RegisterView);

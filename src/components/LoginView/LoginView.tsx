@@ -1,4 +1,5 @@
 import React, { FormEvent } from 'react';
+import { withCookies, ReactCookieProps } from 'react-cookie';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -12,7 +13,7 @@ import { validateLogin } from '../../validators/auth';
 import { Image, Grid, Header, Form, Button, Segment, Icon, Divider } from 'semantic-ui-react';
 import { login } from '../../handlers/auth';
 
-class LoginView extends React.Component<any,IState>{
+class LoginView extends React.Component<ReactCookieProps,IState>{
     state:IState = {email:'',password:'',errors:{}}
 
     private async handleSubmit(e: FormEvent<HTMLFormElement>){
@@ -24,6 +25,11 @@ class LoginView extends React.Component<any,IState>{
         if(result.success){
             let response: IAuthResponse = await login(this.state);
             if(response.success){
+                //save user data
+                this.props.cookies?.set('username',response.user.username);
+                this.props.cookies?.set('token',response.token);
+                this.props.cookies?.set('isLogged',true);
+
                 toast.success(response.messege);
             }
             else{
@@ -84,4 +90,4 @@ class LoginView extends React.Component<any,IState>{
     }
 }
 
-export default LoginView;
+export default withCookies(LoginView);
