@@ -8,6 +8,40 @@ html {
     width: 100%;
 }
 
+body{
+    height: fit-content;
+}
+
+main{
+    margin-top: 4rem;
+}
+
+@font-face {
+    font-family: 'icomoon';
+    src: url('./assets/custom-home-outline.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+  }
+
+  .home-outline:before {
+    content: "\e900";
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'icomoon' !important;
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+  
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+
+
 body,.gradient-body{
     /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#e9e9e7+0,d5d4d0+100 */
     background: #e9e9e7 fixed !important;  /* Old browsers */

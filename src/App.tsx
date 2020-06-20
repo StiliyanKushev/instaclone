@@ -7,7 +7,9 @@ import './App.css';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import CustomRoute, { CustomRouteProps } from './shared/PrivateRoute';
 
+// IMPORT SOME GENERAL COMPONENTS
 import LoadingView from './shared/LoadingView';
+import NavMenu from './components/NavMenu/NavMenu';
 
 // IMPORT ALL VIEWS
 const LoginView = React.lazy(() => import('./components/LoginView/LoginView'));
@@ -22,12 +24,12 @@ const HomeView = () => {
 /** TODO END */
 
 const privateOnly:CustomRouteProps = {
-  condition: isLogged,
+  condition: !isLogged,
   redirectPath: '/login'
 }
 
 const publicOnly:CustomRouteProps = {
-  condition:isLogged,
+  condition:!isLogged,
   redirectPath: '/'
 }
 
@@ -36,6 +38,9 @@ function App() {
     <Suspense fallback={<LoadingView/>}>
       <Router>
         <ToastContainer />
+        <header>
+          <NavMenu />
+        </header>
         <main>
           <Switch>
             <CustomRoute exact path='/' component={HomeView} condition={isLogged} redirectPath="/login"/>

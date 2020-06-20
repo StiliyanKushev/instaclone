@@ -1,0 +1,70 @@
+.logo{
+    font-size:2.5rem;
+    padding: .5rem 2rem !important;
+    position: relative;
+    bottom: -3px;
+}
+
+.iconBtn{
+    cursor: pointer;
+    transition-duration: 300ms;
+}
+
+.iconBtn:hover{
+    transform: scale(1.2);
+}
+
+.searchBtn{
+    display: none !important;
+}
+
+.searchBar{
+    position: absolute;
+    bottom: -4rem;
+    width: 100%;
+    background: rgb(206, 206, 206);
+    padding: .7rem;
+}
+
+.searchBar > *{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media screen and (min-width:620px){
+    .searchBar{
+        display: none !important;
+    }
+}
+
+@media screen and (max-width:620px){
+    .searchItem > div{
+        display: none;
+    }
+    
+    .searchBtn{
+        display: block !important;
+    }   
+}
+
+@media screen and (max-width:440px){
+
+    .logo{
+        visibility: hidden;
+        width: 5%;
+    }
+
+    .logo::after{
+        color: white;
+        content: "I";
+        visibility: visible;
+        display: block;
+        position: absolute;
+
+        margin-top: -3px;
+
+        background: rgb(55,55,55);
+        padding: .1rem .8rem;
+        border-radius: 50%;
+    }
+}
