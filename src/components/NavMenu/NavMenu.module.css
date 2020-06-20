@@ -27,8 +27,12 @@
 }
 
 .searchBar > *{
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: auto !important;
+    margin-right: auto !important;
+
+    justify-content: center;
+    align-items: center;
+    display: flex;
 }
 
 @media screen and (min-width:620px){

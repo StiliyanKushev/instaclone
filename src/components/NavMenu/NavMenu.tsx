@@ -41,7 +41,9 @@ class NavMenu extends React.Component<RouteComponentProps>{
 
     public componentDidMount(){
         this.handleVisibility();
-        this.handleMobileSearchClick();
+        
+        if(this.mobileSearchBar.current)
+        $(this.mobileSearchBar.current).hide();
     }
 
     private onRouteChanged() {
