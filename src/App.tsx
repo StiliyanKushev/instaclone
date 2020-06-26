@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { AppState, ReduxProps } from './reducers';
 
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
-import CustomRoute, { CustomRouteProps } from './shared/PrivateRoute';
+import CustomRoute, { CustomRouteProps } from './shared/CustomRoute';
 
 // IMPORT SOME GENERAL COMPONENTS
 import LoadingView from './shared/LoadingView';
