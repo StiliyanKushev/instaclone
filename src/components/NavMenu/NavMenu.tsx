@@ -31,7 +31,7 @@ class NavMenu extends React.Component<RouteComponentProps>{
     }
 
     private handleVisibility(){
-        if(this.props.location.pathname == '/login' || this.props.location.pathname == '/register'){
+        if(this.props.location.pathname === '/login' || this.props.location.pathname === '/register'){
             this.setState({isVisible:false})
         }
         else{
@@ -41,7 +41,7 @@ class NavMenu extends React.Component<RouteComponentProps>{
 
     public componentDidMount(){
         this.handleVisibility();
-        
+
         if(this.mobileSearchBar.current)
         $(this.mobileSearchBar.current).hide();
     }

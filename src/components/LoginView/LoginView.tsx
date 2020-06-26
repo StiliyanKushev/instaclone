@@ -1,39 +1,65 @@
-import React, { FormEvent } from 'react';
+import React, { FormEvent, ComponentType } from 'react';
 import { withCookies, ReactCookieProps } from 'react-cookie';
-import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
+import {bindActionCreators} from 'redux';
+import { connect } from 'react-redux';
 
 import styles from './LoginView.module.css';
 import SideImage from '../../assets/image-login.png';
 
-import {ILoginState as IState, IAuthResponse} from '../../interfaces/auth';
-import { IValidationResult } from '../../interfaces/validation';
+import { IValidationResult, IValidationResultErrors } from '../../interfaces/form-validation';
 import { validateLogin } from '../../validators/auth';
 
 import { Image, Grid, Header, Form, Button, Segment, Icon, Divider } from 'semantic-ui-react';
-import { login } from '../../handlers/auth';
 
-class LoginView extends React.Component<ReactCookieProps,IState>{
-    state:IState = {email:'',password:'',errors:{}}
+import { AppState, ReduxProps } from '../../reducers';
+import { ThunkDispatch } from 'redux-thunk';
+import { AppActions } from '../../actions/types/actions';
+import { LOGIN_AUTH, FINISH_AUTH } from '../../actions/authActions';
+import { toast } from 'react-toastify';
+import { saveUser } from '../../handlers/saveData';
 
-    private async handleSubmit(e: FormEvent<HTMLFormElement>){
+type IProps = ReduxProps & DispatchProps & ReactCookieProps & RouteComponentProps;
+
+export interface ILoginState{
+    email:string,
+    password:string,
+    errors:IValidationResultErrors
+}
+
+class LoginView extends React.Component<IProps,ILoginState>{
+    state:ILoginState = {email:'',password:'',errors:{}}
+
+    private handleSubmit(e: FormEvent<HTMLFormElement>){
         e.preventDefault();
 
         let result: IValidationResult = validateLogin(this.state);
         this.setState({errors:result.errors});
 
         if(result.success){
-            let response: IAuthResponse = await login(this.state);
-            if(response.success){
-                //save user data
-                this.props.cookies?.set('username',response.user.username);
-                this.props.cookies?.set('token',response.token);
-                this.props.cookies?.set('isLogged',true);
+            this.props.login(this.state);
+        }
+    }
 
-                toast.success(response.messege);
+    public componentDidUpdate(prevProps:IProps){
+        //on props change
+        if(this.props.auth !== prevProps.auth){
+            if(!this.props.auth?.error){
+                //if it was successfull
+                if(this.props.auth?.isLogged){
+                    toast.success(this.props.auth.messege);
+                    
+                    //save user in cookies
+                    saveUser(this.props.auth.username,this.props.auth.token);
+
+                    //redirect to home and update app only after success msg is shown
+                    this.props.history.push('/');
+                    this.props.finishAuth();
+                }
             }
+            //display backend error
             else{
-                toast.error(response.messege);
+                toast.error(this.props.auth.messege);
             }
         }
     }
@@ -68,7 +94,7 @@ class LoginView extends React.Component<ReactCookieProps,IState>{
                             </Form.Field>
 
                             <Segment>
-                            <Button form='login-form' type='submit' fluid color="twitter">Login</Button>
+                            <Button loading={this.props.auth?.isLoading} form='login-form' type='submit' fluid color="twitter">Login</Button>
                                     <Divider horizontal>
                                         Or
                                     </Divider>
@@ -90,4 +116,18 @@ class LoginView extends React.Component<ReactCookieProps,IState>{
     }
 }
 
-export default withCookies(LoginView);
+const mapStateToProps = (state:AppState):ReduxProps => ({
+    auth:state.auth
+})
+
+interface DispatchProps {
+    login: (state:ILoginState) => void,
+    finishAuth: () => void
+}
+
+const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
+    login:bindActionCreators(LOGIN_AUTH,dispatch),
+    finishAuth:bindActionCreators(FINISH_AUTH,dispatch)
+})
+
+export default withRouter(withCookies(connect(mapStateToProps,mapDispatchToProps)(LoginView as ComponentType<IProps>)));

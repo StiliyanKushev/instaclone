@@ -1,6 +1,9 @@
-import React, { createRef, FormEvent } from 'react';
+import React, { createRef, FormEvent, ComponentType } from 'react';
 import { withCookies, ReactCookieProps } from 'react-cookie';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
+import {bindActionCreators} from 'redux';
+import { connect } from 'react-redux';
+
 import { toast } from 'react-toastify';
 import $ from 'jquery';
 
@@ -10,14 +13,28 @@ import selfie2 from '../../assets/selfie2.png';
 import selfie3 from '../../assets/selfie3.png';
 
 import {validateRegister} from '../../validators/auth';
-import {IRegisterState as IState, IAuthResponse} from '../../interfaces/auth';
-import { IValidationResult } from '../../interfaces/validation';
+import { IValidationResult, IValidationResultErrors } from '../../interfaces/form-validation';
 
 import { Image, Grid, Header, Form, Button, Segment, Icon, Divider, Ref } from 'semantic-ui-react';
-import { register } from '../../handlers/auth';
 
-class RegisterView extends React.Component<ReactCookieProps,IState> {
-    state:IState = {email:'',username:'',password:'',r_password:'',errors:{}}
+import { ReduxProps, AppState } from '../../reducers';
+import { saveUser } from '../../handlers/saveData';
+import { ThunkDispatch } from 'redux-thunk';
+import { AppActions } from '../../actions/types/actions';
+import { FINISH_AUTH, REGISTER_AUTH } from '../../actions/authActions';
+
+type IProps = ReduxProps & DispatchProps & ReactCookieProps & RouteComponentProps;
+
+export interface IRegisterState{
+    username:string,
+    email:string,
+    password:string,
+    r_password:string,
+    errors:IValidationResultErrors
+}
+
+class RegisterView extends React.Component<IProps,IRegisterState> {
+    state:IRegisterState = {email:'',username:'',password:'',r_password:'',errors:{}}
 
     private s1 = createRef<HTMLImageElement>();
     private s2 = createRef<HTMLImageElement>();
@@ -56,24 +73,36 @@ class RegisterView extends React.Component<ReactCookieProps,IState> {
         clearInterval(this.imageInterval);
     }
 
-    private async handleSubmit(e:FormEvent<HTMLFormElement>){
+    private handleSubmit(e:FormEvent<HTMLFormElement>){
         e.preventDefault();
 
         let result:IValidationResult = validateRegister(this.state);
         this.setState({errors:result.errors});
 
         if(result.success){
-            let response:IAuthResponse = await register(this.state);
-            if(response.success){
-                //save user data
-                this.props.cookies?.set('username',response.user.username);
-                this.props.cookies?.set('token',response.token);
-                this.props.cookies?.set('isLogged',true);
+            this.props.register(this.state);
+        }
+    }
 
-                toast.success(response.messege);
+    public componentDidUpdate(prevProps:IProps){
+        //on props change
+        if(this.props.auth !== prevProps.auth){
+            if(!this.props.auth?.error){
+                //if it was successfull
+                if(this.props.auth?.isLogged){
+                    toast.success(this.props.auth.messege);
+                    
+                    //save user in cookies
+                    saveUser(this.props.auth.username,this.props.auth.token);
+
+                    //redirect to home and update app only after success msg is shown
+                    this.props.history.push('/');
+                    this.props.finishAuth();
+                }
             }
+            //display backend error
             else{
-                toast.error(response.messege);
+                toast.error(this.props.auth.messege);
             }
         }
     }
@@ -128,7 +157,8 @@ class RegisterView extends React.Component<ReactCookieProps,IState> {
                                         icon='key'
                                         iconPosition='left'
                                         type='password' 
-                                        placeholder="Password" />
+                                        placeholder="Password"
+                                        autoComplete="on" />
                                 </Form.Field>
                                 <Form.Field>
                                     <Form.Input
@@ -137,12 +167,13 @@ class RegisterView extends React.Component<ReactCookieProps,IState> {
                                         icon='key'
                                         iconPosition='left'
                                         type='password' 
-                                        placeholder="Repeat Password" />
+                                        placeholder="Repeat Password"
+                                        autoComplete="on" />
                                 </Form.Field>
                             </Form>
                         </Segment>
 
-                        <Button form='register-form' type='submit' fluid color="twitter">Register</Button>
+                        <Button loading={this.props.auth?.isLoading} form='register-form' type='submit' fluid color="twitter">Register</Button>
 
                         <div className="ui message">
                             Already a user? <Link to='/login'>Login In</Link>
@@ -154,5 +185,18 @@ class RegisterView extends React.Component<ReactCookieProps,IState> {
     }
 }
 
+const mapStateToProps = (state:AppState):ReduxProps => ({
+    auth:state.auth
+})
 
-export default withCookies(RegisterView);
+interface DispatchProps {
+    register: (state:IRegisterState) => void,
+    finishAuth: () => void
+}
+
+const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
+    register:bindActionCreators(REGISTER_AUTH,dispatch),
+    finishAuth:bindActionCreators(FINISH_AUTH,dispatch)
+})
+
+export default withRouter(withCookies(connect(mapStateToProps,mapDispatchToProps)(RegisterView as ComponentType<IProps>)));

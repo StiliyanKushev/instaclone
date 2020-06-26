@@ -1,13 +1,15 @@
-import React, { Fragment, Suspense } from 'react';
+import React, { Suspense, ComponentType } from 'react';
 import {ToastContainer} from 'react-toastify';
-import { CookiesProvider, withCookies, ReactCookieProps } from 'react-cookie';
+import { CookiesProvider } from 'react-cookie';
 import 'react-toastify/dist/ReactToastify.css';
 import 'semantic-ui-css/semantic.min.css';
 import './App.css';
 
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import CustomRoute, { CustomRouteProps } from './shared/PrivateRoute';
+import { connect } from 'react-redux';
+import { AppState, ReduxProps } from './reducers';
 
+import { BrowserRouter as Router, Switch } from 'react-router-dom';
+import CustomRoute, { CustomRouteProps } from './shared/PrivateRoute';
 
 // IMPORT SOME GENERAL COMPONENTS
 import LoadingView from './shared/LoadingView';
@@ -24,38 +26,63 @@ const HomeView = () => {
 }
 /** TODO END */
 
-function App(props:ReactCookieProps) {
-  let isLogged = props.cookies?.get('isLogged');
-  
-  const privateOnly:CustomRouteProps = {
-    condition: !isLogged,
+type IProps = ReduxProps & OtherReduxProps;
+
+class App extends React.Component<IProps,any> {
+  //acts like a computed property
+  get isLogged(){
+    return this.props.auth?.isLogged || false;
+  }
+
+  private privateOnly:CustomRouteProps = {
+    condition: !this.isLogged,
     redirectPath: '/login'
   }
   
-  const publicOnly:CustomRouteProps = {
-    condition:!isLogged,
+  private publicOnly:CustomRouteProps = {
+    condition:!this.isLogged,
     redirectPath: '/'
   }
 
-  return (
-    <Suspense fallback={<LoadingView/>}>
-      <CookiesProvider>
-        <Router>
-          <ToastContainer />
-          <header>
-            <NavMenu />
-          </header>
-          <main>
-            <Switch>
-              <CustomRoute exact path='/' component={HomeView} condition={isLogged} redirectPath="/login"/>
-              <CustomRoute exact path='/login' component={LoginView} {...publicOnly}/>
-              <CustomRoute exact path='/register' component={RegisterView} {...publicOnly}/>
-            </Switch>
-          </main>
-        </Router>
-      </CookiesProvider>
-    </Suspense>
-  );
+  shouldComponentUpdate(nextProps:IProps){
+    if(this.props.isAuthFinished !== nextProps.isAuthFinished && nextProps.isAuthFinished){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
+  render(){
+    return (
+      <Suspense fallback={<LoadingView/>}>
+        <CookiesProvider>
+          <Router>
+            <ToastContainer />
+            <header>
+              <NavMenu />
+            </header>
+            <main>
+              <Switch>
+                <CustomRoute exact path='/' component={HomeView} condition={this.isLogged} redirectPath="/login"/>
+                <CustomRoute exact path='/login' component={LoginView} {...this.publicOnly}/>
+                <CustomRoute exact path='/register' component={RegisterView} {...this.publicOnly}/>
+              </Switch>
+            </main>
+          </Router>
+        </CookiesProvider>
+      </Suspense>
+    );
+  }
 }
 
-export default withCookies(App);
+interface OtherReduxProps {
+  isAuthFinished?: boolean
+}
+
+const mapStateToProps = (state:AppState):ReduxProps & OtherReduxProps => ({
+  auth:state.auth,
+  isAuthFinished:state.auth.isAuthFinished
+})
+
+export default connect(mapStateToProps,null)(App as ComponentType<IProps>);
