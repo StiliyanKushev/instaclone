@@ -6,7 +6,7 @@ interface IProps {
 
 const UserView = (props:IProps):FunctionComponentElement<IProps> => {
     return (
-        <div>
+        <div className='view-container'>
             User View TODO
         </div>
     );

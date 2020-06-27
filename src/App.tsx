@@ -23,7 +23,7 @@ const UserView = React.lazy(() => import('./components/UserView/UserView'));
 
 /** TODO START */
 const HomeView = () => {
-  return (<p>Home View TODO</p>);
+  return (<div className='view-container'><p>Home View TODO</p></div>);
 }
 /** TODO END */
 
@@ -35,14 +35,18 @@ class App extends React.Component<IProps,any> {
     return this.props.auth?.isLogged || false;
   }
 
-  private privateOnly:CustomRouteProps = {
-    condition: this.isLogged,
-    redirectPath: '/login'
+  get privateOnly():CustomRouteProps {
+    return {
+      condition: this.isLogged,
+      redirectPath: '/login'
+    }
   }
-  
-  private publicOnly:CustomRouteProps = {
-    condition:!this.isLogged,
-    redirectPath: '/'
+
+  get publicOnly():CustomRouteProps {
+    return {
+      condition: !this.isLogged,
+      redirectPath: '/'
+    }
   }
 
   shouldComponentUpdate(nextProps:IProps){
@@ -69,7 +73,7 @@ class App extends React.Component<IProps,any> {
                 <CustomRoute exact path='/login' component={LoginView} {...this.publicOnly}/>
                 <CustomRoute exact path='/register' component={RegisterView} {...this.publicOnly}/>
 
-                <CustomRoute exact path='/profile' component={UserView} {...this.privateOnly}/>
+                <CustomRoute exact path='/profile/:name' component={UserView} {...this.privateOnly}/>
 
                 <Route exact path='*' component={Error404}/>
               </Switch>

@@ -9,11 +9,21 @@ html {
 }
 
 body{
-    height: fit-content;
+    height: 100%;
+}
+
+#root{
+    height: 100%;
+}
+
+.view-container{
+    padding-top: 5rem !important;
 }
 
 main{
-    margin-top: 4rem;
+    /* padding is added on each view container instead */
+    /* padding-top: 5rem; */
+    height: 100%;
 }
 
 @font-face {

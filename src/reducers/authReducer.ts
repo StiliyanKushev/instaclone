@@ -12,10 +12,9 @@ export interface IAuthState {
     token:string
 }
 
-//TODO check if data is in cookies and fill it instead of using undefined
 const authState:IAuthState = {
     isAuthFinished:false,
-    isLogged:cookies.get('isLogged') || '',
+    isLogged:cookies.get('isLogged') || false,
     isLoading:false,
     error:false,
     messege:'',

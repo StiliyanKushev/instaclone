@@ -32,19 +32,21 @@ class NavMenu extends React.Component<RouteComponentProps & ReactCookieProps>{
     }
 
     private handleVisibility(){
+        const hideMobileBar = function(this:any) {
+            if(this.mobileSearchBar.current)
+            $(this.mobileSearchBar.current).hide();
+        }.bind(this);
+
         if(this.props.location.pathname === '/login' || this.props.location.pathname === '/register'){
-            this.setState({isVisible:false})
+            this.setState({isVisible:false},hideMobileBar)
         }
         else{
-            this.setState({isVisible:true})
+            this.setState({isVisible:true},hideMobileBar)
         }
     }
 
     public componentDidMount(){
         this.handleVisibility();
-
-        if(this.mobileSearchBar.current)
-        $(this.mobileSearchBar.current).hide();
     }
 
     private onRouteChanged() {
@@ -59,7 +61,7 @@ class NavMenu extends React.Component<RouteComponentProps & ReactCookieProps>{
 
     private isCurrentPath(path: string): string {
         let prefix: string = path === '/' ? '-' : '';
-        return path === this.props.location.pathname ? '' : prefix + 'outline';
+        return (this.props.location.pathname === '/' && path === '/') || (path !== '/' && this.props.location.pathname.startsWith(path)) ? '' : prefix + 'outline';
     }
 
     public render() {
@@ -87,7 +89,7 @@ class NavMenu extends React.Component<RouteComponentProps & ReactCookieProps>{
                         <Link className={styles.LinkContainer} to={`/feed`}>
                             <Icon className={`${styles.iconBtn} heart ${this.isCurrentPath('/feed')}`} size='big'></Icon>
                         </Link>
-                        <Link className={styles.LinkContainer} to={`/profile`}>
+                        <Link className={styles.LinkContainer} to={`/profile/${this.props.cookies?.get('username')}`}>
                             <Icon className={`${styles.iconBtn} user circle ${this.isCurrentPath('/profile')}`} size='big'></Icon>
                         </Link>
                     </Item>

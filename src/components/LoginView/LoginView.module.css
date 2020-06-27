@@ -16,7 +16,7 @@
 }
 
 @media screen and (max-width:767px){
-    .image img{
+    .image img, .image{
         display: none !important;
     }
 }
