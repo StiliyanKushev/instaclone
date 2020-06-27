@@ -8,17 +8,18 @@ import './App.css';
 import { connect } from 'react-redux';
 import { AppState, ReduxProps } from './reducers';
 
-import { BrowserRouter as Router, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import CustomRoute, { CustomRouteProps } from './shared/CustomRoute';
 
 // IMPORT SOME GENERAL COMPONENTS
 import LoadingView from './shared/LoadingView';
-import NavMenu from './components/NavMenu/NavMenu';
+import NavMenu from './shared/NavMenu/NavMenu';
+import Error404 from './shared/Error404';
 
 // IMPORT ALL VIEWS
 const LoginView = React.lazy(() => import('./components/LoginView/LoginView'));
 const RegisterView = React.lazy(() => import('./components/RegisterView/RegisterView'));
-
+const UserView = React.lazy(() => import('./components/UserView/UserView'));
 
 /** TODO START */
 const HomeView = () => {
@@ -35,7 +36,7 @@ class App extends React.Component<IProps,any> {
   }
 
   private privateOnly:CustomRouteProps = {
-    condition: !this.isLogged,
+    condition: this.isLogged,
     redirectPath: '/login'
   }
   
@@ -67,6 +68,10 @@ class App extends React.Component<IProps,any> {
                 <CustomRoute exact path='/' component={HomeView} condition={this.isLogged} redirectPath="/login"/>
                 <CustomRoute exact path='/login' component={LoginView} {...this.publicOnly}/>
                 <CustomRoute exact path='/register' component={RegisterView} {...this.publicOnly}/>
+
+                <CustomRoute exact path='/profile' component={UserView} {...this.privateOnly}/>
+
+                <Route exact path='*' component={Error404}/>
               </Switch>
             </main>
           </Router>

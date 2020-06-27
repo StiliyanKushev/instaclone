@@ -4,9 +4,10 @@ import $ from 'jquery';
 import styles from './NavMenu.module.css';
 
 import { Menu, Container, Item, Search, Icon, Ref } from 'semantic-ui-react';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
+import { ReactCookieProps, withCookies } from 'react-cookie';
 
-class NavMenu extends React.Component<RouteComponentProps>{
+class NavMenu extends React.Component<RouteComponentProps & ReactCookieProps>{
     state = {isVisible:true}
 
     private mobileSearchBar = createRef<HTMLDivElement>();
@@ -74,11 +75,21 @@ class NavMenu extends React.Component<RouteComponentProps>{
                     </Item>
                     <Item className='right'>
                         <Icon onClick={this.handleMobileSearchClick} className={`${styles.searchBtn} ${styles.iconBtn}`} name='search' size='big'></Icon>
-                        <Icon className={`${styles.iconBtn} home${this.isCurrentPath('/')}`} size='big'></Icon>
-                        <Icon className={`${styles.iconBtn} paper plane ${this.isCurrentPath('/inbox')}`} size='big'></Icon>
-                        <Icon className={`${styles.iconBtn} compass ${this.isCurrentPath('/explore')}`} size='big'></Icon>
-                        <Icon className={`${styles.iconBtn} heart ${this.isCurrentPath('/wtfisdis')}`} size='big'></Icon>
-                        <Icon className={`${styles.iconBtn} user circle ${this.isCurrentPath('/profile')}`} size='big'></Icon>
+                        <Link className={styles.LinkContainer} to={`/`}>
+                            <Icon className={`${styles.iconBtn} home${this.isCurrentPath('/')}`} size='big'></Icon>
+                        </Link>
+                        <Link className={styles.LinkContainer} to={`/inbox`}>
+                            <Icon className={`${styles.iconBtn} paper plane ${this.isCurrentPath('/inbox')}`} size='big'></Icon>
+                        </Link>
+                        <Link className={styles.LinkContainer} to={`/explore`}>
+                            <Icon className={`${styles.iconBtn} compass ${this.isCurrentPath('/explore')}`} size='big'></Icon>
+                        </Link>
+                        <Link className={styles.LinkContainer} to={`/feed`}>
+                            <Icon className={`${styles.iconBtn} heart ${this.isCurrentPath('/feed')}`} size='big'></Icon>
+                        </Link>
+                        <Link className={styles.LinkContainer} to={`/profile`}>
+                            <Icon className={`${styles.iconBtn} user circle ${this.isCurrentPath('/profile')}`} size='big'></Icon>
+                        </Link>
                     </Item>
                 </Container>
                 <Ref innerRef={this.mobileSearchBar}>
@@ -91,4 +102,4 @@ class NavMenu extends React.Component<RouteComponentProps>{
     }
 }
 
-export default withRouter(NavMenu);
+export default withRouter(withCookies(NavMenu));

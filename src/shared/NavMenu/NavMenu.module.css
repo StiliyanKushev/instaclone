@@ -3,6 +3,10 @@
     display: none !important;
 }
 
+.LinkContainer,.LinkContainer:hover{
+    color: rgb(55,55,55);
+}
+
 .logo{
     font-size:2.5rem;
     padding: .5rem 2rem !important;
