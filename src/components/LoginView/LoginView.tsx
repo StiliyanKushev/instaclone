@@ -81,6 +81,7 @@ class LoginView extends React.Component<IProps,ILoginState>{
                                     icon='user'
                                     iconPosition='left'
                                     type='email'
+                                    autoComplete='on'
                                     placeholder="Email" />
                             </Form.Field>
                             <Form.Field>
@@ -90,6 +91,7 @@ class LoginView extends React.Component<IProps,ILoginState>{
                                     icon='key'
                                     iconPosition='left'
                                     type='password'
+                                    autoComplete='on'
                                     placeholder="Password" />
                             </Form.Field>
 

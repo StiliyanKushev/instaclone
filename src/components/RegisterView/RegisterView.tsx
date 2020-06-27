@@ -139,6 +139,7 @@ class RegisterView extends React.Component<IProps,IRegisterState> {
                                         icon='user'
                                         iconPosition='left'
                                         type='text'
+                                        autoComplete='on'
                                         placeholder="Username" />
                                 </Form.Field>
                                 <Form.Field>
@@ -148,6 +149,7 @@ class RegisterView extends React.Component<IProps,IRegisterState> {
                                         icon='mail'
                                         iconPosition='left'
                                         type='email'
+                                        autoComplete='on'
                                         placeholder="Email" />
                                 </Form.Field>
                                 <Form.Field>
@@ -157,8 +159,8 @@ class RegisterView extends React.Component<IProps,IRegisterState> {
                                         icon='key'
                                         iconPosition='left'
                                         type='password' 
-                                        placeholder="Password"
-                                        autoComplete="on" />
+                                        autoComplete="on"
+                                        placeholder="Password" />
                                 </Form.Field>
                                 <Form.Field>
                                     <Form.Input
@@ -166,9 +168,9 @@ class RegisterView extends React.Component<IProps,IRegisterState> {
                                         error={this.state.errors.r_password}
                                         icon='key'
                                         iconPosition='left'
-                                        type='password' 
-                                        placeholder="Repeat Password"
-                                        autoComplete="on" />
+                                        type='password'
+                                        autoComplete="on" 
+                                        placeholder="Repeat Password" />
                                 </Form.Field>
                             </Form>
                         </Segment>

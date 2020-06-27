@@ -65,7 +65,7 @@ class NavMenu extends React.Component<RouteComponentProps>{
         if(!this.state.isVisible) return ''
         return (
             <Menu size='small' fixed='top'>
-                <Container>
+                <Container className={styles.itemContainer}>
                     <Item className={`logo-text ${styles.logo}`} as='span'>
                         Instaclone
                     </Item>
