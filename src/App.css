@@ -17,6 +17,7 @@ body{
 }
 
 .view-container{
+    background-color: white;
     padding-top: 5rem !important;
 }
 

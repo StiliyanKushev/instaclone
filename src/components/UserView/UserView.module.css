@@ -1,0 +1,101 @@
+.fluidGrid {
+    width: 100% !important;
+}
+
+.columnHeader{
+    width:fit-content !important;
+}
+
+.container{
+    margin-top: 5rem !important;
+}
+
+.userRow{
+    justify-content: center !important;
+}
+
+.postsMenu{
+    justify-content: space-around !important;
+}
+
+.postsMenu::after{
+    content: none !important;
+}
+
+.columnFit{
+    width:fit-content !important;
+}
+
+.username{
+    font-weight: normal !important;
+}
+
+.avatar{
+    border: 2px solid rgb(100,100,100) !important;
+}
+
+.usernameColumn{
+    width: fit-content !important;
+}
+
+.userSettingsBtns{
+    width: fit-content !important;
+}
+
+.userSettingsBtns2{
+    display: none;
+}
+
+@media screen and (max-width:660px){
+    .userSettingsBtns{
+        display: none !important;
+    }
+
+    .userSettingsBtns2{
+        display: block;
+    }
+
+    .editBtn2{
+        width: calc(100% - 3rem) !important;
+    }
+}
+
+.stats2{
+    display: none;
+}
+
+@media screen and (max-width:600px){
+    .usernameColumn{
+        width: 100% !important;
+        margin-left: 1rem;
+    }
+
+    .fluidGrid{
+        text-align: center !important;
+    }
+
+    .stats{
+        display: none !important;
+    }
+
+    .stats2{
+        display: block;
+    }
+
+    .stats2 *{
+        font-size: 0.8rem !important;
+        text-align: center;
+        padding-top: 0.3rem !important;
+        padding-bottom: 0.3rem !important;
+    }
+}
+
+@media screen and (max-width:474px){
+    #seccondColumn{
+        width: 80% !important;
+    }
+    .columnFit{
+        margin-top: -3rem !important;
+        margin-bottom: 2rem !important;
+    }
+}
