@@ -11,12 +11,15 @@ import { AppActions } from '../../actions/types/actions';
 import { LOGOUT_AUTH } from '../../actions/authActions';
 import { clearUser } from '../../handlers/serializationData';
 import { toast } from 'react-toastify';
+import ReportBug from '../ReportBug/ReportBug';
 
 interface IProps extends DispatchProps {
     handleClose: Function
 }
 
 class UserSettings extends React.Component<IProps> {
+    state ={showTabView:''}
+
     private logout(){
         //toast for goodbye
         toast.info("See you soon!");
@@ -28,6 +31,7 @@ class UserSettings extends React.Component<IProps> {
 
     render() {
         return (
+            this.state.showTabView === '' ?
             <Dimmer active>
                 <Menu size='massive' vertical>
                     <Segment className={styles.segmentPaddingNone} attached='top'>
@@ -39,8 +43,8 @@ class UserSettings extends React.Component<IProps> {
                     </Segment>
                     <Segment className={styles.segmentPaddingNone} attached>
                         <Menu.Item>
-                            <Link to='/report-bug'>
-                                <Header as='span' size='tiny' textAlign='center'>Report a bug</Header>
+                            <Link to='#'>
+                                <Header onClick={() => this.setState({showTabView:'report-bug'})} as='span' size='tiny' textAlign='center'>Report a bug</Header>
                             </Link>
                         </Menu.Item>
                     </Segment>
@@ -60,6 +64,8 @@ class UserSettings extends React.Component<IProps> {
                     </Segment>
                 </Menu>
             </Dimmer>
+            :
+            (this.state.showTabView === 'report-bug' && <ReportBug handleClose={this.props.handleClose}/>)
         );
     }
 }

@@ -3,6 +3,7 @@ export interface IAuthResponse{
     success:boolean,
     token:string,
     user:{
-        username:string
+        username:string,
+        email:string,
     }
 }

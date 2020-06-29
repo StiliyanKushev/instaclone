@@ -9,6 +9,7 @@ export interface setAuthSuccess {
     payload:{
         username:string,
         token:string,
+        email:string,
         messege:string
     }
 }

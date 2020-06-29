@@ -9,7 +9,8 @@ export interface IAuthState {
     error:boolean,
     messege:string,
     username:string,
-    token:string
+    token:string,
+    email:string,
 }
 
 const authState:IAuthState = {
@@ -19,7 +20,8 @@ const authState:IAuthState = {
     error:false,
     messege:'',
     username:cookies.get('username') || '',
-    token:cookies.get('token') || ''
+    token:cookies.get('token') || '',
+    email:cookies.get('email') || ''
 }
 
 const authReducer = (state = authState, action:authActionTypes) => {
@@ -51,6 +53,7 @@ const authReducer = (state = authState, action:authActionTypes) => {
                 error: false, 
                 messege: action.payload.messege, 
                 username: action.payload.username,
+                email: action.payload.email,
                 token: action.payload.token
             } as IAuthState;
         }
@@ -68,6 +71,7 @@ const authReducer = (state = authState, action:authActionTypes) => {
                 isLogged:false,
                 token:'',
                 username:'',
+                email:'',
             } as IAuthState;
         }
 

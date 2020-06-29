@@ -28,7 +28,7 @@ export interface ILoginState{
 }
 
 class LoginView extends React.Component<IProps,ILoginState>{
-    state:ILoginState = {email:'',password:'',errors:{}}
+    state:ILoginState = {email: '',password:'',errors:{}}
 
     private handleSubmit(e: FormEvent<HTMLFormElement>){
         e.preventDefault();
@@ -50,7 +50,7 @@ class LoginView extends React.Component<IProps,ILoginState>{
                     toast.success(this.props.auth.messege);
                     
                     //save user in cookies
-                    saveUser(this.props.auth.username,this.props.auth.token);
+                    saveUser(this.props.auth.email,this.props.auth.username,this.props.auth.token);
 
                     //redirect to home and update app only after success msg is shown
                     this.props.history.push('/');
