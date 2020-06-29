@@ -17,7 +17,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { AppActions } from '../../actions/types/actions';
 import { LOGIN_AUTH, FINISH_AUTH } from '../../actions/authActions';
 import { toast } from 'react-toastify';
-import { saveUser } from '../../handlers/saveData';
+import { saveUser } from '../../handlers/serializationData';
 
 type IProps = ReduxProps & DispatchProps & ReactCookieProps & RouteComponentProps;
 

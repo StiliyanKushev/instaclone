@@ -50,7 +50,7 @@ class App extends React.Component<IProps,any> {
   }
 
   shouldComponentUpdate(nextProps:IProps){
-    if(this.props.isAuthFinished !== nextProps.isAuthFinished && nextProps.isAuthFinished){
+    if(this.props.isAuthFinished !== nextProps.isAuthFinished){
       return true;
     }
     else{

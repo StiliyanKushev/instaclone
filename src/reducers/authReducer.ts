@@ -26,6 +26,7 @@ const authReducer = (state = authState, action:authActionTypes) => {
     switch (action.type) {
         case "SET_AUTH_LOADING": {
             return {
+                ...state,
                 isLoading:true,
                 isLogged:false,
                 error:false,
@@ -34,6 +35,7 @@ const authReducer = (state = authState, action:authActionTypes) => {
 
         case "SET_AUTH_FAILURE": {
             return {
+                ...state,
                 isLoading:false,
                 isLogged:false,
                 error:true,
@@ -43,6 +45,7 @@ const authReducer = (state = authState, action:authActionTypes) => {
 
         case "SET_AUTH_SUCCESS": {
             return { 
+                ...state,
                 isLoading:false,
                 isLogged: true,
                 error: false, 
@@ -54,10 +57,17 @@ const authReducer = (state = authState, action:authActionTypes) => {
 
         case "SET_AUTH_FINISH":{
             return {
-                isAuthFinished:true,
-                isLogged: true,
-                username: state.username,
-                token: state.token
+                ...state,
+                isAuthFinished:!state.isAuthFinished,
+            } as IAuthState;
+        }
+
+        case "SET_AUTH_LOGOUT":{
+            return {
+                ...state,
+                isLogged:false,
+                token:'',
+                username:'',
             } as IAuthState;
         }
 

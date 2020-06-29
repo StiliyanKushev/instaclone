@@ -18,7 +18,7 @@ import { IValidationResult, IValidationResultErrors } from '../../interfaces/for
 import { Image, Grid, Header, Form, Button, Segment, Icon, Divider, Ref } from 'semantic-ui-react';
 
 import { ReduxProps, AppState } from '../../reducers';
-import { saveUser } from '../../handlers/saveData';
+import { saveUser } from '../../handlers/serializationData';
 import { ThunkDispatch } from 'redux-thunk';
 import { AppActions } from '../../actions/types/actions';
 import { FINISH_AUTH, REGISTER_AUTH } from '../../actions/authActions';

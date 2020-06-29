@@ -9,6 +9,10 @@ export const CALL_AUTH_LOADING = ():AppActions => ({
     type: 'SET_AUTH_LOADING',
 });
 
+export const CALL_AUTH_LOGOUT = ():AppActions => ({
+    type: 'SET_AUTH_LOGOUT',
+});
+
 export const CALL_AUTH_FINISH = ():AppActions => ({
     type: 'SET_AUTH_FINISH',
 });
@@ -26,6 +30,10 @@ export const CALL_AUTH_FAILURE = (messege:string):AppActions => ({
         messege
     }
 });
+
+export const FINISH_AUTH = () => (dispatch:Dispatch<AppActions>) => {
+    dispatch(CALL_AUTH_FINISH());
+}
 
 export const LOGIN_AUTH = (state:ILoginState) => (dispatch:Dispatch<AppActions>) => {
     dispatch(CALL_AUTH_LOADING());
@@ -53,6 +61,7 @@ export const REGISTER_AUTH = (state:IRegisterState) => (dispatch:Dispatch<AppAct
     });
 }
 
-export const FINISH_AUTH = () => (dispatch:Dispatch<AppActions>) => {
+export const LOGOUT_AUTH = () => (dispatch:Dispatch<AppActions>) => {
+    dispatch(CALL_AUTH_LOGOUT());
     dispatch(CALL_AUTH_FINISH());
 }
