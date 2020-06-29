@@ -1,6 +1,6 @@
-export interface IAuthResponse{
-    messege:string,
-    success:boolean,
+import IGenericResponse from "./response";
+
+export interface IAuthResponse extends IGenericResponse{
     token:string,
     user:{
         username:string,
