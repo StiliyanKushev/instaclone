@@ -4,6 +4,7 @@ const cookies = new Cookies();
 
 export interface IAuthState {
     isAuthFinished:boolean,
+    isPasswordChanged:boolean,
     isLogged: boolean,
     isLoading:boolean,
     error:boolean,
@@ -15,6 +16,7 @@ export interface IAuthState {
 
 const authState:IAuthState = {
     isAuthFinished:false,
+    isPasswordChanged:false,
     isLogged:cookies.get('isLogged') || false,
     isLoading:false,
     error:false,
@@ -72,6 +74,26 @@ const authReducer = (state = authState, action:authActionTypes) => {
                 token:'',
                 username:'',
                 email:'',
+            } as IAuthState;
+        }
+
+        case "SET_AUTH_CHANGE_PASSWORD_SUCCESS":{
+            return {
+                ...state,
+                isPasswordChanged:true,
+                error:false,
+                messege:action.payload.messege,
+                isLoading:false,
+            } as IAuthState;
+        }
+
+        case "SET_AUTH_CHANGE_PASSWORD_FAILURE":{
+            return {
+                ...state,
+                isPasswordChanged:false,
+                error:true,
+                messege:action.payload.messege,
+                isLoading:false
             } as IAuthState;
         }
 

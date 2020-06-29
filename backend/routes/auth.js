@@ -1,10 +1,43 @@
 const express = require('express')
+const encryption = require('../utilities/encryption')
 const passport = require('passport')
 const validator = require('validator')
+const User = require('../models/User')
 
 const router = new express.Router()
 
-function validateSignupForm (payload) {
+function validateChangePasswordForm(payload) {
+  const errors = {}
+  let isFormValid = true
+  let messege = ''
+
+  if (!payload || typeof payload.currentPassword !== 'string' || payload.currentPassword.trim().length < 8) {
+    isFormValid = false
+    errors.password = 'Current password must be at least 8 characters long'
+  }
+
+  if (!payload || typeof payload.newPassword !== 'string' || payload.newPassword.trim().length < 8) {
+    isFormValid = false
+    errors.password = 'New password must be at least 8 characters long'
+  }
+
+  if (!payload || typeof payload.repeatNewPassword !== 'string' || payload.repeatNewPassword.trim() !== payload.newPassword.trim()) {
+    isFormValid = false
+    errors.password = 'Passwords don\'t match'
+  }
+
+  if (!isFormValid) {
+    messege = 'Check the form for errors.'
+  }
+
+  return {
+    success: isFormValid,
+    messege,
+    errors
+  }
+}
+
+function validateSignupForm(payload) {
   const errors = {}
   let isFormValid = true
   let messege = ''
@@ -40,7 +73,7 @@ function validateSignupForm (payload) {
   }
 }
 
-function validateLoginForm (payload) {
+function validateLoginForm(payload) {
   const errors = {}
   let isFormValid = true
   let messege = ''
@@ -76,7 +109,7 @@ router.post('/register', (req, res, next) => {
     })
   }
 
-  return passport.authenticate('local-signup', (err,token,userData) => {
+  return passport.authenticate('local-signup', (err, token, userData) => {
     if (err) {
       return res.status(200).json({
         success: false,
@@ -88,7 +121,7 @@ router.post('/register', (req, res, next) => {
       success: true,
       messege: 'You have successfully signed up!',
       token: token,
-      user: userData 
+      user: userData
     })
   })(req, res, next)
 })
@@ -118,6 +151,52 @@ router.post('/login', (req, res, next) => {
       user: userData
     })
   })(req, res, next)
+
+  
 })
 
-module.exports = router
+router.post('/passwordChange', (req, res, next) => {
+  const validationResult = validateChangePasswordForm(req.body)
+  if (!validationResult.success) {
+    return res.status(200).json({
+      success: false,
+      messege: validationResult.messege,
+      errors: validationResult.errors
+    })
+  }
+
+  User
+    .find({
+      email: req.body.email
+    })
+    .then(users => {
+        if (users.length < 0) {
+            return res.status(200).json({
+              success: false,
+              messege: 'No user with this email was found'
+            });
+        }
+
+        passport.authenticate('local-login', (err, token, userData) => {
+          if (err) {
+            return res.status(200).json({
+              success: false,
+              messege: 'Current password is not correct.'
+            })
+          }
+      
+          let salt = encryption.generateSalt()
+          let password = encryption.generateHashedPassword(salt, req.body.newPassword)
+      
+          User.updateOne({email:req.body.email},{salt,password},() => {
+            res.status(200).json({
+              success: true,
+              messege: 'New password has been set.'
+            })
+          });
+      
+        })({body:{email:req.body.email,password:req.body.currentPassword}}, res, next)
+    });
+})
+
+module.exports = router;

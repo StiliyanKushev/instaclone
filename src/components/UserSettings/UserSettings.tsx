@@ -12,6 +12,7 @@ import { LOGOUT_AUTH } from '../../actions/authActions';
 import { clearUser } from '../../handlers/serializationData';
 import { toast } from 'react-toastify';
 import ReportBug from '../ReportBug/ReportBug';
+import ChangePassword from '../ChangePassword/ChangePassword';
 
 interface IProps extends DispatchProps {
     handleClose: Function
@@ -36,8 +37,8 @@ class UserSettings extends React.Component<IProps> {
                 <Menu size='massive' vertical>
                     <Segment className={styles.segmentPaddingNone} attached='top'>
                         <Menu.Item>
-                            <Link to='/forgot-password'>
-                                <Header as='span' size='tiny' textAlign='center'>Forgot password</Header>
+                            <Link to='#'>
+                                <Header onClick={() => this.setState({showTabView:'change-password'})} as='span' size='tiny' textAlign='center'>Change password</Header>
                             </Link>
                         </Menu.Item>
                     </Segment>
@@ -66,6 +67,7 @@ class UserSettings extends React.Component<IProps> {
             </Dimmer>
             :
             (this.state.showTabView === 'report-bug' && <ReportBug handleClose={this.props.handleClose}/>)
+            || (this.state.showTabView === 'change-password' && <ChangePassword handleClose={this.props.handleClose} />)
         );
     }
 }

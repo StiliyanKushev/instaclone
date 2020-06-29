@@ -1,6 +1,7 @@
 import { IValidationResult } from "../interfaces/form-validation";
 import { IRegisterState } from "../components/RegisterView/RegisterView";
 import { ILoginState } from "../components/LoginView/LoginView";
+import { IChangePasswordState } from "../components/ChangePassword/ChangePassword";
 
 const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const isEmail = (str:string) => str.match(emailRegex) !== null;
@@ -49,6 +50,32 @@ export function validateLogin(state:ILoginState){
     // PASSWORD
     if(state.password.length < 8){
         result.errors.password = {content:'Password must be at least 8 charachters long.'}
+    }
+    //  NO ERROS
+    if(Object.keys(result.errors).length === 0){
+        result.success = true;
+    }
+
+    return result;
+}
+
+export function validateChangePassword(state:IChangePasswordState){
+    let result:IValidationResult = {
+        success:false,
+        errors:{}
+    }
+
+    // CURRENT PASSWORD
+    if(state.currentPassword.length < 8){
+        result.errors.currentPassword = {content:'Password must be at least 8 charachters long.'}
+    }
+    // NEW PASSWORD
+    if(state.newPassword.length < 8){
+        result.errors.newPassword = {content:'New password must be at least 8 charachters long.'}
+    }
+    // REPEAT PASSWORD
+    if((state.newPassword.length === 0 && state.repeatNewPassword.length === 0) || (state.repeatNewPassword !== state.newPassword)){
+        result.errors.repeatNewPassword = {content:'Password don\'t match.'}
     }
     //  NO ERROS
     if(Object.keys(result.errors).length === 0){
