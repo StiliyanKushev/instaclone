@@ -7,12 +7,12 @@ import { connect } from 'react-redux';
 import {bindActionCreators} from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import {CHANGE_PASSWORD_AUTH, EDIT_PROFILE_AUTH} from '../../actions/authActions';
+import { EDIT_PROFILE_AUTH} from '../../actions/authActions';
 import { ReduxProps, AppState } from '../../reducers';
 import { AppActions } from '../../actions/types/actions';
 
 import { IValidationResult, IValidationResultErrors } from '../../interfaces/form-validation';
-import { validateChangePassword, validateEditProfile } from '../../validators/auth';
+import { validateEditProfile } from '../../validators/auth';
 
 import { Dimmer, Segment, Button, Icon, Form } from 'semantic-ui-react';
 
@@ -50,6 +50,10 @@ class EditProfile extends React.Component<IProps,IEditProfileState> {
                 //if it was successfull
                 if(this.props.auth?.isProfileEdited){
                     toast.success(this.props.auth.messege);
+
+                    //save new data in cookies
+                    this.props.cookies?.set('email',this.props.auth.email);
+                    this.props.cookies?.set('username',this.props.auth.username);
 
                     //close menu
                     this.props.handleClose();

@@ -4,11 +4,9 @@ import { login, register, changePassword, editProfile } from "../handlers/auth";
 import { ILoginState } from "../components/LoginView/LoginView";
 import { IRegisterState } from "../components/RegisterView/RegisterView";
 import { Dispatch } from "react";
-import ChangePassword, { IChangePasswordState } from "../components/ChangePassword/ChangePassword";
+import { IChangePasswordState } from "../components/ChangePassword/ChangePassword";
 import IGenericResponse from "../interfaces/response";
 import { IEditProfileState } from "../components/EditProfile/EditProfile";
-import { Cookies } from "react-cookie";
-const cookies = new Cookies();
 
 export const CALL_AUTH_LOADING = ():AppActions => ({
     type: 'SET_AUTH_LOADING',
@@ -118,9 +116,6 @@ export const EDIT_PROFILE_AUTH = (state:IEditProfileState,email:string) => (disp
     dispatch(CALL_AUTH_LOADING());
     editProfile(state,email).then((res:IEditProfileResponse) => {
         if(res.success){
-            //save new data in cookies
-            cookies?.set('email',res.user.email);
-            cookies?.set('username',res.user.username);
             dispatch(CALL_AUTH_EDIT_PROFILE_SUCCESS(res.messege,res.user.email,res.user.username));
         }
         else{
