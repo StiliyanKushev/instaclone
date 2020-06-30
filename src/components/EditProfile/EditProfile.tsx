@@ -1,18 +1,18 @@
 import React, { FormEvent, ComponentType } from 'react';
 import { withCookies, ReactCookieProps } from 'react-cookie';
 import { toast } from 'react-toastify';
-import styles from './ChangePassword.module.css';
+import styles from './EditProfile.module.css';
 
 import { connect } from 'react-redux';
 import {bindActionCreators} from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import {CHANGE_PASSWORD_AUTH} from '../../actions/authActions';
+import {CHANGE_PASSWORD_AUTH, EDIT_PROFILE_AUTH} from '../../actions/authActions';
 import { ReduxProps, AppState } from '../../reducers';
 import { AppActions } from '../../actions/types/actions';
 
 import { IValidationResult, IValidationResultErrors } from '../../interfaces/form-validation';
-import { validateChangePassword } from '../../validators/auth';
+import { validateChangePassword, validateEditProfile } from '../../validators/auth';
 
 import { Dimmer, Segment, Button, Icon, Form } from 'semantic-ui-react';
 
@@ -22,24 +22,24 @@ interface IParentProps {
 
 type IProps = IParentProps & ReduxProps & DispatchProps & ReactCookieProps;
 
-export interface IChangePasswordState{
-    currentPassword:string,
-    newPassword:string,
-    repeatNewPassword:string,
+export interface IEditProfileState{
+    email:string,
+    username:string,
+    password:string,
     errors:IValidationResultErrors
 }
 
-class ChangePassword extends React.Component<IProps,IChangePasswordState> {
-    state:IChangePasswordState = { currentPassword: '', newPassword: '', repeatNewPassword: '', errors: {}}
+class EditProfile extends React.Component<IProps,IEditProfileState> {
+    state:IEditProfileState = { password:'', email:this.props.auth?.email || '', username:this.props.auth?.username || '', errors: {}}
 
     private handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        let result: IValidationResult = validateChangePassword(this.state);
+        let result: IValidationResult = validateEditProfile(this.state);
         this.setState({errors:result.errors});
         
         if(result.success){
-            this.props.changePassword(this.state,this.props.cookies?.get('email'));
+            this.props.editProfile(this.state,this.props.auth?.email || this.props.cookies?.get('email'));
         }
     }
 
@@ -48,7 +48,7 @@ class ChangePassword extends React.Component<IProps,IChangePasswordState> {
         if(this.props.auth !== prevProps.auth){
             if(!this.props.auth?.error){
                 //if it was successfull
-                if(this.props.auth?.isPasswordChanged){
+                if(this.props.auth?.isProfileEdited){
                     toast.success(this.props.auth.messege);
 
                     //close menu
@@ -68,31 +68,35 @@ class ChangePassword extends React.Component<IProps,IChangePasswordState> {
                 <Segment size='tiny'>
                     <Icon onClick={this.props.handleClose} className={styles.closeIcon} color='black' size='big' name='close'></Icon>
 
-                    <Form onSubmit={this.handleSubmit.bind(this)} id='change-password'>
+                    <Form onSubmit={this.handleSubmit.bind(this)} id='edit-profile'>
                         <br />
                         <Form.Field>
                             <Form.Input
-                                error={this.state.errors.currentPassword}
-                                onChange={e => { this.setState({ currentPassword: e.target.value }) }}
-                                placeholder='Current Password' 
-                                type='password' 
+                                value={this.state.email}
+                                error={this.state.errors.email}
+                                onChange={e => { this.setState({ email: e.target.value }) }}
+                                placeholder='Email' 
+                                type='email' 
                                 autoComplete='on' />
                             <Form.Input
-                                error={this.state.errors.newPassword}
-                                onChange={e => { this.setState({ newPassword: e.target.value }) }} 
-                                placeholder='New Password' 
-                                type='password' 
+                                value={this.state.username}
+                                error={this.state.errors.username}
+                                onChange={e => { this.setState({ username: e.target.value }) }} 
+                                placeholder='Username' 
+                                type='text' 
                                 autoComplete='on' />
-                            <Form.Input 
-                                error={this.state.errors.repeatNewPassword}
-                                onChange={e => { this.setState({ repeatNewPassword: e.target.value }) }}
-                                placeholder='Repeat Password' 
+                        </Form.Field>
+                        <Form.Field>
+                            <Form.Input
+                                error={this.state.errors.password}
+                                onChange={e => { this.setState({ password: e.target.value }) }} 
+                                placeholder='Confirm Password' 
                                 type='password' 
                                 autoComplete='on' />
                         </Form.Field>
                     </Form>
                     <br />
-                    <Button loading={this.props.auth?.isLoading} form='change-password' type='submit' fluid primary>Change password</Button>
+                    <Button loading={this.props.auth?.isLoading} form='edit-profile' type='submit' fluid primary>Update Profile</Button>
                     <br />
                 </Segment>
             </Dimmer>
@@ -105,11 +109,11 @@ const mapStateToProps = (state:AppState):ReduxProps => ({
 })
 
 interface DispatchProps {
-    changePassword: (state:IChangePasswordState,email:string) => void,
+    editProfile: (state:IEditProfileState,email:string) => void,
 }
 
 const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
-    changePassword:bindActionCreators(CHANGE_PASSWORD_AUTH,dispatch),
+    editProfile:bindActionCreators(EDIT_PROFILE_AUTH,dispatch),
 })
 
-export default withCookies(connect(mapStateToProps,mapDispatchToProps)(ChangePassword as ComponentType<IProps>));
+export default withCookies(connect(mapStateToProps,mapDispatchToProps)(EditProfile as ComponentType<IProps>));

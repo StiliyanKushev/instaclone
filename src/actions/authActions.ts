@@ -1,11 +1,14 @@
 import { AppActions } from "./types/actions";
-import { IAuthResponse } from "../interfaces/auth";
-import { login, register, changePassword } from "../handlers/auth";
+import { IAuthResponse, IEditProfileResponse } from "../interfaces/auth";
+import { login, register, changePassword, editProfile } from "../handlers/auth";
 import { ILoginState } from "../components/LoginView/LoginView";
 import { IRegisterState } from "../components/RegisterView/RegisterView";
 import { Dispatch } from "react";
 import ChangePassword, { IChangePasswordState } from "../components/ChangePassword/ChangePassword";
 import IGenericResponse from "../interfaces/response";
+import { IEditProfileState } from "../components/EditProfile/EditProfile";
+import { Cookies } from "react-cookie";
+const cookies = new Cookies();
 
 export const CALL_AUTH_LOADING = ():AppActions => ({
     type: 'SET_AUTH_LOADING',
@@ -33,6 +36,23 @@ export const CALL_AUTH_CHANGE_PASSWORD_FAILURE = (messege:string):AppActions => 
         messege
     }
 });
+
+export const CALL_AUTH_EDIT_PROFILE_SUCCESS = (messege:string,email:string,username:string):AppActions => ({
+    type: 'SET_AUTH_EDIT_PROFILE_SUCCESS',
+    payload:{
+        messege,
+        email,
+        username
+    }
+});
+
+export const CALL_AUTH_EDIT_PROFILE_FAILURE = (messege:string):AppActions => ({
+    type: 'SET_AUTH_EDIT_PROFILE_FAILURE',
+    payload:{
+        messege
+    }
+});
+
 export const CALL_AUTH_SUCCESS = (email:string,username:string,token:string,messege:string):AppActions => ({
     type: 'SET_AUTH_SUCCESS',
     payload:{
@@ -90,6 +110,21 @@ export const CHANGE_PASSWORD_AUTH = (state:IChangePasswordState,email:string) =>
         }
         else{
             dispatch(CALL_AUTH_CHANGE_PASSWORD_FAILURE(res.messege));
+        }
+    })
+}
+
+export const EDIT_PROFILE_AUTH = (state:IEditProfileState,email:string) => (dispatch:Dispatch<AppActions>) => {
+    dispatch(CALL_AUTH_LOADING());
+    editProfile(state,email).then((res:IEditProfileResponse) => {
+        if(res.success){
+            //save new data in cookies
+            cookies?.set('email',res.user.email);
+            cookies?.set('username',res.user.username);
+            dispatch(CALL_AUTH_EDIT_PROFILE_SUCCESS(res.messege,res.user.email,res.user.username));
+        }
+        else{
+            dispatch(CALL_AUTH_EDIT_PROFILE_FAILURE(res.messege));
         }
     })
 }

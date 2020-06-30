@@ -5,6 +5,7 @@ const cookies = new Cookies();
 export interface IAuthState {
     isAuthFinished:boolean,
     isPasswordChanged:boolean,
+    isProfileEdited:boolean,
     isLogged: boolean,
     isLoading:boolean,
     error:boolean,
@@ -15,6 +16,7 @@ export interface IAuthState {
 }
 
 const authState:IAuthState = {
+    isProfileEdited:false,
     isAuthFinished:false,
     isPasswordChanged:false,
     isLogged:cookies.get('isLogged') || false,
@@ -94,6 +96,28 @@ const authReducer = (state = authState, action:authActionTypes) => {
                 error:true,
                 messege:action.payload.messege,
                 isLoading:false
+            } as IAuthState;
+        }
+
+        case "SET_AUTH_EDIT_PROFILE_SUCCESS":{
+            return {
+                ...state,
+                isProfileEdited:true,
+                error:false,
+                messege:action.payload.messege,
+                isLoading:false,
+                email:action.payload.email,
+                username:action.payload.username
+            } as IAuthState;
+        }
+
+        case "SET_AUTH_EDIT_PROFILE_FAILURE":{
+            return {
+                ...state,
+                isProfileEdited:false,
+                error:true,
+                messege:action.payload.messege,
+                isLoading:false,
             } as IAuthState;
         }
 

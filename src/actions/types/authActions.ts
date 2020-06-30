@@ -5,6 +5,8 @@ export const SET_AUTH_FINISH = 'SET_AUTH_FINISH';
 export const SET_AUTH_LOGOUT = 'SET_AUTH_LOGOUT';
 export const SET_AUTH_CHANGE_PASSWORD_SUCCESS = 'SET_AUTH_CHANGE_PASSWORD_SUCCESS';
 export const SET_AUTH_CHANGE_PASSWORD_FAILURE = 'SET_AUTH_CHANGE_PASSWORD_FAILURE';
+export const SET_AUTH_EDIT_PROFILE_SUCCESS = 'SET_AUTH_EDIT_PROFILE_SUCCESS';
+export const SET_AUTH_EDIT_PROFILE_FAILURE = 'SET_AUTH_EDIT_PROFILE_FAILURE';
 
 export interface setAuthSuccess {
     type: typeof SET_AUTH_SUCCESS,
@@ -50,6 +52,22 @@ export interface setAuthChangePasswordFailure {
     }
 }
 
+export interface setAuthEditProfileSuccess {
+    type: typeof SET_AUTH_EDIT_PROFILE_SUCCESS,
+    payload:{
+        messege:string,
+        username:string,
+        email:string
+    }
+}
+
+export interface setAuthEditProfileFailure {
+    type: typeof SET_AUTH_EDIT_PROFILE_FAILURE,
+    payload:{
+        messege:string
+    }
+}
+
 export type authActionTypes = 
 setAuthSuccess | 
 setAuthFailure | 
@@ -57,4 +75,6 @@ setAuthLoading |
 setAuthFinish  |
 setAuthLogout  |
 setAuthChangePasswordSuccess |
-setAuthChangePasswordFailure;
+setAuthChangePasswordFailure |
+setAuthEditProfileSuccess    |
+setAuthEditProfileFailure;

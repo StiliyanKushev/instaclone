@@ -7,3 +7,10 @@ export interface IAuthResponse extends IGenericResponse{
         email:string,
     }
 }
+
+export interface IEditProfileResponse extends IGenericResponse{
+    user:{
+        username:string,
+        email:string
+    }
+}

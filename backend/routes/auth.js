@@ -6,6 +6,42 @@ const User = require('../models/User')
 
 const router = new express.Router()
 
+function validateEditProfile(payload){
+  const errors = {}
+  let isFormValid = true
+  let messege = ''
+
+  if (!payload || typeof payload.username !== 'string' || payload.username.trim().length < 5 || payload.username.trim().length > 20) {
+    isFormValid = false
+    errors.username = 'Username must be between 5 and 20 chars long.'
+  }
+
+  if (!payload || typeof payload.authEmail !== 'string' || !validator.isEmail(payload.authEmail)) {
+    isFormValid = false
+    errors.authEmail = 'Please provide a correct email address for authentication'
+  }
+
+  if (!payload || typeof payload.email !== 'string' || !validator.isEmail(payload.email)) {
+    isFormValid = false
+    errors.email = 'Please provide a correct email address'
+  }
+
+  if (!payload || typeof payload.password !== 'string' || payload.password.trim().length < 8) {
+    isFormValid = false
+    errors.password = 'Password must be at least 8 characters long'
+  }
+
+  if (!isFormValid) {
+    messege = 'Check the form for errors.'
+  }
+
+  return {
+    success: isFormValid,
+    messege,
+    errors
+  }
+}
+
 function validateChangePasswordForm(payload) {
   const errors = {}
   let isFormValid = true
@@ -197,6 +233,48 @@ router.post('/passwordChange', (req, res, next) => {
       
         })({body:{email:req.body.email,password:req.body.currentPassword}}, res, next)
     });
+})
+
+router.post('/editProfile', (req, res, next) => {
+  const validationResult = validateEditProfile(req.body)
+  if (!validationResult.success) {
+    return res.status(200).json({
+      success: false,
+      messege: validationResult.messege,
+      errors: validationResult.errors
+    })
+  }
+
+  User.findOne({email:req.body.authEmail}).then(user => {
+    if(!user){
+      return res.status(200).json({
+        success: false,
+        messege: 'No user with the authentication email exists.',
+      })
+    }
+    else{
+      passport.authenticate('local-login', (err, token, userData) => {
+        if (err) {
+          return res.status(200).json({
+            success: false,
+            messege: 'Email or password is not correct.'
+          })
+        }
+    
+        User.updateOne({email:req.body.authEmail},{email:req.body.email,username:req.body.username},() => {
+          res.status(200).json({
+            success: true,
+            messege: 'New email and/or username has been set.',
+            user:{
+              email:req.body.email,
+              username:req.body.username
+            }
+          })
+        });
+    
+      })({body:{email:req.body.authEmail,password:req.body.password}}, res, next)
+    }
+  });
 })
 
 module.exports = router;

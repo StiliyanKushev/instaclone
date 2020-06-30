@@ -1,25 +1,43 @@
-import React from 'react';
+import React, { ComponentType } from 'react';
 import styles from './UserView.module.css';
 import avatar from '../../assets/avatar.jpg';
 import { Container, Grid, Item, Segment, Header, Button, Image, Menu } from 'semantic-ui-react';
 import { ReactCookieProps, withCookies } from 'react-cookie';
 import UserSettings from '../UserSettings/UserSettings';
+import EditProfile from '../EditProfile/EditProfile';
+import { connect } from 'react-redux';
+import { AppState, ReduxProps } from '../../reducers';
 
-type IProps = ReactCookieProps;
+type IProps = ReactCookieProps & ReduxProps;
+
 interface IState {
     selectionTab:string,
     settingsPopup:boolean,
+    editProfilePopup:boolean
 }
 
 class UserView extends React.Component<IProps,IState> {
-    state:IState = {selectionTab:'recent',settingsPopup:false}
+    state:IState = {selectionTab:'recent',settingsPopup:false,editProfilePopup:false}
 
     constructor(props:IProps){
         super(props);
 
         this.handleItemClick = this.handleItemClick.bind(this);
         this.handleSettingClick = this.handleSettingClick.bind(this);
+        this.handleEditProfileClick = this.handleEditProfileClick.bind(this);
         this.handleCloseSettings = this.handleCloseSettings.bind(this);
+        this.handleCloseEditProfile = this.handleCloseEditProfile.bind(this);
+    }
+
+
+
+    private handleEditProfileClick(e:React.MouseEvent<HTMLButtonElement>){
+        e.preventDefault();
+        this.setState({editProfilePopup:true})
+    }
+
+    private handleCloseEditProfile(){
+        this.setState({editProfilePopup:false})
     }
 
     private handleCloseSettings(){
@@ -49,13 +67,13 @@ class UserView extends React.Component<IProps,IState> {
                                     <Segment attached='top' padded>
                                         <Item>
                                             <Grid className={styles.fluidGrid}>
-                                                <Grid.Column className={styles.usernameColumn}><Header className={styles.username} as='h1'>{this.props.cookies?.get('username')}</Header></Grid.Column>
-                                                <Grid.Column className={styles.userSettingsBtns} floated='right'><Button secondary>Edit Profile</Button><Button onClick={this.handleSettingClick} primary icon='setting'></Button></Grid.Column>
+                                                <Grid.Column className={styles.usernameColumn}><Header className={styles.username} as='h1'>{this.props.auth?.username}</Header></Grid.Column>
+                                                <Grid.Column className={styles.userSettingsBtns} floated='right'><Button onClick={this.handleEditProfileClick} secondary>Edit Profile</Button><Button onClick={this.handleSettingClick} primary icon='setting'></Button></Grid.Column>
                                             </Grid>
                                         </Item>
                                     </Segment>
                                     <Segment className={styles.userSettingsBtns2} attached>
-                                        <Button size='mini' className={styles.editBtn2} secondary>Edit Profile</Button><Button onClick={this.handleSettingClick} className={styles.settingsBtn2} size='mini' primary icon='setting'></Button>
+                                        <Button size='mini' className={styles.editBtn2} onClick={this.handleEditProfileClick} secondary>Edit Profile</Button><Button onClick={this.handleSettingClick} className={styles.settingsBtn2} size='mini' primary icon='setting'></Button>
                                     </Segment>
                                     <Segment className={styles.stats} attached='bottom'>
                                         <Item>
@@ -99,11 +117,15 @@ class UserView extends React.Component<IProps,IState> {
                         </Grid.Row>
                     </Grid>
                 </Container>
-                
+                {this.state.editProfilePopup && <EditProfile handleClose={this.handleCloseEditProfile} />}
                 {this.state.settingsPopup && <UserSettings handleClose={this.handleCloseSettings} />}
             </div>
         );
     }
 }
 
-export default withCookies(UserView);
+const mapStateToProps = (state:AppState):ReduxProps => ({
+    auth:state.auth
+})
+
+export default withCookies(connect(mapStateToProps,null)(UserView as ComponentType<IProps>));
