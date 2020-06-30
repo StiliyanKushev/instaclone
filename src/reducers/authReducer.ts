@@ -4,6 +4,7 @@ const cookies = new Cookies();
 
 export interface IAuthState {
     isAuthFinished:boolean,
+    isPasswordReseted:boolean,
     isPasswordChanged:boolean,
     isProfileEdited:boolean,
     isLogged: boolean,
@@ -18,6 +19,7 @@ export interface IAuthState {
 const authState:IAuthState = {
     isProfileEdited:false,
     isAuthFinished:false,
+    isPasswordReseted:false,
     isPasswordChanged:false,
     isLogged:cookies.get('isLogged') || false,
     isLoading:false,
@@ -34,7 +36,9 @@ const authReducer = (state = authState, action:authActionTypes) => {
             return {
                 ...state,
                 isLoading:true,
-                isLogged:false,
+                isPasswordChanged:false,
+                isPasswordReseted:false,
+                isProfileEdited:false,
                 error:false,
             } as IAuthState;
         }
@@ -115,6 +119,26 @@ const authReducer = (state = authState, action:authActionTypes) => {
             return {
                 ...state,
                 isProfileEdited:false,
+                error:true,
+                messege:action.payload.messege,
+                isLoading:false,
+            } as IAuthState;
+        }
+
+        case "SET_AUTH_RESET_FORGOTTEN_PASSWORD_SUCCESS":{
+            return {
+                ...state,
+                isPasswordReseted:true,
+                error:false,
+                messege:action.payload.messege,
+                isLoading:false,
+            } as IAuthState;
+        }
+        
+        case "SET_AUTH_RESET_FORGOTTEN_PASSWORD_FAILURE":{
+            return {
+                ...state,
+                isPasswordReseted:false,
                 error:true,
                 messege:action.payload.messege,
                 isLoading:false,

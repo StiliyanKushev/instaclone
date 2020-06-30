@@ -13,7 +13,7 @@ import selfie2 from '../../assets/selfie2.png';
 import selfie3 from '../../assets/selfie3.png';
 
 import {validateRegister} from '../../validators/auth';
-import { IValidationResult, IValidationResultErrors } from '../../interfaces/form-validation';
+import { IValidationResult, IValidationResultErrors } from '../../types/form-validation';
 
 import { Image, Grid, Header, Form, Button, Segment, Icon, Divider, Ref } from 'semantic-ui-react';
 

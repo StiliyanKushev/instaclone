@@ -1,8 +1,9 @@
-import { IValidationResult } from "../interfaces/form-validation";
+import { IValidationResult } from "../types/form-validation";
 import { IRegisterState } from "../components/RegisterView/RegisterView";
 import { ILoginState } from "../components/LoginView/LoginView";
 import { IChangePasswordState } from "../components/ChangePassword/ChangePassword";
 import { IEditProfileState } from "../components/EditProfile/EditProfile";
+import { IForgotPasswordState } from "../components/ForgotPassword/ForgotPassword";
 
 const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const isEmail = (str:string) => str.match(emailRegex) !== null;
@@ -103,6 +104,24 @@ export function validateEditProfile(state:IEditProfileState){
     //  USERNAME
     if(state.username.length < 5 || state.username.length > 20){
         result.errors.username = {content:'Username must be between 5 and 20 characters long.'}
+    }
+    //  NO ERROS
+    if(Object.keys(result.errors).length === 0){
+        result.success = true;
+    }
+
+    return result;
+}
+
+export function validateForgotPassword(state:IForgotPasswordState){
+    let result:IValidationResult = {
+        success:false,
+        errors:{}
+    }
+
+    //  EMAIL
+    if(!isEmail(state.email)){
+        result.errors.email = {content:'Invalid Email'} 
     }
     //  NO ERROS
     if(Object.keys(result.errors).length === 0){

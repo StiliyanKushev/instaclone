@@ -1,12 +1,14 @@
 import { AppActions } from "./types/actions";
-import { IAuthResponse, IEditProfileResponse } from "../interfaces/auth";
+import { IAuthResponse, IEditProfileResponse } from "../types/auth";
 import { login, register, changePassword, editProfile } from "../handlers/auth";
 import { ILoginState } from "../components/LoginView/LoginView";
 import { IRegisterState } from "../components/RegisterView/RegisterView";
 import { Dispatch } from "react";
 import { IChangePasswordState } from "../components/ChangePassword/ChangePassword";
-import IGenericResponse from "../interfaces/response";
+import IGenericResponse from "../types/response";
 import { IEditProfileState } from "../components/EditProfile/EditProfile";
+import { IForgotPasswordState } from "../components/ForgotPassword/ForgotPassword";
+import { resetForgottenPassword } from "../handlers/mail";
 
 export const CALL_AUTH_LOADING = ():AppActions => ({
     type: 'SET_AUTH_LOADING',
@@ -30,6 +32,20 @@ export const CALL_AUTH_CHANGE_PASSWORD_SUCCESS = (messege:string):AppActions => 
 
 export const CALL_AUTH_CHANGE_PASSWORD_FAILURE = (messege:string):AppActions => ({
     type: 'SET_AUTH_CHANGE_PASSWORD_FAILURE',
+    payload:{
+        messege
+    }
+});
+
+export const CALL_AUTH_RESET_FORGOTTEN_PASSWORD_SUCCESS = (messege:string):AppActions => ({
+    type: 'SET_AUTH_RESET_FORGOTTEN_PASSWORD_SUCCESS',
+    payload:{
+        messege
+    }
+});
+
+export const CALL_AUTH_RESET_FORGOTTEN_PASSWORD_FAILURE = (messege:string):AppActions => ({
+    type: 'SET_AUTH_RESET_FORGOTTEN_PASSWORD_FAILURE',
     payload:{
         messege
     }
@@ -120,6 +136,18 @@ export const EDIT_PROFILE_AUTH = (state:IEditProfileState,email:string) => (disp
         }
         else{
             dispatch(CALL_AUTH_EDIT_PROFILE_FAILURE(res.messege));
+        }
+    })
+}
+
+export const RESET_FORGOTTEN_PASSWORD_AUTH = (state:IForgotPasswordState) => (dispatch:Dispatch<AppActions>) => {
+    dispatch(CALL_AUTH_LOADING());
+    resetForgottenPassword(state).then((res:IGenericResponse) => {
+        if(res.success){
+            dispatch(CALL_AUTH_RESET_FORGOTTEN_PASSWORD_SUCCESS(res.messege));
+        }
+        else{
+            dispatch(CALL_AUTH_RESET_FORGOTTEN_PASSWORD_FAILURE(res.messege));
         }
     })
 }

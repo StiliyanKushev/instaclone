@@ -2,7 +2,7 @@ import React from 'react';
 import { Dimmer, Segment, Header, TextArea, Button, Icon } from 'semantic-ui-react';
 
 import styles from './ReportBug.module.css';
-import { reportBug } from '../../handlers/report';
+import { reportBug } from '../../handlers/mail';
 import { toast } from 'react-toastify';
 
 interface IProps {

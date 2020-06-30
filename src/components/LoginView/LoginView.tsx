@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import styles from './LoginView.module.css';
 import SideImage from '../../assets/image-login.png';
 
-import { IValidationResult, IValidationResultErrors } from '../../interfaces/form-validation';
+import { IValidationResult, IValidationResultErrors } from '../../types/form-validation';
 import { validateLogin } from '../../validators/auth';
 
 import { Image, Grid, Header, Form, Button, Segment, Icon, Divider } from 'semantic-ui-react';
@@ -103,9 +103,8 @@ class LoginView extends React.Component<IProps,ILoginState>{
                                     <Button fluid size='mini' color='facebook'><Icon name='facebook'/>Facebook login</Button>
                             </Segment>
 
-
                             <Segment>
-                                <a className={styles.forgotPass} href='#'>Forgot password?</a>
+                                <Link to='/forgot-password'>Forgot password?</Link>
                             </Segment>
                         </Form>
                         <div className="ui message">

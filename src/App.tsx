@@ -15,6 +15,7 @@ import CustomRoute, { CustomRouteProps } from './shared/CustomRoute';
 import LoadingView from './shared/LoadingView';
 import NavMenu from './shared/NavMenu/NavMenu';
 import Error404 from './shared/Error404';
+import ForgotPassword from './components/ForgotPassword/ForgotPassword';
 
 // IMPORT ALL VIEWS
 const LoginView = React.lazy(() => import('./components/LoginView/LoginView'));
@@ -69,6 +70,8 @@ class App extends React.Component<IProps,any> {
             </header>
             <main>
               <Switch>
+                <Route exact path='/forgot-password' component={ForgotPassword}/>
+                
                 <CustomRoute exact path='/' component={HomeView} condition={this.isLogged} redirectPath="/login"/>
                 <CustomRoute exact path='/login' component={LoginView} {...this.publicOnly}/>
                 <CustomRoute exact path='/register' component={RegisterView} {...this.publicOnly}/>

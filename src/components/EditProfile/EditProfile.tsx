@@ -11,7 +11,7 @@ import { EDIT_PROFILE_AUTH} from '../../actions/authActions';
 import { ReduxProps, AppState } from '../../reducers';
 import { AppActions } from '../../actions/types/actions';
 
-import { IValidationResult, IValidationResultErrors } from '../../interfaces/form-validation';
+import { IValidationResult, IValidationResultErrors } from '../../types/form-validation';
 import { validateEditProfile } from '../../validators/auth';
 
 import { Dimmer, Segment, Button, Icon, Form } from 'semantic-ui-react';

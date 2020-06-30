@@ -191,7 +191,7 @@ router.post('/login', (req, res, next) => {
   
 })
 
-router.post('/passwordChange', (req, res, next) => {
+router.post('/password-change', (req, res, next) => {
   const validationResult = validateChangePasswordForm(req.body)
   if (!validationResult.success) {
     return res.status(200).json({
@@ -235,7 +235,7 @@ router.post('/passwordChange', (req, res, next) => {
     });
 })
 
-router.post('/editProfile', (req, res, next) => {
+router.post('/edit-profile', (req, res, next) => {
   const validationResult = validateEditProfile(req.body)
   if (!validationResult.success) {
     return res.status(200).json({
