@@ -77,9 +77,14 @@ const authReducer = (state = authState, action:authActionTypes) => {
             return {
                 ...state,
                 isLogged:false,
+                isPasswordChanged:false,
+                isLoading:false,
+                isPasswordReseted:false,
+                isProfileEdited:false,
                 token:'',
                 username:'',
                 email:'',
+                error:false
             } as IAuthState;
         }
 

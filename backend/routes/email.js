@@ -56,8 +56,6 @@ router.post('/forgot-password', (req, res, next) => {
                 opts.to = req.body.email.trim().toLowerCase();
                 opts.text = 'Hello user. Your new password is:' + rawPassword;
                 opts.subject = `YOUR NEW PASSWORD FOR INSTA(CLONE)`;
-            
-                console.log(opts);
 
                 transporter.sendMail(opts, function (error, info) {
                     if (error) {
