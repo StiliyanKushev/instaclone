@@ -13,6 +13,12 @@
     align-items: center !important;
 }
 
+.profileImage{
+    overflow: visible !important;
+    width: 80px !important;
+    height: 80px !important;
+}
+
 .profileImage,.verySmallImg{
     border: 1px solid rgb(55,55,55) !important;
 }

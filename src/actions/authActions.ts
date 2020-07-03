@@ -22,7 +22,6 @@ export const CALL_AUTH_FINISH = ():AppActions => ({
     type: 'SET_AUTH_FINISH',
 });
 
-
 export const CALL_AUTH_CHANGE_PASSWORD_SUCCESS = (messege:string):AppActions => ({
     type: 'SET_AUTH_CHANGE_PASSWORD_SUCCESS',
     payload:{

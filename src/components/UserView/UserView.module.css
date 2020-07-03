@@ -32,6 +32,7 @@
 
 .avatar{
     cursor: pointer;
+    height: 150px !important;
     border: 2px solid rgb(100,100,100) !important;
 }
 

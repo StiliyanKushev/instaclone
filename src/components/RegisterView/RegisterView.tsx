@@ -51,7 +51,7 @@ class RegisterView extends React.Component<IProps,IRegisterState> {
             if(arr.length === 0 && this.s1.current && this.s2.current && this.s3.current){
                 arr = [this.s1.current,this.s2.current,this.s3.current];
             }
-
+            
             $(arr[currentIndex++]).hide();
             currentIndex = currentIndex === arr.length ? 0 : currentIndex;
             $(arr[currentIndex]).show();

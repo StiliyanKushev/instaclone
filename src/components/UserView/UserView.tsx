@@ -7,24 +7,26 @@ import EditProfile from '../EditProfile/EditProfile';
 import { connect } from 'react-redux';
 import { AppState, ReduxProps } from '../../reducers';
 import $ from 'jquery';
-import { sendUserAvatar } from '../../handlers/user';
 import { settings } from '../../settings';
 import { toast } from 'react-toastify';
+import { ThunkDispatch } from 'redux-thunk';
+import { bindActionCreators } from 'redux';
+import { AppActions } from '../../actions/types/actions';
+import { UPDATE_AVATAR_USER } from '../../actions/userActions';
 
-type IProps = ReactCookieProps & ReduxProps;
+type IProps = ReactCookieProps & ReduxProps & DispatchProps;
 
 interface IState {
-    selectionTab:string,
-    settingsPopup:boolean,
-    editProfilePopup:boolean,
-    userImage:string
+    selectionTab: string,
+    settingsPopup: boolean,
+    editProfilePopup: boolean,
 }
 
-class UserView extends React.Component<IProps,IState> {
-    state:IState = {userImage:'',selectionTab:'recent',settingsPopup:false,editProfilePopup:false}
+class UserView extends React.Component<IProps, IState> {
+    state: IState = { selectionTab: 'recent', settingsPopup: false, editProfilePopup: false }
     private userImageRef = createRef<HTMLImageElement>();
 
-    constructor(props:IProps){
+    constructor(props: IProps) {
         super(props);
 
         this.handleItemClick = this.handleItemClick.bind(this);
@@ -35,53 +37,74 @@ class UserView extends React.Component<IProps,IState> {
         this.handleChangeAvatar = this.handleChangeAvatar.bind(this);
     }
 
-    public componentDidMount(){
-        let un = this.props.auth?.username;
-        let imageRef = this.userImageRef.current;
-        $(imageRef as any).attr('src',`${settings.BASE_URL}/feed/photo/user/${un}`);
+    public componentDidMount() {
+        let user = this.props.auth?.username || '';
+        let token = this.props.auth?.token || '';
+        $(this.userImageRef.current as HTMLImageElement).attr('src', `${settings.BASE_URL}/feed/photo/user/${user}`);
 
-        $('#global-file-input').change((e:any) => {
+        $('#global-file-input').change((e: any) => {
             let file = e.target.files[0];
 
-            if(file){
+            if (file) {
+                //attach file to formData
                 let formData = new FormData();
-                formData.append('image',file);
+                formData.append('image', file);
 
-                if(this.props.auth?.username)
-                sendUserAvatar(formData,this.props.auth?.username,this.props.auth?.token).then((res) => {
-                    toast.success(res.messege);
-                    let date = new Date();
-                    $(imageRef as any).attr("src", `${settings.BASE_URL}/feed/photo/user/${un}?`+date.getTime());
-                });
+                this.props.updateAvatar(formData, user, token);
             }
 
             $('#global-file-input').val('');
         });
     }
 
-    private handleEditProfileClick(e:React.MouseEvent<HTMLButtonElement>){
+    public componentWillUnmount() {
+        $('#global-file-input').unbind('change')
+    }
+
+    public componentDidUpdate(prevProps:IProps) {
+        //on props change
+        if (this.props.user !== prevProps.user) {
+            if (!this.props.user?.error) {
+                //if it was successfull
+                if (this.props.user?.isUserAvatarUpdated) {
+                    toast.success(this.props.user?.messege);
+                    let date = new Date();
+                    let user = this.props.auth?.username;
+                    $(this.userImageRef.current as HTMLImageElement).attr("src", `${settings.BASE_URL}/feed/photo/user/${user}?` + date.getTime());
+                }
+            }
+            //display backend error
+            else {
+                toast.error(this.props.user?.messege);
+            }
+        }
+
+
+    }
+
+    private handleEditProfileClick(e: React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
-        this.setState({editProfilePopup:true})
+        this.setState({ editProfilePopup: true })
     }
 
-    private handleCloseEditProfile(){
-        this.setState({editProfilePopup:false})
+    private handleCloseEditProfile() {
+        this.setState({ editProfilePopup: false })
     }
 
-    private handleCloseSettings(){
-        this.setState({settingsPopup:false})
+    private handleCloseSettings() {
+        this.setState({ settingsPopup: false })
     }
 
-    private handleItemClick(selectionTab:string){
-        this.setState({selectionTab})
+    private handleItemClick(selectionTab: string) {
+        this.setState({ selectionTab })
     }
 
-    private handleSettingClick(e:React.MouseEvent<HTMLButtonElement>){
+    private handleSettingClick(e: React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
-        this.setState({settingsPopup:true});
+        this.setState({ settingsPopup: true });
     }
 
-    private handleChangeAvatar(e:React.MouseEvent<HTMLImageElement>){
+    private handleChangeAvatar(e: React.MouseEvent<HTMLImageElement>) {
         e.preventDefault();
 
         $('#global-file-input').trigger('click');
@@ -95,7 +118,7 @@ class UserView extends React.Component<IProps,IState> {
                         <Grid.Row className={styles.userRow}>
                             <Grid.Column className={styles.columnFit}>
                                 <Ref innerRef={this.userImageRef}>
-                                    <Image onClick={this.handleChangeAvatar} className={styles.avatar} size='small' circular src={this.state.userImage} />
+                                    <Image onClick={this.handleChangeAvatar} className={styles.avatar} size='small' circular />
                                 </Ref>
                             </Grid.Column>
                             <Grid.Column id={styles.seccondColumn} widescreen='10'>
@@ -160,8 +183,17 @@ class UserView extends React.Component<IProps,IState> {
     }
 }
 
-const mapStateToProps = (state:AppState):ReduxProps => ({
-    auth:state.auth
+const mapStateToProps = (state: AppState): ReduxProps => ({
+    auth: state.auth,
+    user: state.user
 })
 
-export default withCookies(connect(mapStateToProps,null)(UserView as ComponentType<IProps>));
+interface DispatchProps {
+    updateAvatar: (formData: FormData, username: string, token: string) => void,
+}
+
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): DispatchProps => ({
+    updateAvatar: bindActionCreators(UPDATE_AVATAR_USER, dispatch)
+})
+
+export default withCookies(connect(mapStateToProps, mapDispatchToProps)(UserView as ComponentType<IProps>));
