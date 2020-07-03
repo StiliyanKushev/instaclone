@@ -9,7 +9,7 @@ module.exports = new PassportLocalStrategy({
   passReqToCallback: true
 }, (req, email, password, done) => {
   const userToLogin = {
-    email: email.trim(),
+    email: email.trim().toLowerCase(),
     password: password.trim()
   }
 
@@ -20,10 +20,8 @@ module.exports = new PassportLocalStrategy({
         return done('Incorrect email or password')
       }
 
-      const payload = {
-        sub: user.id
-      }
-      const token = jwt.sign(payload, 's0m3 r4nd0m str1ng')
+      const token = jwt.sign(user.id,'s0m3 r4nd0m str1ng')
+
       const data = {
         username: user.username,
         email:userToLogin.email.toLowerCase().trim()

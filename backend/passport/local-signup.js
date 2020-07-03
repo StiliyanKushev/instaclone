@@ -2,6 +2,8 @@ const PassportLocalStrategy = require('passport-local').Strategy
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 const encryption = require('../utilities/encryption')
+const fs = require('fs');
+const path = require('path');
 
 module.exports = new PassportLocalStrategy({
   usernameField: 'email',
@@ -10,7 +12,7 @@ module.exports = new PassportLocalStrategy({
   passReqToCallback: true
 }, (req, email, password, done) => {
   const user = {
-    email: email.trim(),
+    email: email.trim().toLowerCase(),
     password: password.trim(),
     username: req.body.username.trim()
   }
@@ -25,28 +27,31 @@ module.exports = new PassportLocalStrategy({
       user.salt = encryption.generateSalt()
       user.password = encryption.generateHashedPassword(user.salt, user.password)
       user.roles = []
-      user.soldItems = [];
-      user.inventory = [];
+      user.postsCount = 0;
+      user.followersCount = 0;
+      user.followingCount = 0;
+      user.avatarImg = {
+        data: fs.readFileSync( path.dirname(require.main.filename || process.mainModule.filename) + '/uploads/avatar.jpg'),
+        contentType: 'image/jpeg',
+      };
 
       User
         .create(user)
-        .then(() => {
-          const payload = {
-            sub: user.id
-          }
-          const token = jwt.sign(payload, 's0m3 r4nd0m str1ng')
-          const data = {
-            username: user.username,
-            email:email.toLowerCase().trim()
-          }
+        .then((usr) => {
+          const token = jwt.sign(usr.id,'s0m3 r4nd0m str1ng')
+          let userData = { }
     
+          userData.username = user.username,
+          userData.email = email.toLowerCase().trim();
+
           if (user.roles) {
-            data.roles = user.roles
+            userData.roles = user.roles
           }
 
-          return done(null, token, data)
+          return done(null, token, userData)
         })
         .catch((error) => {
+          console.log(error);
           return done(null);
         })
     })

@@ -1,0 +1,84 @@
+.profileSegment,.profileSegmentInternal{
+    display: flex !important;
+    align-items: center !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin-bottom: 0rem !important;
+}
+
+.profileSegmentInternal{
+    padding: 0rem !important;
+    display: flex !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+}
+
+.profileImage,.verySmallImg{
+    border: 1px solid rgb(55,55,55) !important;
+}
+
+.verySmallImg{
+    width:40px !important;
+}
+
+.profileUsernameSmall{
+    margin: 0rem !important;
+}
+
+.profileUsername{
+    width: calc(100% - 2rem) !important;
+    margin-left: 2rem !important;
+    margin-top: 0rem !important;
+}
+
+.profileDivider{
+    margin-top: 0rem !important;
+}
+
+.uploadImageForm{
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.uploadImageForm *{
+    margin: 0 !important;
+}
+
+@media screen and (max-width:995px){
+    #firstColumn{
+        width: 100% !important;
+        /* margin-left: auto !important;
+        margin-right: auto !important; */
+    }
+    .uploadImageSegment{
+        width: 100% !important;
+    }
+    .secondColumn{
+        display: none !important;
+    }
+}
+
+.uploadImageSegmentMobile {
+    display: none;
+}
+
+@media screen and (max-width:460px){
+    .uploadImageSegment{
+        display: none !important;
+    }
+    .uploadImageSegmentMobile{
+        margin-top: 0rem !important;
+        display: block !important;
+    }
+
+    .buttonsFormMobile{
+        display: flex !important;
+        justify-content: space-between !important;
+    }
+
+    .buttonsFormMobile > *{
+        margin: 0 !important;
+        width: 45% !important;
+    }
+}

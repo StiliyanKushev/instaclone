@@ -4,10 +4,19 @@ const encryption = require('../utilities/encryption')
 const REQUIRED_VALIDATION_MESSAGE = '{PATH} is required'
 
 let userSchema = new mongoose.Schema({
+  avatarImg: { data: Buffer, contentType: String},
   email: { type: String, required: REQUIRED_VALIDATION_MESSAGE, unique: true },
   username: { type: String, required: REQUIRED_VALIDATION_MESSAGE, unique: true },
   salt: String,
   password: String,
+  postsCount:Number,
+  followersCount:Number,
+  followingCount:Number,
+  posts:[{type:mongoose.Schema.Types.ObjectId,ref:'Post'}],
+  likedPosts:[{type:mongoose.Schema.Types.ObjectId,ref:'Post'}],
+  savedPosts:[{type:mongoose.Schema.Types.ObjectId,ref:'Post'}],
+  followers:[{type:mongoose.Schema.Types.ObjectId,ref:'User'}],
+  following:[{type:mongoose.Schema.Types.ObjectId,ref:'User'}],
 })
 
 userSchema.method({

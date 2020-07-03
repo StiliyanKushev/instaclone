@@ -1,23 +1,28 @@
-import React, { ComponentType } from 'react';
+import React, { ComponentType, createRef } from 'react';
 import styles from './UserView.module.css';
-import avatar from '../../assets/avatar.jpg';
-import { Container, Grid, Item, Segment, Header, Button, Image, Menu } from 'semantic-ui-react';
+import { Container, Grid, Item, Segment, Header, Button, Image, Menu, Ref } from 'semantic-ui-react';
 import { ReactCookieProps, withCookies } from 'react-cookie';
 import UserSettings from '../UserSettings/UserSettings';
 import EditProfile from '../EditProfile/EditProfile';
 import { connect } from 'react-redux';
 import { AppState, ReduxProps } from '../../reducers';
+import $ from 'jquery';
+import { sendUserAvatar } from '../../handlers/user';
+import { settings } from '../../settings';
+import { toast } from 'react-toastify';
 
 type IProps = ReactCookieProps & ReduxProps;
 
 interface IState {
     selectionTab:string,
     settingsPopup:boolean,
-    editProfilePopup:boolean
+    editProfilePopup:boolean,
+    userImage:string
 }
 
 class UserView extends React.Component<IProps,IState> {
-    state:IState = {selectionTab:'recent',settingsPopup:false,editProfilePopup:false}
+    state:IState = {userImage:'',selectionTab:'recent',settingsPopup:false,editProfilePopup:false}
+    private userImageRef = createRef<HTMLImageElement>();
 
     constructor(props:IProps){
         super(props);
@@ -27,9 +32,32 @@ class UserView extends React.Component<IProps,IState> {
         this.handleEditProfileClick = this.handleEditProfileClick.bind(this);
         this.handleCloseSettings = this.handleCloseSettings.bind(this);
         this.handleCloseEditProfile = this.handleCloseEditProfile.bind(this);
+        this.handleChangeAvatar = this.handleChangeAvatar.bind(this);
     }
 
+    public componentDidMount(){
+        let un = this.props.auth?.username;
+        let imageRef = this.userImageRef.current;
+        $(imageRef as any).attr('src',`${settings.BASE_URL}/feed/photo/user/${un}`);
 
+        $('#global-file-input').change((e:any) => {
+            let file = e.target.files[0];
+
+            if(file){
+                let formData = new FormData();
+                formData.append('image',file);
+
+                if(this.props.auth?.username)
+                sendUserAvatar(formData,this.props.auth?.username,this.props.auth?.token).then((res) => {
+                    toast.success(res.messege);
+                    let date = new Date();
+                    $(imageRef as any).attr("src", `${settings.BASE_URL}/feed/photo/user/${un}?`+date.getTime());
+                });
+            }
+
+            $('#global-file-input').val('');
+        });
+    }
 
     private handleEditProfileClick(e:React.MouseEvent<HTMLButtonElement>){
         e.preventDefault();
@@ -53,6 +81,12 @@ class UserView extends React.Component<IProps,IState> {
         this.setState({settingsPopup:true});
     }
 
+    private handleChangeAvatar(e:React.MouseEvent<HTMLImageElement>){
+        e.preventDefault();
+
+        $('#global-file-input').trigger('click');
+    }
+
     render() {
         return (
             <div className='view-container'>
@@ -60,7 +94,9 @@ class UserView extends React.Component<IProps,IState> {
                     <Grid>
                         <Grid.Row className={styles.userRow}>
                             <Grid.Column className={styles.columnFit}>
-                                <Image className={styles.avatar} size='small' circular src={avatar} />
+                                <Ref innerRef={this.userImageRef}>
+                                    <Image onClick={this.handleChangeAvatar} className={styles.avatar} size='small' circular src={this.state.userImage} />
+                                </Ref>
                             </Grid.Column>
                             <Grid.Column id={styles.seccondColumn} widescreen='10'>
                                 <Item.Group>
@@ -110,7 +146,7 @@ class UserView extends React.Component<IProps,IState> {
                                     <Menu className={styles.postsMenu} pointing secondary fluid>
                                         <Menu.Item onClick={() => this.handleItemClick('recent')} active={this.state.selectionTab === 'recent'}>Recent Posts</Menu.Item>
                                         <Menu.Item onClick={() => this.handleItemClick('popular')} active={this.state.selectionTab === 'popular'}>Popular Posts</Menu.Item>
-                                        <Menu.Item onClick={() => this.handleItemClick('commented')} active={this.state.selectionTab === 'commented'}>Commented Posts</Menu.Item>
+                                        <Menu.Item onClick={() => this.handleItemClick('saved')} active={this.state.selectionTab === 'saved'}>Saved Posts</Menu.Item>
                                     </Menu>
                                 </Item>
                             </Segment>

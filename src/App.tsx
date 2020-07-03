@@ -18,15 +18,10 @@ import Error404 from './shared/Error404';
 import ForgotPassword from './components/ForgotPassword/ForgotPassword';
 
 // IMPORT ALL VIEWS
+const HomeView = React.lazy(() => import('./components/HomeView/HomeView'));
 const LoginView = React.lazy(() => import('./components/LoginView/LoginView'));
 const RegisterView = React.lazy(() => import('./components/RegisterView/RegisterView'));
 const UserView = React.lazy(() => import('./components/UserView/UserView'));
-
-/** TODO START */
-const HomeView = () => {
-  return (<div className='view-container'><p>Home View TODO</p></div>);
-}
-/** TODO END */
 
 type IProps = ReduxProps & OtherReduxProps;
 
@@ -64,6 +59,7 @@ class App extends React.Component<IProps,any> {
       <Suspense fallback={<LoadingView/>}>
         <CookiesProvider>
           <Router>
+            <input id='global-file-input' type="file" style={{display: 'none'}} />
             <ToastContainer />
             <header>
               <NavMenu />

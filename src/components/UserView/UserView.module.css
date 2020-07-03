@@ -27,10 +27,11 @@
 }
 
 .username{
-    font-weight: normal !important;
+    font-weight: lighter !important;
 }
 
 .avatar{
+    cursor: pointer;
     border: 2px solid rgb(100,100,100) !important;
 }
 
