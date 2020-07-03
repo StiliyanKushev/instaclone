@@ -111,13 +111,16 @@ class HomeView extends React.Component<IProps, IHomeState>{
                                 </Form>
                             </Segment>
                             <Segment className={styles.uploadImageSegmentMobile}>
-                                <Form className={styles.uploadImageFormMobile}>
+                                <Form onSubmit={this.handleAddPostSubmit.bind(this)} className={styles.uploadImageFormMobile}>
                                     <Form.Field className={styles.buttonsFormMobile}>
-                                        <Button secondary>Upload</Button>
-                                        <Button primary>Add Post</Button>
+                                        <Button onClick={this.handleUpload} secondary>Upload</Button>
+                                        <Button loading={this.props.post?.isPostLoading} type='submit' primary>Add Post</Button>
                                     </Form.Field>
                                     <Form.Field>
-                                        <Form.Input iconPosition='left' icon='rocketchat' type='text' placeholder='Description'></Form.Input>
+                                        <Form.Input iconPosition='left' icon='rocketchat' type='text' placeholder='Description'
+                                        onChange={e => { this.setState({ postDescription: e.target.value }) }}
+                                        error={this.state.errors.postDescription}
+                                        value={this.state.postDescription}></Form.Input>
                                     </Form.Field>
                                 </Form>
                             </Segment>
