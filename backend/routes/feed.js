@@ -35,7 +35,7 @@ router.get('/photo/user/:username',(req,res,next) => {
 // router.get('/posts/get/user/popular/:index',authCeck,getPopularFromUserPost)
 // router.get('/posts/get/all/popular/:index',authCeck,getPopularFromAllPost)
 // router.get('/posts/:id/get',authCeck,getPost)
-router.post('/posts/create',authCheck,createPost)
+router.post('/posts/create',authCheck,upload.single('image'),createPost)
 // router.delete('/posts/:id/delete',authCeck,deletePost)
 // router.put('/posts/:id/comment',authCeck,commentPost)
 // router.put('/posts/:id/edit',authCeck,editPost)

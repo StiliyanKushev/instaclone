@@ -109,7 +109,7 @@ class UserView extends React.Component<IProps, IState> {
         $('#global-file-input').trigger('click');
     }
 
-    render() {
+    public render() {
         return (
             <div className='view-container'>
                 <Container className={styles.container}>

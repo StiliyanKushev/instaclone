@@ -1,5 +1,6 @@
 const User = require("../models/User")
 const Post = require("../models/Post")
+const jwt = require('jsonwebtoken');
 
 const fs = require('fs'); 
 const path = require('path'); 
@@ -31,7 +32,7 @@ function validateCreatePost(payload){
   }
 
 function createPost(req, res, next) {
-    const validationResult = validateCreatePost(req.body)
+    const validationResult = validateCreatePost({username:req.headers.username,description:req.body.description})
     if (!validationResult.success) {
         return res.status(200).json({
             success: false,
@@ -40,7 +41,24 @@ function createPost(req, res, next) {
         })
     }
 
-    User.findOne({username:req.body.username}).then(user => {
+    //validation of the file
+    if (!req.file) {
+        return res.status(200).json({
+            success: false,
+            messege: 'File not uploaded.'
+        })
+    }
+
+    if (!req.file.mimetype || (req.file.mimetype.indexOf('jpg') === -1 &&
+            req.file.mimetype.indexOf('jpeg') === -1 &&
+            req.file.mimetype.indexOf('png') === -1)) {
+        return res.status(200).json({
+            success: false,
+            messege: 'Uploaded file type is not supported yet.'
+        })
+    }
+
+    User.findOne({username:req.headers.username}).then(user => {
         if(!user){
             return res.status(200).json({
                 success:false,
@@ -48,17 +66,31 @@ function createPost(req, res, next) {
             })
         }
 
-        new Post({
-            creator: req.body.username,
-            source: {
-                data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
-                contentType: 'image/png',
-                description:req.body.description
-            }
-        }).save().then(post => {
-            console.log(post);
-        }).catch();
+        const tempToken = jwt.sign(user.id,'s0m3 r4nd0m str1ng')
 
+        //check if user is the one from the username's user id
+        if(tempToken !== req.headers.token){
+            return res.status(401).end('Cannot create a post for different account');
+        }
+
+        let imgPath = path.dirname(require.main.filename || process.mainModule.filename) + '/' + req.file.path;
+
+        new Post({
+            creator: req.headers.username,
+            source: {
+                data: fs.readFileSync(imgPath),
+                contentType: req.file.mimetype,
+            },
+            description:req.body.description,
+            likesCount: 0
+        }).save().then(post => {
+            return res.status(200).json({
+                success:true,
+                messege:'Post uploaded successfully.'
+            });
+        }).catch(err => {
+            console.log(err);
+        });
     })
 }
 
