@@ -39,7 +39,7 @@ class EditProfile extends React.Component<IProps,IEditProfileState> {
         this.setState({errors:result.errors});
         
         if(result.success){
-            this.props.editProfile(this.state,this.props.auth?.email || this.props.cookies?.get('email'));
+            this.props.editProfile(this.state,this.props.auth?.email || this.props.cookies?.get('email'),this.props.auth?.token || this.props.cookies?.get('token'));
         }
     }
 
@@ -113,7 +113,7 @@ const mapStateToProps = (state:AppState):ReduxProps => ({
 })
 
 interface DispatchProps {
-    editProfile: (state:IEditProfileState,email:string) => void,
+    editProfile: (state:IEditProfileState,email:string,token:string) => void,
 }
 
 const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({

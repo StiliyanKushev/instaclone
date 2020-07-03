@@ -13,6 +13,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
 import { AppActions } from '../../actions/types/actions';
 import { UPDATE_AVATAR_USER } from '../../actions/userActions';
+import _ from 'lodash';
 
 type IProps = ReactCookieProps & ReduxProps & DispatchProps;
 
@@ -50,7 +51,7 @@ class UserView extends React.Component<IProps, IState> {
                 let formData = new FormData();
                 formData.append('image', file);
 
-                this.props.updateAvatar(formData, user, token);
+                this.props.updateAvatar(formData, this.props.auth?.username || this.props.cookies?.get('username'), token);
             }
 
             $('#global-file-input').val('');
@@ -63,7 +64,7 @@ class UserView extends React.Component<IProps, IState> {
 
     public componentDidUpdate(prevProps:IProps) {
         //on props change
-        if (this.props.user !== prevProps.user) {
+        if (!_.isEqual(this.props.user,prevProps.user)) {
             if (!this.props.user?.error) {
                 //if it was successfull
                 if (this.props.user?.isUserAvatarUpdated) {
@@ -78,8 +79,6 @@ class UserView extends React.Component<IProps, IState> {
                 toast.error(this.props.user?.messege);
             }
         }
-
-
     }
 
     private handleEditProfileClick(e: React.MouseEvent<HTMLButtonElement>) {

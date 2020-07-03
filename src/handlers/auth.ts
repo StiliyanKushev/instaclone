@@ -19,7 +19,7 @@ export function changePassword(state: IChangePasswordState, email: string) {
     return post<IChangePasswordPost, IGenericResponse>({ ...state, email }, '/auth/password-change').then((res: any) => res.data);
 }
 
-export function editProfile(state: IEditProfileState, email: string) {
+export function editProfile(state: IEditProfileState, email: string, token:string) {
     interface IEditProfilePost extends IEditProfileState { authEmail: string }
-    return post<IEditProfilePost, IEditProfileResponse>({ ...state, authEmail: email }, '/auth/edit-profile').then((res: any) => res.data);
+    return post<IEditProfilePost, IEditProfileResponse>({ ...state, authEmail: email }, '/auth/edit-profile',token).then((res: any) => res.data);
 }

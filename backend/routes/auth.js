@@ -3,6 +3,7 @@ const encryption = require('../utilities/encryption')
 const passport = require('passport')
 const validator = require('validator')
 const User = require('../models/User')
+const authCheck = require('../config/auth-check');
 
 const router = new express.Router()
 
@@ -235,7 +236,7 @@ router.post('/password-change', (req, res, next) => {
     });
 })
 
-router.post('/edit-profile', (req, res, next) => {
+router.post('/edit-profile', authCheck, (req, res, next) => {
   const validationResult = validateEditProfile(req.body)
   if (!validationResult.success) {
     return res.status(200).json({

@@ -127,9 +127,9 @@ export const CHANGE_PASSWORD_AUTH = (state:IChangePasswordState,email:string) =>
     })
 }
 
-export const EDIT_PROFILE_AUTH = (state:IEditProfileState,email:string) => (dispatch:Dispatch<AppActions>) => {
+export const EDIT_PROFILE_AUTH = (state:IEditProfileState,email:string,token:string) => (dispatch:Dispatch<AppActions>) => {
     dispatch(CALL_AUTH_LOADING());
-    editProfile(state,email).then((res:IEditProfileResponse) => {
+    editProfile(state,email,token).then((res:IEditProfileResponse) => {
         if(res.success){
             dispatch(CALL_AUTH_EDIT_PROFILE_SUCCESS(res.messege,res.user.email,res.user.username));
         }
