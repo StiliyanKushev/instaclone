@@ -15,12 +15,17 @@
 
 .profileImage{
     overflow: visible !important;
-    width: 80px !important;
-    height: 80px !important;
+    width: 65px !important;
+    height: 65px !important;
 }
 
-.profileImage,.verySmallImg{
+/* .profileImage,.verySmallImg{
     border: 1px solid rgb(55,55,55) !important;
+} */
+
+.fixedDiv{
+    width:300px !important;
+    margin-top: 5rem;
 }
 
 .verySmallImg{
@@ -51,7 +56,24 @@
     margin: 0 !important;
 }
 
+@media screen and (max-width:645px){
+    #gridID{
+        margin-left: 0rem !important;
+        margin-right: 0rem !important;
+    }
+
+    #firstColumn{
+        padding-left: 0rem !important;
+        padding-right: 0rem !important;
+    }
+}
+
 @media screen and (max-width:995px){
+    .grid{
+        margin-left: 5rem !important;
+        margin-right: 5rem !important;
+    }
+
     #firstColumn{
         width: 100% !important;
         /* margin-left: auto !important;
@@ -67,6 +89,10 @@
 
 .uploadImageSegmentMobile {
     display: none;
+}
+
+.uploadImageSegment{
+    margin-bottom: 3rem !important;
 }
 
 @media screen and (max-width:460px){

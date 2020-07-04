@@ -1,8 +1,7 @@
 import { settings } from "../settings";
-
 import axios from 'axios';
 
-export async function post<IData, IResponse>(data: IData, url: string,token?:string): Promise<IResponse> {
+export function post<IData, IResponse>(data: IData, url: string,token?:string): Promise<IResponse> {
     return axios({
         method:'POST',
         url:settings.BASE_URL + url,
@@ -14,7 +13,17 @@ export async function post<IData, IResponse>(data: IData, url: string,token?:str
     }) as any;
 }
 
-export async function postFormData<IData, IResponse>(data:IData, url: string): Promise<IResponse> {
+export function get<IResponse>(url:string,token?:string): Promise<IResponse> {
+    return axios({
+        method: "GET",
+        url: settings.BASE_URL + url,
+        headers: {
+            'token': token
+        },
+    }) as any;
+}
+
+export function postFormData<IData, IResponse>(data:IData, url: string): Promise<IResponse> {
     return axios({
         method: "POST",
         url: settings.BASE_URL + url,

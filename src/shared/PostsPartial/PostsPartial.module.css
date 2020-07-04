@@ -1,0 +1,123 @@
+.profileSegmentInternal{
+    padding: .5rem !important;
+    display: flex !important;
+    /* justify-content: space-around !important; */
+    align-items: center !important;
+}
+
+.iconBtn{
+    cursor: pointer;
+    font-size: 1.8em !important;
+    transition-duration: 300ms;
+}
+
+.iconBtn:hover{
+    transform: scale(1.2);
+}
+
+.viewAllComments{
+    margin-top: 0rem !important;
+}
+
+.commentUsername{
+    font-weight: bolder;
+    margin-right: .2rem !important;
+}
+
+.commentText{
+    font-weight: 100 !important;
+}
+
+.description{
+    margin-top: 0.1rem !important;
+    margin-bottom: .5rem !important;
+    color: rgb(55,55,55) !important;
+}
+
+.likes{
+    margin-top: 0.2rem !important;
+    margin-bottom: .5rem !important;
+    color: rgb(55,55,55) !important;
+}
+
+.postMenu{
+    padding: 0rem !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.postMenu > *{
+    padding: 0rem !important;
+    border: none !important;
+}
+
+.postMenu > *::before{
+    content:none !important;
+}
+
+.verySmallImg{
+    width:40px !important;
+    height:40px !important;
+}
+
+.imageContainer{
+    padding: 0rem !important;
+    max-height: 800px !important;
+    padding-bottom: -1rem !important;
+}
+
+.headerName{
+    margin-left: 1rem !important;
+    margin-top: 0rem !important;
+}
+
+.bottomSegment{
+    margin-top: -5px !important;
+    padding: .7rem !important;
+}
+
+.container{
+    margin-bottom: 5rem;
+}
+
+.image{
+    max-width: 100%;
+    /* DONT JUDGE ME PLS... :D */
+    width: 500000000px;
+    object-fit: cover;
+    max-height: 800px;
+}
+
+@media screen and (max-width:570px){
+    .imageContainer{
+        max-height: 700px !important;
+    }
+
+    .image{
+        max-height: 700px !important;
+    }
+}
+
+.commentField{
+    display: flex;
+    justify-content: space-between;
+    height: 2.6rem;
+}
+
+.commentInput{
+    width: 70%;
+}
+
+.commentInput input{
+    border: none !important;
+}
+
+.commentSubmit{
+    background-color: transparent !important;
+    margin-left: 1rem !important;
+    color:#0095F6 !important;
+}
+
+.mainContainer{
+    /* height: calc(100vh - 194px); */
+}

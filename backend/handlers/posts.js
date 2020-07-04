@@ -94,6 +94,27 @@ function createPost(req, res, next) {
     })
 }
 
+function getPopularFromAllPost(req,res,next){
+    let startIndex = Number(req.params.index) || 0;
+    let length = Number(req.params.length) || 30;
+
+    Post.find().skip(startIndex).limit(length).sort({likesCount:'asc'}).exec((err,posts) => {
+        if(err){
+            console.log(err);
+            return res.status(200).json({
+                success:false,
+                posts:[]
+            })
+        }
+
+        return res.status(200).json({
+            success:true,
+            posts:posts
+        })
+    })
+}
+
 module.exports = {
-    createPost
+    createPost,
+    getPopularFromAllPost
 }
