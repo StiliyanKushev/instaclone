@@ -3,10 +3,10 @@ import { Segment, Image, Header, Menu, Container, Item, Icon, Form, FormField, B
 import { settings } from '../../settings';
 import _ from 'lodash';
 import styles from './PostsPartial.module.css';
-import { LazyLoadImage, trackWindowScroll, LazyComponentProps }
-    from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
-import { Link } from 'react-router-dom';
+import Post from '../Post/Post';
+import { WindowScroller, List, AutoSizer, CellMeasurer, CellMeasurerCache, CellMeasurerProps } from 'react-virtualized';
+import { CellMeasurerChildProps } from 'react-virtualized/dist/es/CellMeasurer';
 
 interface IParentProps {
     newPosts: Array<IPost>,
@@ -25,13 +25,19 @@ export interface IPostsPartialState {
     posts: Array<IPost>
 }
 
-type IProps = IParentProps & LazyComponentProps;
+type IProps = IParentProps;
 
 class PostsPartial extends React.Component<IProps>{
     state: IPostsPartialState = { posts: [] }
-    
+    private cache: CellMeasurerCache;
+
     constructor(props: IProps) {
         super(props);
+
+        this.cache = new CellMeasurerCache({
+            fixedWidth: true,
+            defaultHeight: 1000
+        });
 
         this.handleNewPosts = this.handleNewPosts.bind(this);
         this.renderRow = this.renderRow.bind(this);
@@ -53,77 +59,67 @@ class PostsPartial extends React.Component<IProps>{
         }
     }
 
-    private renderRow(post:IPost) {
+    private renderRow({ index, scrollTop, key, parent, style }: any) {
         return (
-            <div key={post._id} className={styles.container}>
-                <Segment className={styles.profileSegmentInternal} attached='top'>
-                    <Image className={styles.verySmallImg} circular size='tiny' src={`${settings.BASE_URL}/feed/photo/user/${post.creator}`}></Image>
-                    <Link to={`/profile/${post.creator}`}>
-                        <Header size='small' className={styles.headerName} as='span'>{post.creator}</Header>
-                    </Link>
-                </Segment>
-                <Segment className={styles.imageContainer} attached>
-                    <LazyLoadImage
-                        afterLoad={this.props.handleNewLastSeenPost}
-                        scrollPosition={this.props.scrollPosition}
-                        className={styles.image}
-                        effect="blur"
-                        src={`${settings.BASE_URL}/feed/photo/post/${post._id}`}
-                    ></LazyLoadImage>
-                    {/* <Image src={`${settings.BASE_URL}/feed/photo/post/${post._id}`} className={styles.image}></Image> */}
-                </Segment>
-                <Segment className={styles.bottomSegment} attached='bottom'>
-                    <Container>
-                        <Menu className={styles.postMenu}>
-                            <Item className='left'>
-                                <Icon className={styles.iconBtn} size='big' name='heart outline'></Icon>
-                                <Icon className={styles.iconBtn} size='big' name='comment outline'></Icon>
-                                <Icon className={styles.iconBtn} size='big' name='paper plane outline'></Icon>
-                            </Item>
-                            <Item className='right'>
-                                <Icon className={styles.iconBtn} size='big' name='bookmark outline'></Icon>
-                            </Item>
-                        </Menu>
-                    </Container>
-                    <Header className={styles.likes} size='tiny'>{post.likesCount} likes</Header>
-                    <Header className={styles.description} size='tiny'>
-                        <Header size='tiny' className={styles.commentUsername} as='span'>{post.creator}</Header>
-                        <Header className={styles.commentText} as='span' size='tiny'> {post.description}</Header>
-                    </Header>
-                    <Link to='#'>
-                        <Header className={styles.viewAllComments} size='tiny' disabled>View all comments</Header>
-                        {
-                            //backend will return the first 3-4 messeges only
-                            // post.messeges.map((messege,index) => (
+            <CellMeasurer
+                cache={this.cache}
+                columnIndex={0}
+                key={key}
+                parent={parent}
+                rowIndex={index}
+            >
+                {({ measure, registerChild }: any) => (
+                    <div className={styles.paddingContainer} ref={registerChild} style={style}>
+                        <Post
+                            measure={measure}
+                            handleNewLastSeenPost={this.props.handleNewLastSeenPost}
+                            scrollPosition={scrollTop}
+                            post={this.state.posts[index]}
+                        />
+                    </div>
+                )}
+            </CellMeasurer>
 
-                            // ))
-                        }
-                        <Form>
-                            <Form.Field className={styles.commentField}>
-                                <Form.Input
-                                    className={styles.commentInput}
-                                    placeholder='Adding comment ...'
-                                >
-
-                                </Form.Input>
-                                <Button className={styles.commentSubmit} size='medium' primary>Comment</Button>
-                            </Form.Field>
-                        </Form>
-                    </Link>
-                </Segment>
-            </div>
-        )
+        );
     }
 
     public render() {
         return (
             <div className={styles.mainContainer}>
-                {
-                    this.state.posts.map(this.renderRow)
-                }
+                <WindowScroller>
+                    {({ height, isScrolling, onChildScroll, scrollTop }) => (
+                        <AutoSizer disableHeight>
+                            {
+                                ({ width }: any) => (
+                                    <List
+                                        autoHeight
+                                        width={width}
+                                        height={height}
+                                        isScrolling={isScrolling}
+                                        onScroll={onChildScroll}
+                                        scrollTop={scrollTop}
+                                        deferredMeasurementCache={this.cache}
+                                        rowHeight={this.cache.rowHeight}
+                                        rowRenderer={this.renderRow}
+                                        rowCount={this.state.posts.length}
+                                        overscanRowCount={2}
+                                        // containerStyle={{
+                                        //     width: "100%",
+                                        //     maxWidth: "100%"
+                                        // }}
+                                        // style={{
+                                        //     width: "100%"
+                                        // }}
+                                    />
+                                )
+                            }
+
+                        </AutoSizer>
+                    )}
+                </WindowScroller>,
             </div>
         );
     }
 }
 
-export default trackWindowScroll(PostsPartial as ComponentType<IProps>);
+export default PostsPartial as ComponentType<IProps>;
