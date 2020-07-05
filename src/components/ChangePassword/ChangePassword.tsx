@@ -1,20 +1,25 @@
-import React, { FormEvent, ComponentType } from 'react';
-import { withCookies, ReactCookieProps } from 'react-cookie';
-import { toast } from 'react-toastify';
+// IMPORT STYLES
 import styles from './ChangePassword.module.css';
 
-import { connect } from 'react-redux';
-import {bindActionCreators} from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
+// IMPORT REACT RELATED
+import { withCookies, ReactCookieProps } from 'react-cookie';
+import React, { FormEvent, ComponentType } from 'react';
+import { Dimmer, Segment, Button, Icon, Form } from 'semantic-ui-react';
 
+// IMPORT REDUX RELATED
+import { connect } from 'react-redux';
+import { AppActions } from '../../actions/types/actions';
+import { ThunkDispatch } from 'redux-thunk';
+import {bindActionCreators} from 'redux';
 import {CHANGE_PASSWORD_AUTH} from '../../actions/authActions';
 import { ReduxProps, AppState } from '../../reducers';
-import { AppActions } from '../../actions/types/actions';
 
-import { IValidationResult, IValidationResultErrors } from '../../types/form-validation';
+// IMPORT VALIDATION
 import { validateChangePassword } from '../../validators/auth';
+import { IValidationResult, IValidationResultErrors } from '../../types/form-validation';
 
-import { Dimmer, Segment, Button, Icon, Form } from 'semantic-ui-react';
+// IMPORT OTHER
+import { toast } from 'react-toastify';
 
 interface IParentProps {
     handleClose: Function

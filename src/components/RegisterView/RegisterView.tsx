@@ -1,27 +1,31 @@
-import React, { createRef, FormEvent, ComponentType } from 'react';
-import { withCookies, ReactCookieProps } from 'react-cookie';
-import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
-import {bindActionCreators} from 'redux';
-import { connect } from 'react-redux';
-
-import { toast } from 'react-toastify';
-import $ from 'jquery';
-
+// IMPORT STYLES
 import styles from './RegisterView.module.css';
 import selfie1 from '../../assets/selfie1.png';
 import selfie2 from '../../assets/selfie2.png';
 import selfie3 from '../../assets/selfie3.png';
 
+// IMPORT REACT RELETED
+import React, { createRef, FormEvent, ComponentType } from 'react';
+import { Image, Grid, Header, Form, Button, Segment, Icon, Divider, Ref } from 'semantic-ui-react';
+import { withCookies, ReactCookieProps } from 'react-cookie';
+import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
+
+// IMPORT REDUX RELETED
+import { connect } from 'react-redux';
+import { AppActions } from '../../actions/types/actions';
+import { ThunkDispatch } from 'redux-thunk';
+import {bindActionCreators} from 'redux';
+import { ReduxProps, AppState } from '../../reducers';
+import { FINISH_AUTH, REGISTER_AUTH } from '../../actions/authActions';
+
+// IMPORT VALIDATIONS
 import {validateRegister} from '../../validators/auth';
 import { IValidationResult, IValidationResultErrors } from '../../types/form-validation';
 
-import { Image, Grid, Header, Form, Button, Segment, Icon, Divider, Ref } from 'semantic-ui-react';
-
-import { ReduxProps, AppState } from '../../reducers';
+// IMPORT OTHER
+import $ from 'jquery';
+import { toast } from 'react-toastify';
 import { saveUser } from '../../handlers/serializationData';
-import { ThunkDispatch } from 'redux-thunk';
-import { AppActions } from '../../actions/types/actions';
-import { FINISH_AUTH, REGISTER_AUTH } from '../../actions/authActions';
 
 type IProps = ReduxProps & DispatchProps & ReactCookieProps & RouteComponentProps;
 

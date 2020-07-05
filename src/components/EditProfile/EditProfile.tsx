@@ -1,20 +1,25 @@
-import React, { FormEvent, ComponentType } from 'react';
-import { withCookies, ReactCookieProps } from 'react-cookie';
-import { toast } from 'react-toastify';
+// IMPORT STYLES
 import styles from './EditProfile.module.css';
 
-import { connect } from 'react-redux';
-import {bindActionCreators} from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
-
-import { EDIT_PROFILE_AUTH} from '../../actions/authActions';
-import { ReduxProps, AppState } from '../../reducers';
-import { AppActions } from '../../actions/types/actions';
-
-import { IValidationResult, IValidationResultErrors } from '../../types/form-validation';
-import { validateEditProfile } from '../../validators/auth';
-
+// IMPORT REACT RELATED
+import { withCookies, ReactCookieProps } from 'react-cookie';
+import React, { FormEvent, ComponentType } from 'react';
 import { Dimmer, Segment, Button, Icon, Form } from 'semantic-ui-react';
+
+// IMPORT REDUX RELATED
+import { connect } from 'react-redux';
+import { AppActions } from '../../actions/types/actions';
+import { ThunkDispatch } from 'redux-thunk';
+import { EDIT_PROFILE_AUTH } from '../../actions/authActions';
+import { bindActionCreators } from 'redux';
+import { ReduxProps, AppState } from '../../reducers';
+
+// IMPORT VALIDATION
+import { validateEditProfile } from '../../validators/auth';
+import { IValidationResult, IValidationResultErrors } from '../../types/form-validation';
+
+// IMPORT OTHER
+import { toast } from 'react-toastify';
 
 interface IParentProps {
     handleClose: Function

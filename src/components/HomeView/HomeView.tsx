@@ -1,25 +1,32 @@
-import React, { ComponentType, FormEvent } from 'react';
-import { Container, Grid, Segment, Button, Header, Image, Divider, Form } from 'semantic-ui-react';
-
+// IMPORT STYLES
 import styles from './HomeView.module.css';
 import defaultUserImage from '../../assets/avatar.jpg';
-import { connect } from 'react-redux';
-import { ReduxProps, AppState } from '../../reducers';
-import { settings } from '../../settings';
 
-import {bindActionCreators} from 'redux';
-import _ from 'lodash';
-import $ from 'jquery';
-import {IPostsChunkResponse} from '../../types/response';
-import { IValidationResultErrors, IValidationResult } from '../../types/form-validation';
-import { validatePostCreate } from '../../validators/post';
+// IMPORT REACT RELATED
+import { ReactCookieProps, withCookies } from 'react-cookie';
+import React, { ComponentType, FormEvent } from 'react';
+import { Button, Container, Divider, Form, Grid, Header, Image, Segment } from 'semantic-ui-react';
+
+// IMPORT REDUX RELATED
 import { toast } from 'react-toastify';
-import { ThunkDispatch } from 'redux-thunk';
+import { connect } from 'react-redux';
 import { AppActions } from '../../actions/types/actions';
 import { UPLOAD_POST } from '../../actions/postActions';
-import { ReactCookieProps, withCookies } from 'react-cookie';
-import PostsPartial, { IPost } from '../../shared/PostsPartial/PostsPartial';
+import { ThunkDispatch } from 'redux-thunk';
+import { bindActionCreators } from 'redux';
+import { AppState, ReduxProps } from '../../reducers';
+
+// IMPORT VALIDATION
+import { validatePostCreate } from '../../validators/post';
+
+// IMPORT OTHER
+import $ from 'jquery';
+import _ from 'lodash';
+import { settings } from '../../settings';
 import { getNewPostsChunk } from '../../handlers/post';
+import { IPostsChunkResponse } from '../../types/response';
+import PostsPartial, { IPost } from '../../shared/PostsPartial/PostsPartial';
+import { IValidationResult, IValidationResultErrors } from '../../types/form-validation';
 
 type IProps = ReduxProps & DispatchProps & ReactCookieProps;
 

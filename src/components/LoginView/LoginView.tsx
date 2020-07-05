@@ -1,21 +1,26 @@
-import React, { FormEvent, ComponentType } from 'react';
-import { withCookies, ReactCookieProps } from 'react-cookie';
-import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import {bindActionCreators} from 'redux';
-import { connect } from 'react-redux';
-
+// IMPORT STYLES
 import styles from './LoginView.module.css';
 import SideImage from '../../assets/image-login.png';
 
-import { IValidationResult, IValidationResultErrors } from '../../types/form-validation';
-import { validateLogin } from '../../validators/auth';
-
+// IMPORT REACT RELETED
+import { withCookies, ReactCookieProps } from 'react-cookie';
+import React, { FormEvent, ComponentType } from 'react';
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { Image, Grid, Header, Form, Button, Segment, Icon, Divider } from 'semantic-ui-react';
 
-import { AppState, ReduxProps } from '../../reducers';
-import { ThunkDispatch } from 'redux-thunk';
+// IMPORT REDUX RELETED
+import { connect } from 'react-redux';
 import { AppActions } from '../../actions/types/actions';
+import { ThunkDispatch } from 'redux-thunk';
+import {bindActionCreators} from 'redux';
+import { AppState, ReduxProps } from '../../reducers';
 import { LOGIN_AUTH, FINISH_AUTH } from '../../actions/authActions';
+
+// IMPORT VALIDATIONS
+import { validateLogin } from '../../validators/auth';
+import { IValidationResult, IValidationResultErrors } from '../../types/form-validation';
+
+// IMPORT OTHER
 import { toast } from 'react-toastify';
 import { saveUser } from '../../handlers/serializationData';
 

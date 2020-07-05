@@ -1,16 +1,24 @@
+// IMPORT STYLES
+import styles from './ForgotPassword.module.css';
+
+// IMPORT REACT RELATED
 import React, { ComponentType, FormEvent } from 'react';
+import { RouteComponentProps, withRouter } from 'react-router';
 import { Segment, Icon, Header, Form, Button, Divider } from 'semantic-ui-react';
 
-import styles from './ForgotPassword.module.css';
-import {RESET_FORGOTTEN_PASSWORD_AUTH} from '../../actions/authActions';
-import {bindActionCreators} from 'redux';
-import { IValidationResultErrors, IValidationResult } from '../../types/form-validation';
-import { RouteComponentProps, withRouter } from 'react-router';
+// IMPORT REDUX RELATED
 import { connect } from 'react-redux';
-import { ReduxProps, AppState } from '../../reducers';
-import { ThunkDispatch } from 'redux-thunk';
 import { AppActions } from '../../actions/types/actions';
+import { ThunkDispatch } from 'redux-thunk';
+import {bindActionCreators} from 'redux';
+import { ReduxProps, AppState } from '../../reducers';
 import { validateForgotPassword } from '../../validators/auth';
+import {RESET_FORGOTTEN_PASSWORD_AUTH} from '../../actions/authActions';
+
+// IMPORT VALIDATION
+import { IValidationResultErrors, IValidationResult } from '../../types/form-validation';
+
+// IMPORT OTHER
 import { toast } from 'react-toastify';
 
 export interface IForgotPasswordState{

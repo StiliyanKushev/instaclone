@@ -1,12 +1,15 @@
-import React from 'react';
-import { IPost } from '../PostsPartial/PostsPartial';
-
-import { Segment, Image, Header, Menu, Container, Item, Icon, Form, Button } from 'semantic-ui-react';
-import { settings } from '../../settings';
-import _ from 'lodash';
-import styles from './Post.module.css';
+// IMPORT STYLES
 import 'react-lazy-load-image-component/src/effects/blur.css';
+import styles from './Post.module.css';
+
+// IMPORT REACT RELATED
+import React from 'react';
 import { Link } from 'react-router-dom';
+import { Segment, Image, Header, Menu, Item, Icon, Form, Button } from 'semantic-ui-react';
+
+// IMPORT OTHER
+import { settings } from '../../settings';
+import { IPost } from '../PostsPartial/PostsPartial';
 
 
 interface IParentProps {
@@ -18,7 +21,7 @@ interface IParentProps {
 
 type IProps = IParentProps;
 
-class Post extends React.Component<IProps>{
+class Post extends React.PureComponent<IProps>{
     private handleLoad() {
         this.props.handleNewLastSeenPost();
         this.props.measure();
@@ -33,12 +36,12 @@ class Post extends React.Component<IProps>{
                         <Header size='small' className={styles.headerName} as='span'>{this.props.post.creator}</Header>
                     </Link>
                 </Segment>
-                <Segment className={styles.imageContainer} attached>
+                <div className={styles.imageContainer}>
                     <Image onLoad={this.handleLoad.bind(this)} src={`${settings.BASE_URL}/feed/photo/post/${this.props.post._id}`} className={styles.image}></Image>
-                </Segment>
+                </div>
                 
                 <Segment className={styles.bottomSegment} attached='bottom'>
-                    <Container>
+                    <>
                         <Menu className={styles.postMenu}>
                             <Item className='left'>
                                 <Icon className={styles.iconBtn} size='big' name='heart outline'></Icon>
@@ -49,7 +52,7 @@ class Post extends React.Component<IProps>{
                                 <Icon className={styles.iconBtn} size='big' name='bookmark outline'></Icon>
                             </Item>
                         </Menu>
-                    </Container>
+                    </>
                     <Header className={styles.likes} size='tiny'>{this.props.post.likesCount} likes</Header>
                     <Header className={styles.description} size='tiny'>
                         <Header size='tiny' className={styles.commentUsername} as='span'>{this.props.post.creator}</Header>

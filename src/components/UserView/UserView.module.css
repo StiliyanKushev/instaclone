@@ -1,8 +1,17 @@
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v7.0.29,
+* Autoprefixer: v9.7.6
+* Browsers: last 4 version
+*/
+
 .fluidGrid {
     width: 100% !important;
 }
 
 .columnHeader{
+    width:-webkit-fit-content !important;
+    width:-moz-fit-content !important;
     width:fit-content !important;
 }
 
@@ -11,11 +20,14 @@
 }
 
 .userRow{
-    justify-content: center !important;
+    -webkit-box-pack: center !important;
+        -ms-flex-pack: center !important;
+            justify-content: center !important;
 }
 
 .postsMenu{
-    justify-content: space-around !important;
+    -ms-flex-pack: distribute !important;
+        justify-content: space-around !important;
 }
 
 .postsMenu::after{
@@ -23,6 +35,8 @@
 }
 
 .columnFit{
+    width:-webkit-fit-content !important;
+    width:-moz-fit-content !important;
     width:fit-content !important;
 }
 
@@ -37,10 +51,14 @@
 }
 
 .usernameColumn{
+    width: -webkit-fit-content !important;
+    width: -moz-fit-content !important;
     width: fit-content !important;
 }
 
 .userSettingsBtns{
+    width: -webkit-fit-content !important;
+    width: -moz-fit-content !important;
     width: fit-content !important;
 }
 

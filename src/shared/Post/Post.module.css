@@ -1,18 +1,33 @@
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v7.0.29,
+* Autoprefixer: v9.7.6
+* Browsers: last 4 version
+*/
+
 .profileSegmentInternal{
     padding: .5rem !important;
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
     display: flex !important;
     /* justify-content: space-around !important; */
-    align-items: center !important;
+    -webkit-box-align: center !important;
+        -ms-flex-align: center !important;
+            align-items: center !important;
 }
 
 .iconBtn{
     cursor: pointer;
     font-size: 1.8em !important;
-    transition-duration: 300ms;
+    -webkit-transition-duration: 300ms;
+         -o-transition-duration: 300ms;
+            transition-duration: 300ms;
 }
 
 .iconBtn:hover{
-    transform: scale(1.2);
+    -webkit-transform: scale(1.2);
+        -ms-transform: scale(1.2);
+            transform: scale(1.2);
 }
 
 .viewAllComments{
@@ -43,7 +58,8 @@
 .postMenu{
     padding: 0rem !important;
     border: none !important;
-    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+            box-shadow: none !important;
 }
 
 .postMenu > *{
@@ -61,9 +77,14 @@
 }
 
 .imageContainer{
-    padding: 0rem !important;
+    margin-left: -2px !important;
+    margin-top: -1px !important;
+    margin-right: -2px !important;
+    padding: 0px !important;
     max-height: 800px !important;
     padding-bottom: -1rem !important;
+    border: 1px solid #d4d4d5 !important;
+    box-sizing: border-box !important;
 }
 
 .headerName{
@@ -83,7 +104,8 @@
 .image{
     max-width: 100%;
     width: 500000000px;
-    object-fit: cover;
+    -o-object-fit: cover;
+       object-fit: cover;
     max-height: 800px;
 }
 
@@ -98,8 +120,12 @@
 }
 
 .commentField{
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    justify-content: space-between;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
     height: 2.6rem;
 }
 

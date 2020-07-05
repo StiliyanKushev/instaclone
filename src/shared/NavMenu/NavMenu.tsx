@@ -1,11 +1,14 @@
-import React, { createRef } from 'react';
-import $ from 'jquery';
-
+// IMPORT STYLES
 import styles from './NavMenu.module.css';
 
+// IMPORT REACT RELATED
+import React, { createRef } from 'react';
+import { ReactCookieProps, withCookies } from 'react-cookie';
 import { Menu, Container, Item, Search, Icon, Ref } from 'semantic-ui-react';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { ReactCookieProps, withCookies } from 'react-cookie';
+
+// IMPORT OTHER
+import $ from 'jquery';
 
 class NavMenu extends React.Component<RouteComponentProps & ReactCookieProps>{
     state = {isVisible:true}
@@ -104,4 +107,4 @@ class NavMenu extends React.Component<RouteComponentProps & ReactCookieProps>{
     }
 }
 
-export default withRouter(withCookies(NavMenu));
+export default React.memo(withRouter(withCookies(NavMenu)));

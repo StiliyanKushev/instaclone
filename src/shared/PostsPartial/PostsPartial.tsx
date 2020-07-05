@@ -1,12 +1,14 @@
-import React, { ComponentType } from 'react';
-import { Segment, Image, Header, Menu, Container, Item, Icon, Form, FormField, Button } from 'semantic-ui-react';
-import { settings } from '../../settings';
-import _ from 'lodash';
-import styles from './PostsPartial.module.css';
+// IMPORT STYLES
 import 'react-lazy-load-image-component/src/effects/blur.css';
+import styles from './PostsPartial.module.css';
+
+// IMPORT REACT RELATED
+import React, { ComponentType } from 'react';
+import { WindowScroller, List, AutoSizer, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
+
+// OTHER
+import _ from 'lodash';
 import Post from '../Post/Post';
-import { WindowScroller, List, AutoSizer, CellMeasurer, CellMeasurerCache, CellMeasurerProps } from 'react-virtualized';
-import { CellMeasurerChildProps } from 'react-virtualized/dist/es/CellMeasurer';
 
 interface IParentProps {
     newPosts: Array<IPost>,
@@ -102,14 +104,7 @@ class PostsPartial extends React.Component<IProps>{
                                         rowHeight={this.cache.rowHeight}
                                         rowRenderer={this.renderRow}
                                         rowCount={this.state.posts.length}
-                                        overscanRowCount={2}
-                                        // containerStyle={{
-                                        //     width: "100%",
-                                        //     maxWidth: "100%"
-                                        // }}
-                                        // style={{
-                                        //     width: "100%"
-                                        // }}
+                                        overscanRowCount={1}
                                     />
                                 )
                             }
@@ -122,4 +117,4 @@ class PostsPartial extends React.Component<IProps>{
     }
 }
 
-export default PostsPartial as ComponentType<IProps>;
+export default React.memo(PostsPartial as ComponentType<IProps>);

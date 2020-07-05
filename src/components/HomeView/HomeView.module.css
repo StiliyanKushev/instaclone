@@ -1,16 +1,33 @@
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v7.0.29,
+* Autoprefixer: v9.7.6
+* Browsers: last 4 version
+*/
+
 .profileSegment,.profileSegmentInternal{
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
     display: flex !important;
-    align-items: center !important;
+    -webkit-box-align: center !important;
+        -ms-flex-align: center !important;
+            align-items: center !important;
     border: none !important;
-    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+            box-shadow: none !important;
     margin-bottom: 0rem !important;
 }
 
 .profileSegmentInternal{
     padding: 0rem !important;
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
     display: flex !important;
-    justify-content: space-around !important;
-    align-items: center !important;
+    -ms-flex-pack: distribute !important;
+        justify-content: space-around !important;
+    -webkit-box-align: center !important;
+        -ms-flex-align: center !important;
+            align-items: center !important;
 }
 
 .profileImage{
@@ -47,9 +64,15 @@
 }
 
 .uploadImageForm{
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
     display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
+    -webkit-box-pack: justify !important;
+        -ms-flex-pack: justify !important;
+            justify-content: space-between !important;
+    -webkit-box-align: center !important;
+        -ms-flex-align: center !important;
+            align-items: center !important;
 }
 
 .uploadImageForm *{
@@ -109,8 +132,12 @@
     }
 
     .buttonsFormMobile{
+        display: -webkit-box !important;
+        display: -ms-flexbox !important;
         display: flex !important;
-        justify-content: space-between !important;
+        -webkit-box-pack: justify !important;
+            -ms-flex-pack: justify !important;
+                justify-content: space-between !important;
     }
 
     .buttonsFormMobile > *{

@@ -1,21 +1,25 @@
-import React, { Suspense, ComponentType } from 'react';
-import {ToastContainer} from 'react-toastify';
-import { CookiesProvider } from 'react-cookie';
+// IMPORT STYLES
+import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 import 'semantic-ui-css/semantic.min.css';
-import './App.css';
 
+// IMPORT REACT AND REACT SPECIFIC STUFF
+import React, { ComponentType, Suspense } from 'react';
+import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import { CookiesProvider } from 'react-cookie';
+
+// IMPORT REDUX RELATED
 import { connect } from 'react-redux';
 import { AppState, ReduxProps } from './reducers';
 
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import CustomRoute, { CustomRouteProps } from './shared/CustomRoute';
-
 // IMPORT SOME GENERAL COMPONENTS
+import CustomRoute, { CustomRouteProps } from './shared/CustomRoute';
 import LoadingView from './shared/LoadingView';
 import NavMenu from './shared/NavMenu/NavMenu';
 import Error404 from './shared/Error404';
 import ForgotPassword from './components/ForgotPassword/ForgotPassword';
+
 
 // IMPORT ALL VIEWS
 const HomeView = React.lazy(() => import('./components/HomeView/HomeView'));

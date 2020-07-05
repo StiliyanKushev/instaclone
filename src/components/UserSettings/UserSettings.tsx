@@ -1,18 +1,24 @@
+// IMPORT STYLES
+import styles from './UserSettings.module.css';
+
+// IMPORT REACT RELATED
 import React, { ComponentType } from 'react';
 import { Dimmer, Menu, Segment, Header } from 'semantic-ui-react';
 
-import {bindActionCreators} from 'redux';
 
-import styles from './UserSettings.module.css';
+// IMPORT REDUX RELATED
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
 import { AppActions } from '../../actions/types/actions';
 import { LOGOUT_AUTH } from '../../actions/authActions';
+import { ThunkDispatch } from 'redux-thunk';
+import {bindActionCreators} from 'redux';
+
+// IMPORT OTHER
+import ChangePassword from '../ChangePassword/ChangePassword';
+import ReportBug from '../ReportBug/ReportBug';
 import { clearUser } from '../../handlers/serializationData';
 import { toast } from 'react-toastify';
-import ReportBug from '../ReportBug/ReportBug';
-import ChangePassword from '../ChangePassword/ChangePassword';
 
 interface IProps extends DispatchProps {
     handleClose: Function

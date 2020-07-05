@@ -1,7 +1,11 @@
+// IMPORT STYLES
+import styles from './ReportBug.module.css';
+
+// IMPORT REACT RELETED
 import React from 'react';
 import { Dimmer, Segment, Header, TextArea, Button, Icon } from 'semantic-ui-react';
 
-import styles from './ReportBug.module.css';
+// IMPORT OTHER
 import { reportBug } from '../../handlers/mail';
 import { toast } from 'react-toastify';
 

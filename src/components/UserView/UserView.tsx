@@ -1,19 +1,28 @@
-import React, { ComponentType, createRef } from 'react';
+// IMPORT STYLES
 import styles from './UserView.module.css';
-import { Container, Grid, Item, Segment, Header, Button, Image, Menu, Ref } from 'semantic-ui-react';
+
+// IMPORT REACT RELATED
+import React, { ComponentType, createRef } from 'react';
 import { ReactCookieProps, withCookies } from 'react-cookie';
-import UserSettings from '../UserSettings/UserSettings';
-import EditProfile from '../EditProfile/EditProfile';
+import { Container, Grid, Item, Segment, Header, Button, Image, Menu, Ref } from 'semantic-ui-react';
+
+// IMPORT REDUX RELATED
 import { connect } from 'react-redux';
-import { AppState, ReduxProps } from '../../reducers';
-import $ from 'jquery';
-import { settings } from '../../settings';
-import { toast } from 'react-toastify';
+import { AppActions } from '../../actions/types/actions';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
-import { AppActions } from '../../actions/types/actions';
 import { UPDATE_AVATAR_USER } from '../../actions/userActions';
+import { AppState, ReduxProps } from '../../reducers';
+
+// IMPORT OTHER
+import EditProfile from '../EditProfile/EditProfile';
+import UserSettings from '../UserSettings/UserSettings';
+
+// IMPORT VALIDATION
+import $ from 'jquery';
 import _ from 'lodash';
+import { toast } from 'react-toastify';
+import { settings } from '../../settings';
 
 type IProps = ReactCookieProps & ReduxProps & DispatchProps;
 
