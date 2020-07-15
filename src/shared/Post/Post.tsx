@@ -14,30 +14,27 @@ import { IPost } from '../PostsPartial/PostsPartial';
 
 interface IParentProps {
     post: IPost,
-    handleNewLastSeenPost: () => void,
-    scrollPosition: any,
-    measure: () => void
+    isLoaded:boolean,
+    measure: () => void,
 }
 
 type IProps = IParentProps;
 
-class Post extends React.PureComponent<IProps>{
-    private handleLoad() {
-        this.props.handleNewLastSeenPost();
-        this.props.measure();
-    }
+const Post:React.FC<IProps> = (props:IProps) => {
+        if(!props.isLoaded)
+        return (<p>NOT LOADED YET</p>)
 
-    render() {
+        if(props.post)
         return (
-            <div key={this.props.post._id} className={styles.container}>
+            <div className={styles.container}>
                 <Segment className={styles.profileSegmentInternal} attached='top'>
-                    <Image className={styles.verySmallImg} circular size='tiny' src={`${settings.BASE_URL}/feed/photo/user/${this.props.post.creator}`}></Image>
-                    <Link to={`/profile/${this.props.post.creator}`}>
-                        <Header size='small' className={styles.headerName} as='span'>{this.props.post.creator}</Header>
+                    <Image className={styles.verySmallImg} circular size='tiny' src={`${settings.BASE_URL}/feed/photo/user/${props.post.creator}`}></Image>
+                    <Link to={`/profile/${props.post.creator}`}>
+                        <Header size='small' className={styles.headerName} as='span'>{props.post.creator}</Header>
                     </Link>
                 </Segment>
                 <div className={styles.imageContainer}>
-                    <Image onLoad={this.handleLoad.bind(this)} src={`${settings.BASE_URL}/feed/photo/post/${this.props.post._id}`} className={styles.image}></Image>
+                    <Image onLoad={props.measure} src={`${settings.BASE_URL}/feed/photo/post/${props.post._id}`} className={styles.image}></Image>
                 </div>
                 
                 <Segment className={styles.bottomSegment} attached='bottom'>
@@ -53,17 +50,17 @@ class Post extends React.PureComponent<IProps>{
                             </Item>
                         </Menu>
                     </>
-                    <Header className={styles.likes} size='tiny'>{this.props.post.likesCount} likes</Header>
+                    <Header className={styles.likes} size='tiny'>{props.post.likesCount} likes</Header>
                     <Header className={styles.description} size='tiny'>
-                        <Header size='tiny' className={styles.commentUsername} as='span'>{this.props.post.creator}</Header>
-                        <Header className={styles.commentText} as='span' size='tiny'> {this.props.post.description}</Header>
+                        <Header size='tiny' className={styles.commentUsername} as='span'>{props.post.creator}</Header>
+                        <Header className={styles.commentText} as='span' size='tiny'> {props.post.description}</Header>
                     </Header>
                     <Link to='#'>
                         <Header className={styles.viewAllComments} size='tiny' disabled>View all comments</Header>
                     </Link>
                     {
                         //backend will return the first 3-4 messeges only
-                        // this.props.post.messeges.map((messege,index) => (
+                        // props.post.messeges.map((messege,index) => (
 
                         // ))
                     }
@@ -81,7 +78,10 @@ class Post extends React.PureComponent<IProps>{
                 </Segment>
             </div>
         )
-    }
+        else
+        return (
+            <p>loading</p>
+        )
 }
 
 export default React.memo(Post);

@@ -23,9 +23,7 @@ import { validatePostCreate } from '../../validators/post';
 import $ from 'jquery';
 import _ from 'lodash';
 import { settings } from '../../settings';
-import { getNewPostsChunk } from '../../handlers/post';
-import { IPostsChunkResponse } from '../../types/response';
-import PostsPartial, { IPost } from '../../shared/PostsPartial/PostsPartial';
+import PostsPartial from '../../shared/PostsPartial/PostsPartial';
 import { IValidationResult, IValidationResultErrors } from '../../types/form-validation';
 
 type IProps = ReduxProps & DispatchProps & ReactCookieProps;
@@ -33,50 +31,14 @@ type IProps = ReduxProps & DispatchProps & ReactCookieProps;
 export interface IHomeState {
     postDescription: string,
     errors: IValidationResultErrors,
-    newPosts: Array<IPost>,
-    noMorePosts:boolean,
 }
 
 class HomeView extends React.Component<IProps, IHomeState>{
-    state: IHomeState = {noMorePosts:false, newPosts:[], postDescription: '', errors: {} }
+    state: IHomeState = {postDescription: '', errors: {} }
     
-    private postsIncrementOnScroll:number = 10;
-    private loadBeforeThreshold:number = 3;
-    private postsIndex:number = 0;
-    private lastSeenPostIndex:number = 0;
     private formData: FormData = new FormData();
 
-    private handleScrollThreshold(){
-        //fetch new posts
-        getNewPostsChunk(this.postsIndex,this.postsIncrementOnScroll,this.props.auth?.token || this.props.cookies?.get('token')).then((res:IPostsChunkResponse) => {
-            //set new posts in state
-            if(res.success){
-                if(res.posts.length === 0){
-                    this.setState({noMorePosts:true})
-                }
-                else{
-                    this.setState({newPosts:res.posts})
-                }
-            }
-            else{
-                toast.error('There was an error fetching the posts');
-            }
-        })
-        //calc new index
-        this.postsIndex += this.postsIncrementOnScroll;
-    }
-
-    private handleNewLastSeenPost(){
-        this.lastSeenPostIndex++;
-
-        if(this.lastSeenPostIndex === this.postsIndex - this.loadBeforeThreshold){
-            this.handleScrollThreshold();
-        }
-    }
-
     public componentDidMount() {
-        this.handleScrollThreshold();
-
         $('#global-file-input').change((e: any) => {
             let file = e.target.files[0];
 
@@ -171,7 +133,7 @@ class HomeView extends React.Component<IProps, IHomeState>{
                                     </Form.Field>
                                 </Form>
                             </Segment>
-                            <PostsPartial handleNewLastSeenPost={this.handleNewLastSeenPost.bind(this)} newPosts={this.state.newPosts}></PostsPartial>
+                            <PostsPartial token={this.props.auth?.token || this.props.cookies?.get('token')}></PostsPartial>
                         </Grid.Column>
                         <Grid.Column className={styles.secondColumn} width='5'>
                             <div className={`${styles.fixedDiv} ui fixed top sticky`}>
