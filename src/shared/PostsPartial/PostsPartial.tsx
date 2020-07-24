@@ -52,15 +52,7 @@ class PostsPartial extends React.PureComponent<IProps>{
             defaultHeight: 1000,
         });
 
-        $(window).on('resize',() => {
-            this.cache.clearAll();
-        })
-
         this.renderRow = this.renderRow.bind(this);
-    }
-
-    componentWillUnmount(){
-        $(window).unbind('resize');
     }
 
     private fetchPosts = ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => {
@@ -114,8 +106,8 @@ class PostsPartial extends React.PureComponent<IProps>{
                     isRowLoaded={this.isRowLoaded}
                     loadMoreRows={this.fetchPosts}
                     rowCount={this.rowCount}
-                    minimumBatchSize={10}
-                    threshold={1}
+                    minimumBatchSize={15}
+                    threshold={10}
                 >
                     {({ onRowsRendered, registerChild }: InfiniteLoaderChildProps) => (
                         <WindowScroller>
@@ -136,7 +128,7 @@ class PostsPartial extends React.PureComponent<IProps>{
                                                 rowHeight={this.cache.rowHeight}
                                                 rowRenderer={this.renderRow}
                                                 rowCount={this.rowCount}
-                                                overscanRowCount={0}
+                                                overscanRowCount={1}
                                             />
                                         )
                                     }
