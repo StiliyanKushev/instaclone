@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const fs = require('fs'); 
 const path = require('path'); 
+const sharp = require('sharp');
 
 function validateCreatePost(payload){
     const errors = {}
@@ -31,7 +32,7 @@ function validateCreatePost(payload){
     }
   }
 
-function createPost(req, res, next) {
+async function createPost(req, res, next) {
     const validationResult = validateCreatePost({username:req.headers.username,description:req.body.description})
     if (!validationResult.success) {
         return res.status(200).json({
@@ -58,7 +59,7 @@ function createPost(req, res, next) {
         })
     }
 
-    User.findOne({username:req.headers.username}).then(user => {
+    User.findOne({username:req.headers.username}).then(async (user) => {
         if(!user){
             return res.status(200).json({
                 success:false,
@@ -73,12 +74,23 @@ function createPost(req, res, next) {
             return res.status(401).end('Cannot create a post for different account');
         }
 
-        let imgPath = path.dirname(require.main.filename || process.mainModule.filename) + '/' + req.file.path;
+        let imageName = req.file.filename;
+        let originalImgPath = path.dirname(require.main.filename || process.mainModule.filename) + '/' + req.file.path;
+        let resizedImgPath = path.dirname(require.main.filename || process.mainModule.filename) + '/resized/' + imageName;
+
+        await sharp(originalImgPath)
+        .resize(500)
+        .toFile(
+            path.resolve(path.dirname(require.main.filename || process.mainModule.filename),'resized',imageName)
+        )
+
+        //remove original image after resized is created
+        fs.unlinkSync(originalImgPath);
 
         new Post({
             creator: req.headers.username,
             source: {
-                data: fs.readFileSync(imgPath),
+                data: fs.readFileSync(resizedImgPath),
                 contentType: req.file.mimetype,
             },
             description:req.body.description,
@@ -89,16 +101,23 @@ function createPost(req, res, next) {
                 messege:'Post uploaded successfully.'
             });
         }).catch(err => {
-            console.log(err);
+            return res.status(200).json({
+                success:false,
+                messege:'Image size is too large. GridFS will be implemented soon. :('
+            });
+            //TODO implement GridFS
         });
     })
 }
 
 function getPopularFromAllPost(req,res,next){
-    let startIndex = Number(req.params.index) || 0;
-    let length = Number(req.params.length) || 30;
+    let startIndex = Number(req.params.startIndex);
+    let stopIndex = Number(req.params.stopIndex);
+    
+    let limit = stopIndex - startIndex;
+    if(limit === 0) limit = 1;
 
-    Post.find().skip(startIndex).limit(length).sort({likesCount:'asc'}).exec((err,posts) => {
+    Post.find().skip(startIndex).limit(limit).sort({likesCount:'asc'}).exec((err,posts) => {
         if(err){
             console.log(err);
             return res.status(200).json({

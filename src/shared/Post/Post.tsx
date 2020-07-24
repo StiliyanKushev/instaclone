@@ -5,12 +5,12 @@ import styles from './Post.module.css';
 // IMPORT REACT RELATED
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Segment, Image, Header, Menu, Item, Icon, Form, Button } from 'semantic-ui-react';
+import { Segment, Image, Header, Menu, Item, Icon, Form, Button, Placeholder, PlaceholderImage } from 'semantic-ui-react';
 
 // IMPORT OTHER
 import { settings } from '../../settings';
 import { IPost } from '../PostsPartial/PostsPartial';
-
+import defaultUserImage from '../../assets/avatar.jpg';
 
 interface IParentProps {
     post: IPost,
@@ -20,9 +20,67 @@ interface IParentProps {
 
 type IProps = IParentProps;
 
-const Post:React.FC<IProps> = (props:IProps) => {
+const Post = (props:IProps) => {
         if(!props.isLoaded)
-        return (<p>NOT LOADED YET</p>)
+        return (
+            <div className={styles.container}>
+                <Segment className={styles.profileSegmentInternal} attached='top'>
+                    <Image className={styles.verySmallImg} circular size='tiny' src={defaultUserImage}></Image>
+                    <Link to='#'>
+                        <Header size='small' className={styles.headerName} as='span'>loading</Header>
+                    </Link>
+                </Segment>
+                <div className={styles.imageContainer}>
+                    <Placeholder className={styles.imagePlaceholder}>
+                        <PlaceholderImage>
+
+                        </PlaceholderImage>
+                    </Placeholder>
+                    {/* <Image onLoad={props.measure} src={`${settings.BASE_URL}/feed/photo/post/${props.post._id}`} className={styles.image}></Image> */}
+                    {/* <Image onLoad={props.measure} src={`data:${props.post.source.contentType};base64,${Buffer.from(props.post.source.data).toString('base64')}`} /> */}
+                </div>
+                
+                <Segment className={styles.bottomSegment} attached='bottom'>
+                    <>
+                        <Menu className={styles.postMenu}>
+                            <Item className='left'>
+                                <Icon className={styles.iconBtn} size='big' name='heart outline'></Icon>
+                                <Icon className={styles.iconBtn} size='big' name='comment outline'></Icon>
+                                <Icon className={styles.iconBtn} size='big' name='paper plane outline'></Icon>
+                            </Item>
+                            <Item className='right'>
+                                <Icon className={styles.iconBtn} size='big' name='bookmark outline'></Icon>
+                            </Item>
+                        </Menu>
+                    </>
+                    <Header className={styles.likes} size='tiny'>{0} likes</Header>
+                    <Header className={styles.description} size='tiny'>
+                        <Header size='tiny' className={styles.commentUsername} as='span'>loading</Header>
+                        <Header className={styles.commentText} as='span' size='tiny'>loading</Header>
+                    </Header>
+                    <Link to='#'>
+                        <Header className={styles.viewAllComments} size='tiny' disabled>View all comments</Header>
+                    </Link>
+                    {
+                        //backend will return the first 3-4 messeges only
+                        // props.post.messeges.map((messege,index) => (
+
+                        // ))
+                    }
+                    <Form className={styles.commentForm}>
+                        <Form.Field className={styles.commentField}>
+                            <Form.Input
+                                className={styles.commentInput}
+                                placeholder='Adding comment ...'
+                            >
+
+                            </Form.Input>
+                            <Button className={styles.commentSubmit} size='medium' primary>Comment</Button>
+                        </Form.Field>
+                    </Form>
+                </Segment>
+            </div>
+        )
 
         if(props.post)
         return (
@@ -34,7 +92,9 @@ const Post:React.FC<IProps> = (props:IProps) => {
                     </Link>
                 </Segment>
                 <div className={styles.imageContainer}>
-                    <Image onLoad={props.measure} src={`${settings.BASE_URL}/feed/photo/post/${props.post._id}`} className={styles.image}></Image>
+                    {/* <Image onLoad={props.measure} src={`${settings.BASE_URL}/feed/photo/post/${props.post._id}`} className={styles.image}></Image> */}
+                    <Image className={styles.image} onLoad={props.measure} src={`data:${props.post.source.contentType};base64,${Buffer.from(props.post.source.data).toString('base64')}`} />
+                    {/* <Image onLoad={props.measure} src={``} /> */}
                 </div>
                 
                 <Segment className={styles.bottomSegment} attached='bottom'>
@@ -78,10 +138,6 @@ const Post:React.FC<IProps> = (props:IProps) => {
                 </Segment>
             </div>
         )
-        else
-        return (
-            <p>loading</p>
-        )
 }
 
-export default React.memo(Post);
+export default React.memo(Post as any);

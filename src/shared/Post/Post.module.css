@@ -5,6 +5,13 @@
 * Browsers: last 4 version
 */
 
+.imagePlaceholder{
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 900px !important;
+    max-height: 900px !important;
+}
+
 .profileSegmentInternal{
     padding: .5rem !important;
     display: -webkit-box !important;

@@ -21,7 +21,10 @@ export interface IPost {
     _id: string,
     description: string,
     likesCount: number,
-    loading: undefined,
+    source:{
+        data: any,
+        contentType:string,
+    }
     //todo comments
 }
 
@@ -38,7 +41,7 @@ class PostsPartial extends React.PureComponent<IProps>{
     private cache: CellMeasurerCache;
 
     private get rowCount(): number {
-        return this.state.hasMorePosts ? this.state.posts.length + 1 : this.state.posts.length;
+        return this.state.hasMorePosts ? this.state.posts.length + 2 : this.state.posts.length;
     }
 
     constructor(props: IProps) {
@@ -61,7 +64,8 @@ class PostsPartial extends React.PureComponent<IProps>{
     }
 
     private fetchPosts = ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => {
-        return getNewPostsChunk(startIndex, stopIndex - startIndex, this.props.token).then((res: IPostsChunkResponse) => {
+        console.log(startIndex,stopIndex)
+        return getNewPostsChunk(startIndex, stopIndex, this.props.token).then((res: IPostsChunkResponse) => {
             if (res.success) {
                 if (res.posts.length === 0) {
                     // no more posts
@@ -111,6 +115,8 @@ class PostsPartial extends React.PureComponent<IProps>{
                     isRowLoaded={this.isRowLoaded}
                     loadMoreRows={this.fetchPosts}
                     rowCount={this.rowCount}
+                    minimumBatchSize={10}
+                    threshold={1}
                 >
                     {({ onRowsRendered, registerChild }: InfiniteLoaderChildProps) => (
                         <WindowScroller>
@@ -145,4 +151,4 @@ class PostsPartial extends React.PureComponent<IProps>{
     }
 }
 
-export default React.memo(PostsPartial as ComponentType<IProps>);
+export default PostsPartial as ComponentType<IProps>;
