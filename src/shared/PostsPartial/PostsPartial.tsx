@@ -64,7 +64,6 @@ class PostsPartial extends React.PureComponent<IProps>{
     }
 
     private fetchPosts = ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => {
-        console.log(startIndex,stopIndex)
         return getNewPostsChunk(startIndex, stopIndex, this.props.token).then((res: IPostsChunkResponse) => {
             if (res.success) {
                 if (res.posts.length === 0) {

@@ -92,9 +92,7 @@ const Post = (props:IProps) => {
                     </Link>
                 </Segment>
                 <div className={styles.imageContainer}>
-                    {/* <Image onLoad={props.measure} src={`${settings.BASE_URL}/feed/photo/post/${props.post._id}`} className={styles.image}></Image> */}
                     <Image className={styles.image} onLoad={props.measure} src={`data:${props.post.source.contentType};base64,${Buffer.from(props.post.source.data).toString('base64')}`} />
-                    {/* <Image onLoad={props.measure} src={``} /> */}
                 </div>
                 
                 <Segment className={styles.bottomSegment} attached='bottom'>
