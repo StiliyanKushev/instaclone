@@ -1,3 +1,4 @@
+import { IPost } from './../shared/PostsPartial/PostsPartial';
 import { postActionTypes } from "../actions/types/postActions";
 
 export interface IPostState {
@@ -5,6 +6,7 @@ export interface IPostState {
     messege:string,
     isPostLoading:boolean,
     isPostUploaded:boolean,
+    homePosts:Array<IPost>
 }
 
 const userState:IPostState = {
@@ -12,6 +14,7 @@ const userState:IPostState = {
     messege:'',
     isPostLoading:false,
     isPostUploaded:false,
+    homePosts:[]
 }
 
 const postReducer = (state = userState, action:postActionTypes) => {
@@ -43,6 +46,13 @@ const postReducer = (state = userState, action:postActionTypes) => {
                 isPostUploaded:false,
                 messege:action.payload.messege
             } as IPostState;
+        }
+
+        case 'ADD_POSTS_HOME':{
+            return {
+                ...state,
+                homePosts: [...state.homePosts, ...action.payload.posts]
+            }
         }
 
         default: {

@@ -1,11 +1,20 @@
+import { IPost } from './../shared/PostsPartial/PostsPartial';
 import { AppActions } from "./types/actions";
 import { Dispatch } from "react";
 import IGenericResponse from "../types/response";
 import { uploadPost } from "../handlers/post";
 
+export const ADD_POSTS_HOME = (posts:Array<IPost>):AppActions => ({
+    type: 'ADD_POSTS_HOME',
+    payload: {
+        posts
+    }
+})
+
 export const CALL_POST_LOADING = ():AppActions => ({
     type: 'SET_POST_LOADING',
 });
+
 export const CALL_POST_UPLOAD_SUCCESS = (messege:string):AppActions => ({
     type: 'SET_POST_UPLOAD_SUCCESS',
     payload:{

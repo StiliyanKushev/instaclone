@@ -6,11 +6,15 @@ import styles from './PostsPartial.module.css';
 import React, { ComponentType } from 'react';
 import { WindowScroller, List, AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, InfiniteLoaderChildProps } from 'react-virtualized';
 
+// IMPORT REDUX RELETED
+import { connect } from 'react-redux';
+import { ADD_POSTS_HOME } from '../../actions/postActions';
+
 // OTHER
-import $ from 'jquery';
 import Post from '../Post/Post';
 import { getNewPostsChunk } from '../../handlers/post';
 import { IPostsChunkResponse } from '../../types/response';
+import { AppState, ReduxProps } from '../../reducers';
 
 interface IParentProps {
     token: string,
@@ -29,19 +33,20 @@ export interface IPost {
 }
 
 export interface IPostsPartialState {
-    posts: Array<IPost>,
     hasMorePosts: boolean,
 }
 
-type IProps = IParentProps;
+type IProps = ReduxProps & DispatchProps & IParentProps;
 
 class PostsPartial extends React.PureComponent<IProps>{
-    state: IPostsPartialState = { posts: [], hasMorePosts: true }
+    //todo maybe make make it a variable instead of using state?
+    state: IPostsPartialState = { hasMorePosts: true }
 
     private cache: CellMeasurerCache;
 
     private get rowCount(): number {
-        return this.state.hasMorePosts ? this.state.posts.length + 2 : this.state.posts.length;
+        let homePosts: any = this.props.post?.homePosts;
+        return this.state.hasMorePosts ? homePosts.length + 2 : homePosts.length;
     }
 
     constructor(props: IProps) {
@@ -63,8 +68,7 @@ class PostsPartial extends React.PureComponent<IProps>{
                     this.setState({ hasMorePosts: false })
                 }
                 else {
-                    let newPosts = [...this.state.posts, ...res.posts];
-                    this.setState({ posts: newPosts })
+                    this.props.ADD_POSTS_HOME(res.posts);
                 }
             }
             else {
@@ -87,7 +91,7 @@ class PostsPartial extends React.PureComponent<IProps>{
                         <Post
                             isLoaded={this.isRowLoaded({index})}
                             measure={measure}
-                            post={this.state.posts[index]}
+                            post={this.props.post?.homePosts[index]}
                         />
                     </div>
                 )}
@@ -96,7 +100,7 @@ class PostsPartial extends React.PureComponent<IProps>{
     }
 
     private isRowLoaded = ({ index }: { index: number }) => {
-        return !!this.state.posts[index];
+        return !!this.props.post?.homePosts[index];
     };
 
     public render() {
@@ -142,4 +146,12 @@ class PostsPartial extends React.PureComponent<IProps>{
     }
 }
 
-export default PostsPartial as ComponentType<IProps>;
+const mapStateToProps = (state:AppState):ReduxProps => ({
+    post:state.post
+})
+
+interface DispatchProps {
+    ADD_POSTS_HOME: (posts: Array<IPost>) => void 
+}
+
+export default connect(mapStateToProps,{ADD_POSTS_HOME})(PostsPartial as ComponentType<IProps>);
