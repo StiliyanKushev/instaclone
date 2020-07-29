@@ -31,7 +31,7 @@ const userReducer = (state = userState, action:userActionTypes) => {
                 error:false,
                 isUserLoading:false,
                 isUserAvatarUpdated:true,
-                messege:action.payload.messege
+                messege:action.payload.messege,
             } as IUserState;
         }
 

@@ -34,7 +34,7 @@ const postReducer = (state = userState, action:postActionTypes) => {
                 error:false,
                 isPostLoading:false,
                 isPostUploaded:true,
-                messege:action.payload.messege
+                messege:action.payload.messege,
             } as IPostState;
         }
 
@@ -46,6 +46,24 @@ const postReducer = (state = userState, action:postActionTypes) => {
                 isPostUploaded:false,
                 messege:action.payload.messege
             } as IPostState;
+        }
+
+        case 'SET_POST_COMMENT_SUCCESS':{
+            return {
+                ...state,
+                error:false,
+                isPostLoading:false,
+                messege:action.payload.messege
+            } as IPostState
+        }
+
+        case 'SET_POST_COMMENT_FAILURE':{
+            return {
+                ...state,
+                error:true,
+                isPostLoading:false,
+                messege:action.payload.messege
+            } as IPostState
         }
 
         case 'ADD_POSTS_HOME':{

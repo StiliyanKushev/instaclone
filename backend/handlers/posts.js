@@ -1,12 +1,13 @@
-const User = require("../models/User")
-const Post = require("../models/Post")
+const User = require("../models/User");
+const Post = require("../models/Post");
+const Comment = require("../models/Comment");
 const jwt = require('jsonwebtoken');
 
 const fs = require('fs'); 
 const path = require('path'); 
 const sharp = require('sharp');
 
-function validateCreatePost(payload){
+function validateCreateAndCommentPost(payload){
     const errors = {}
     let isFormValid = true
     let messege = ''
@@ -30,10 +31,10 @@ function validateCreatePost(payload){
       messege,
       errors
     }
-  }
+}
 
 async function createPost(req, res, next) {
-    const validationResult = validateCreatePost({username:req.headers.username,description:req.body.description})
+    const validationResult = validateCreateAndCommentPost({username:req.headers.username,description:req.body.description})
     if (!validationResult.success) {
         return res.status(200).json({
             success: false,
@@ -105,19 +106,71 @@ async function createPost(req, res, next) {
                 success:false,
                 messege:'Image size is too large. GridFS will be implemented soon. :('
             });
-            //TODO implement GridFS
         });
     })
 }
 
-function getPopularFromAllPost(req,res,next){
+function commentPost(req,res,next){
+    const validationResult = validateCreateAndCommentPost({username:req.body.username,description:req.body.description})
+    if (!validationResult.success) {
+        return res.status(200).json({
+            success: false,
+            messege: validationResult.messege,
+            errors: validationResult.errors
+        })
+    }
+
+    User.findOne({username:req.body.username}).then(async (user) => {
+        if(!user){
+            return res.status(200).json({
+                success:false,
+                messege: 'The user trying to comment a post is not valid.'
+            })
+        }
+
+        const tempToken = jwt.sign(user.id,'s0m3 r4nd0m str1ng')
+
+        //check if user is the one from the username's user id
+        if(tempToken !== req.headers.token){
+            return res.status(401).end('Cannot comment a post for different account');
+        }
+
+        Post.findOne({_id:req.params.id}).then(post => {
+            if(!post){
+                return res.status(200).json({
+                    success:false,
+                    messege: 'Cannot comment on post that does not exist.'
+                })
+            }
+
+            new Comment({
+                post: post,
+                creator:req.body.username,
+                content:req.body.description
+            }).save().then(comment => {
+                return res.status(200).json({
+                    success:true,
+                    messege:'Comment added.'
+                })
+            }).catch(err => {
+                console.log(err);
+                return res.status(200).json({
+                    success:false,
+                    messege:'Could not add comment to the post.'
+                });
+            });
+        })
+    })
+}
+
+async function getPopularFromAllPost(req,res,next){
     let startIndex = Number(req.params.startIndex);
     let stopIndex = Number(req.params.stopIndex);
     
     let limit = stopIndex - startIndex;
     if(limit === 0) limit = 1;
 
-    Post.find().skip(startIndex).limit(limit).sort({likesCount:'asc'}).exec((err,posts) => {
+    Post.find().skip(startIndex).limit(limit).sort({likesCount:'asc'}).exec(async (err,posts) => {
         if(err){
             console.log(err);
             return res.status(200).json({
@@ -126,14 +179,32 @@ function getPopularFromAllPost(req,res,next){
             })
         }
 
+        let resPosts = [];
+
+        for(let post of posts){ 
+            let comments = await Comment.find({post:post}).limit(3).exec();
+            let newPost = {
+                _id:post._id,
+                creator: post.creator,
+                source: post.source,
+                description: post.description,
+                likesCount: post.likesCount,
+                likesUsers: post.likesUsers,
+                comments: comments
+            }
+
+            resPosts.push(newPost);
+        }
+
         return res.status(200).json({
             success:true,
-            posts:posts
+            posts:resPosts
         })
     })
 }
 
 module.exports = {
     createPost,
-    getPopularFromAllPost
+    getPopularFromAllPost,
+    commentPost
 }

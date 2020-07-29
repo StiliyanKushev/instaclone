@@ -2,6 +2,8 @@ import { IPost } from './../../shared/PostsPartial/PostsPartial';
 
 const SET_POST_UPLOAD_SUCCESS = 'SET_POST_UPLOAD_SUCCESS';
 const SET_POST_UPLOAD_FAILURE = 'SET_POST_UPLOAD_FAILURE';
+const SET_POST_COMMENT_SUCCESS = 'SET_POST_COMMENT_SUCCESS';
+const SET_POST_COMMENT_FAILURE = 'SET_POST_COMMENT_FAILURE';
 const SET_POST_LOADING = 'SET_POST_LOADING';
 const ADD_POSTS_HOME = 'ADD_POSTS_HOME';
 
@@ -23,6 +25,20 @@ export interface setPostUploadFailure {
     }
 }
 
+export interface setPostCommentSuccess {
+    type: typeof SET_POST_COMMENT_SUCCESS,
+    payload:{
+        messege:string
+    }
+}
+
+export interface setPostCommentFailure {
+    type: typeof SET_POST_COMMENT_FAILURE,
+    payload:{
+        messege:string
+    }
+}
+
 export interface addPostsHome {
     type: typeof ADD_POSTS_HOME,
     payload: {
@@ -30,4 +46,4 @@ export interface addPostsHome {
     }
 }
 
-export type postActionTypes = setPostUploadSuccess | setPostUploadFailure | setPostLoading | addPostsHome; 
+export type postActionTypes = setPostUploadSuccess | setPostUploadFailure | setPostLoading | addPostsHome | setPostCommentSuccess | setPostCommentFailure; 

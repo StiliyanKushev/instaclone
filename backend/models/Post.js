@@ -8,7 +8,7 @@ let postSchema = new mongoose.Schema({
     description: {type:String, required: REQUIRED_VALIDATION_MESSAGE},
     likesCount: Number,
     likesUsers: [{type:mongoose.Schema.Types.ObjectId,ref:'User'}],
-    comments: [{type:mongoose.Schema.Types.ObjectId,ref:'Comment'}],
+    // comments: [{type:mongoose.Schema.Types.ObjectId,ref:'Comment'}],
 });
 
 let Post = mongoose.model('Post',postSchema);

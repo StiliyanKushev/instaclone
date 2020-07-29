@@ -28,8 +28,8 @@ export interface IPost {
     source:{
         data: any,
         contentType:string,
-    }
-    //todo comments
+    },
+    comments: Array<string>
 }
 
 export interface IPostsPartialState {
@@ -39,7 +39,6 @@ export interface IPostsPartialState {
 type IProps = ReduxProps & DispatchProps & IParentProps;
 
 class PostsPartial extends React.PureComponent<IProps>{
-    //todo maybe make make it a variable instead of using state?
     state: IPostsPartialState = { hasMorePosts: true }
 
     private cache: CellMeasurerCache;
@@ -91,7 +90,7 @@ class PostsPartial extends React.PureComponent<IProps>{
                         <Post
                             isLoaded={this.isRowLoaded({index})}
                             measure={measure}
-                            post={this.props.post?.homePosts[index]}
+                            postData={this.props.post?.homePosts[index]}
                         />
                     </div>
                 )}
