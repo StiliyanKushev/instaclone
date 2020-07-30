@@ -4,11 +4,18 @@ const SET_POST_UPLOAD_SUCCESS = 'SET_POST_UPLOAD_SUCCESS';
 const SET_POST_UPLOAD_FAILURE = 'SET_POST_UPLOAD_FAILURE';
 const SET_POST_COMMENT_SUCCESS = 'SET_POST_COMMENT_SUCCESS';
 const SET_POST_COMMENT_FAILURE = 'SET_POST_COMMENT_FAILURE';
+const SET_POST_LIKE_SUCCESS = 'SET_POST_LIKE_SUCCESS';
+const SET_POST_LIKE_FAILURE = 'SET_POST_LIKE_FAILURE';
+const SET_POST_INDEX_INCREMENT = 'SET_POST_INDEX_INCREMENT';
 const SET_POST_LOADING = 'SET_POST_LOADING';
 const ADD_POSTS_HOME = 'ADD_POSTS_HOME';
 
 export  interface setPostLoading{
     type: typeof SET_POST_LOADING,
+}
+
+export  interface setPostIndexIncrement{
+    type: typeof SET_POST_INDEX_INCREMENT,
 }
 
 export interface setPostUploadSuccess {
@@ -28,12 +35,29 @@ export interface setPostUploadFailure {
 export interface setPostCommentSuccess {
     type: typeof SET_POST_COMMENT_SUCCESS,
     payload:{
-        messege:string
+        messege:string,
+        postIndex:number,
+        comment:string,
     }
 }
 
 export interface setPostCommentFailure {
     type: typeof SET_POST_COMMENT_FAILURE,
+    payload:{
+        messege:string
+    }
+}
+
+export interface setPostLikeSuccess {
+    type: typeof SET_POST_LIKE_SUCCESS,
+    payload:{
+        messege:string,
+        postIndex: number,
+    }
+}
+
+export interface setPostLikeFailure {
+    type: typeof SET_POST_LIKE_FAILURE,
     payload:{
         messege:string
     }
@@ -46,4 +70,13 @@ export interface addPostsHome {
     }
 }
 
-export type postActionTypes = setPostUploadSuccess | setPostUploadFailure | setPostLoading | addPostsHome | setPostCommentSuccess | setPostCommentFailure; 
+export type postActionTypes = 
+setPostIndexIncrement | 
+setPostCommentFailure | 
+setPostCommentSuccess | 
+setPostUploadFailure | 
+setPostUploadSuccess | 
+setPostLikeFailure |
+setPostLikeSuccess | 
+setPostLoading | 
+addPostsHome;

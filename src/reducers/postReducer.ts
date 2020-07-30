@@ -6,7 +6,8 @@ export interface IPostState {
     messege:string,
     isPostLoading:boolean,
     isPostUploaded:boolean,
-    homePosts:Array<IPost>
+    homePosts:Array<IPost>,
+    latestIndex:number,
 }
 
 const userState:IPostState = {
@@ -14,7 +15,12 @@ const userState:IPostState = {
     messege:'',
     isPostLoading:false,
     isPostUploaded:false,
-    homePosts:[]
+    homePosts:[],
+    latestIndex:0, 
+    // A post will fetch this and save it when loaded.
+    // Then it will be incremented and be ready for the next post.
+    // This way the post component knows it's index and we can create this 2 way connection,
+    // between the component and the redux store.
 }
 
 const postReducer = (state = userState, action:postActionTypes) => {
@@ -49,6 +55,9 @@ const postReducer = (state = userState, action:postActionTypes) => {
         }
 
         case 'SET_POST_COMMENT_SUCCESS':{
+            // add comment to ownComments
+            state.homePosts[action.payload.postIndex].ownComments.push({content:action.payload.comment});
+            
             return {
                 ...state,
                 error:false,
@@ -66,11 +75,46 @@ const postReducer = (state = userState, action:postActionTypes) => {
             } as IPostState
         }
 
+        case 'SET_POST_LIKE_SUCCESS':{
+            if(!state.homePosts[action.payload.postIndex].isLiked){
+                //change the value of specific index to increment
+                state.homePosts[action.payload.postIndex].likesCount++;
+            }
+            else{
+                //change the value of specific index to decrement
+                state.homePosts[action.payload.postIndex].likesCount--;
+            }
+
+            // update the isliked value of the post
+            state.homePosts[action.payload.postIndex].isLiked = !state.homePosts[action.payload.postIndex].isLiked;
+
+            return {
+                ...state,
+                error:false,
+                messege:action.payload.messege
+            } as IPostState
+        }
+
+        case 'SET_POST_LIKE_FAILURE':{
+            return {
+                ...state,
+                error:true,
+                messege:action.payload.messege
+            } as IPostState
+        }
+
         case 'ADD_POSTS_HOME':{
             return {
                 ...state,
                 homePosts: [...state.homePosts, ...action.payload.posts]
-            }
+            } as IPostState
+        }
+
+        case 'SET_POST_INDEX_INCREMENT':{
+            return {
+                ...state,
+                latestIndex: state.latestIndex + 1,
+            } as IPostState
         }
 
         default: {

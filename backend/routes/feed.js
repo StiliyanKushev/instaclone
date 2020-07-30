@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const authCheck = require('../config/auth-check');
-const {createPost,getPopularFromAllPost,commentPost} = require('../handlers/posts');
+const {createPost,getPopularFromAllPost,commentPost,likePost} = require('../handlers/posts');
 const {sendAvatar} = require('../handlers/user');
 const multer = require('multer'); 
 const User = require('../models/User');
@@ -47,13 +47,13 @@ router.get('/photo/post/:id',(req,res,next) => {
 //posts
 // router.get('/posts/get/user/recent/:index/:length',authCheck,getRecentFromUserPost)
 // router.get('/posts/get/user/popular/:index/:length',authCheck,getPopularFromUserPost)
-router.get('/posts/get/all/popular/:startIndex/:stopIndex',authCheck,getPopularFromAllPost)
+router.get('/posts/get/all/popular/:startIndex/:stopIndex/as/:username',authCheck,getPopularFromAllPost)
 // router.get('/posts/:id/get',authCheck,getPost)
 router.post('/posts/create',authCheck,upload.single('image'),createPost)
 // router.delete('/posts/:id/delete',authCheck,deletePost)
 router.post('/posts/:id/comment',authCheck,commentPost)
-// router.put('/posts/:id/edit',authCheck,editPost)
-// router.put('/posts/:id/like',authCheck,likePost)
+// router.post('/posts/:id/edit',authCheck,editPost)
+router.post('/posts/:id/like',authCheck,likePost)
 
 //users
 router.post('/user/send/avatar',authCheck,upload.single('image'),sendAvatar)

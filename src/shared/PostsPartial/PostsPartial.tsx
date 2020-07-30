@@ -20,16 +20,23 @@ interface IParentProps {
     token: string,
 }
 
+export interface IPostComment {
+    content:string,
+    creator:string
+}
 export interface IPost {
+    postIndex:number,
     creator: string,
     _id: string,
     description: string,
+    isLiked:boolean,
     likesCount: number,
     source:{
         data: any,
         contentType:string,
     },
-    comments: Array<string>
+    comments: Array<IPostComment>,
+    ownComments: Array<{content:string}>, //this doesnt need a creator prop
 }
 
 export interface IPostsPartialState {
@@ -60,7 +67,7 @@ class PostsPartial extends React.PureComponent<IProps>{
     }
 
     private fetchPosts = ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => {
-        return getNewPostsChunk(startIndex, stopIndex, this.props.token).then((res: IPostsChunkResponse) => {
+        return getNewPostsChunk(startIndex, stopIndex,this.props.auth?.username as any, this.props.token).then((res: IPostsChunkResponse) => {
             if (res.success) {
                 if (res.posts.length === 0) {
                     // no more posts
@@ -146,7 +153,8 @@ class PostsPartial extends React.PureComponent<IProps>{
 }
 
 const mapStateToProps = (state:AppState):ReduxProps => ({
-    post:state.post
+    post:state.post,
+    auth:state.auth
 })
 
 interface DispatchProps {

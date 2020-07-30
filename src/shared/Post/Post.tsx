@@ -8,9 +8,10 @@ import { Link } from 'react-router-dom';
 import { Segment, Image, Header, Menu, Item, Icon, Form, Button, Placeholder, PlaceholderImage } from 'semantic-ui-react';
 
 // IMPORT REDUX RELETED
+import { AppState, ReduxProps } from '../../reducers';
 import { connect } from 'react-redux';
 import { AppActions } from '../../actions/types/actions';
-import { COMMENT_POST } from '../../actions/postActions';
+import { COMMENT_POST,LIKE_POST, INCREMENT_POST_INDEX } from '../../actions/postActions';
 import { ThunkDispatch } from 'redux-thunk';
 import {bindActionCreators} from 'redux';
 
@@ -18,7 +19,6 @@ import {bindActionCreators} from 'redux';
 import { settings } from '../../settings';
 import { IPost } from '../PostsPartial/PostsPartial';
 import defaultUserImage from '../../assets/avatar.jpg';
-import { AppState, ReduxProps } from '../../reducers';
 
 interface IParentProps {
     postData: IPost,
@@ -30,22 +30,29 @@ type IProps = IParentProps & DispatchProps & ReduxProps;
 
 interface IState {
     comment: string,
-    ownComments: Array<string>
 }
 
 class Post extends React.PureComponent<IProps,IState> {
-    public state: IState = { comment:'', ownComments:[] }
+    public state: IState = { comment:'' }
+    private postIndex: number = 0; // this is set in the didMount function
+
+    public componentDidMount(){
+        this.postIndex = this.props.post?.latestIndex as number;
+        this.props.incrementIndex(); // update 'latestIndex' for the next post to load
+    }
 
     private handleComment(){
         if(this.props.auth) // just so es-lint shuts up
-        this.props.comment(this.props.postData._id,this.props.auth?.username,this.state.comment,this.props.auth?.token);
-        this.setState(prevState => ({
-            comment:'',
-            ownComments: [...prevState.ownComments,prevState.comment]
-        }));
+        this.props.comment(this.postIndex,this.props.postData._id,this.props.auth?.username,this.state.comment,this.props.auth?.token);
+        this.setState({comment:''});
 
         // resize the row size after adding new comment
         this.props.measure();
+    }
+
+    private handleLike(){
+        if(this.props.auth) // just so es-lint shuts up
+        this.props.like(this.postIndex,this.props.postData._id,this.props.auth?.username,this.props.auth?.token)
     }
 
     public render(){
@@ -121,7 +128,7 @@ class Post extends React.PureComponent<IProps,IState> {
                     <>
                         <Menu className={styles.postMenu}>
                             <Item className='left'>
-                                <Icon className={styles.iconBtn} size='big' name='heart outline'></Icon>
+                                <Icon onClick={this.handleLike.bind(this)} className={`${styles.iconBtn} heart ${this.props.post.homePosts[this.postIndex].isLiked ? '' : 'outline'}`} size='big'></Icon>
                                 <Icon className={styles.iconBtn} size='big' name='comment outline'></Icon>
                                 <Icon className={styles.iconBtn} size='big' name='paper plane outline'></Icon>
                             </Item>
@@ -130,7 +137,7 @@ class Post extends React.PureComponent<IProps,IState> {
                             </Item>
                         </Menu>
                     </>
-                    <Header className={styles.likes} size='tiny'>{this.props.postData.likesCount} likes</Header>
+                    <Header className={styles.likes} size='tiny'>{this.props.post.homePosts[this.postIndex].likesCount} likes</Header>
                     <Header className={styles.description} size='tiny'>
                         <Header size='tiny' className={styles.commentUsername} as='span'>{this.props.postData.creator}</Header>
                         <Header className={styles.commentText} as='span' size='tiny'> {this.props.postData.description}</Header>
@@ -140,17 +147,17 @@ class Post extends React.PureComponent<IProps,IState> {
                     </Link>
                     {
                         //backend will return the first 3-4 messeges only
-                        this.state.ownComments.map((comment:any) => (
-                            <Header className={styles.description} size='tiny'>
+                        this.props.post.homePosts[this.postIndex].ownComments.map((comment:any,index) => (
+                            <Header key={index} className={styles.description} size='tiny'>
                                 <Header size='tiny' className={styles.commentUsername} as='span'>{this.props.auth?.username}</Header>
-                                <Header className={styles.commentText} as='span' size='tiny'> {comment}</Header>
+                                <Header className={styles.commentText} as='span' size='tiny'> {comment.content}</Header>
                             </Header>
                         ))
                     }
                     {
                         //backend will return the first 3-4 messeges only
-                        this.props.postData.comments.map((comment:any) => (
-                            <Header className={styles.description} size='tiny'>
+                        this.props.postData.comments.map((comment:any,index) => (
+                            <Header key={index} className={styles.description} size='tiny'>
                                 <Header size='tiny' className={styles.commentUsername} as='span'>{comment.creator}</Header>
                                 <Header className={styles.commentText} as='span' size='tiny'> {comment.content}</Header>
                             </Header>
@@ -181,11 +188,15 @@ const mapStateToProps = (state:AppState):ReduxProps => ({
 })
 
 interface DispatchProps {
-    comment: (postId: string, username: string, comment: string, token: string) => void,
+    like:(postIndex:number,postId:string,username:string,token:string) => void
+    comment: (postIndex:number,postId: string, username: string, comment: string, token: string) => void,
+    incrementIndex: () => void
 }
 
 const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
     comment:bindActionCreators(COMMENT_POST,dispatch),
+    like:bindActionCreators(LIKE_POST,dispatch),
+    incrementIndex:INCREMENT_POST_INDEX,
 })
 
 export default React.memo(connect(mapStateToProps,mapDispatchToProps)(Post as ComponentType<any>));

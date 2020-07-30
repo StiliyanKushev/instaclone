@@ -13,10 +13,12 @@ let userSchema = new mongoose.Schema({
   followersCount:Number,
   followingCount:Number,
   posts:[{type:mongoose.Schema.Types.ObjectId,ref:'Post'}],
-  likedPosts:[{type:mongoose.Schema.Types.ObjectId,ref:'Post'}],
-  savedPosts:[{type:mongoose.Schema.Types.ObjectId,ref:'Post'}],
-  followers:[{type:mongoose.Schema.Types.ObjectId,ref:'User'}],
-  following:[{type:mongoose.Schema.Types.ObjectId,ref:'User'}],
+
+  // todo probably make these like the comments and UserLikes
+  // likedPosts:[{type:mongoose.Schema.Types.ObjectId,ref:'Post'}],
+  // savedPosts:[{type:mongoose.Schema.Types.ObjectId,ref:'Post'}],
+  // followers:[{type:mongoose.Schema.Types.ObjectId,ref:'User'}],
+  // following:[{type:mongoose.Schema.Types.ObjectId,ref:'User'}],
 })
 
 userSchema.method({

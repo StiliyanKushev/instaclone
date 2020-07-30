@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const Post = require("../models/Post");
+const UserLike = require("../models/UserLike");
 const Comment = require("../models/Comment");
 const jwt = require('jsonwebtoken');
 
@@ -20,6 +21,27 @@ function validateCreateAndCommentPost(payload){
     if(!payload || typeof payload.description !== 'string' || payload.description.trim().length < 5 || payload.description.trim().length > 300){
         isFormValid = false
         errors.description = 'Description should be between 5 and 300 charachters long.'
+    }
+    
+    if (!isFormValid) {
+      messege = 'Check the form for errors.'
+    }
+  
+    return {
+      success: isFormValid,
+      messege,
+      errors
+    }
+}
+
+function validateLikePost(payload){
+    const errors = {}
+    let isFormValid = true
+    let messege = ''
+  
+    if (!payload || typeof payload.username !== 'string' || payload.username.trim().length < 5 || payload.username.trim().length > 20) {
+      isFormValid = false
+      errors.username = 'Creator username must be between 5 and 20 chars long.'
     }
     
     if (!isFormValid) {
@@ -135,6 +157,7 @@ function commentPost(req,res,next){
             return res.status(401).end('Cannot comment a post for different account');
         }
 
+
         Post.findOne({_id:req.params.id}).then(post => {
             if(!post){
                 return res.status(200).json({
@@ -181,8 +204,24 @@ async function getPopularFromAllPost(req,res,next){
 
         let resPosts = [];
 
-        for(let post of posts){ 
-            let comments = await Comment.find({post:post}).limit(3).exec();
+        for(let post of posts){
+            let allComments = await Comment.find({post:post}).limit(3).exec();
+            
+            // sort the comments 
+            let comments = [];
+            let ownComments = [];
+            for(let comment of allComments){
+                if(comment.creator === req.params.username){
+                    ownComments.push(comment);
+                }
+                else{
+                    comments.push(comment);
+                }
+            }
+
+            let isLikedQ = await UserLike.find({post_id:post._id,username:req.params.username});
+            let isLiked = isLikedQ[0] === undefined ? false : true;
+
             let newPost = {
                 _id:post._id,
                 creator: post.creator,
@@ -190,7 +229,9 @@ async function getPopularFromAllPost(req,res,next){
                 description: post.description,
                 likesCount: post.likesCount,
                 likesUsers: post.likesUsers,
-                comments: comments
+                comments: comments,
+                ownComments:ownComments,
+                isLiked: isLiked
             }
 
             resPosts.push(newPost);
@@ -203,8 +244,84 @@ async function getPopularFromAllPost(req,res,next){
     })
 }
 
+function likePost(req,res,next){
+    const validationResult = validateLikePost({username:req.body.username})
+    if (!validationResult.success) {
+        return res.status(200).json({
+            success: false,
+            messege: validationResult.messege,
+            errors: validationResult.errors
+        })
+    }
+
+    User.findOne({username:req.body.username}).then(async (user) => {
+        if(!user){
+            return res.status(200).json({
+                success:false,
+                messege: 'The user trying to comment a post is not valid.'
+            })
+        }
+
+        const tempToken = jwt.sign(user.id,'s0m3 r4nd0m str1ng')
+
+        //check if user is the one from the username's user id
+        if(tempToken !== req.headers.token){
+            return res.status(401).end('Cannot comment a post for different account');
+        }
+
+        Post.findOne({_id:req.params.id}).then(async (post) => {
+            if(!post){
+                return res.status(200).json({
+                    success:false,
+                    messege: 'Cannot like a post that does not exist.'
+                })
+            }
+
+            let isAlreadyLiked = await UserLike.findOne({uniqueCombo:`${post._id}${user.username}`});
+            
+            // like it now
+            if(!isAlreadyLiked){
+                post.likesCount++;
+                post.save();
+
+                new UserLike({post_id:post._id,username:user.username,uniqueCombo:`${post._id}${user.username}`}).save().then(userLike => {
+                    return res.status(200).json({
+                        success:true,
+                        messege: 'Post liked.'
+                    })
+                }).catch(err => {
+                    console.log(err);
+                    return res.status(200).json({
+                        success:false,
+                        messege:'internal error. Could not add user to user likes.'
+                    })
+                })
+            }
+            //unlike it now
+            else{
+                post.likesCount--;
+                post.save();
+
+                UserLike.find({post_id:post._id,username:user.username}).remove().exec().then(() => {
+                    return res.status(200).json({
+                        success:true,
+                        messege: 'Post unliked.'
+                    })
+                }).catch(err => {
+                    console.log(err);
+                    return res.status(200).json({
+                        success:false,
+                        messege:'internal error. Could not remove user from user likes.'
+                    })
+                })
+            }
+        })
+    })
+}
+
 module.exports = {
     createPost,
     getPopularFromAllPost,
-    commentPost
+    commentPost,
+    likePost
 }
