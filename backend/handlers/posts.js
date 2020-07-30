@@ -193,7 +193,7 @@ async function getPopularFromAllPost(req,res,next){
     let limit = stopIndex - startIndex;
     if(limit === 0) limit = 1;
 
-    Post.find().skip(startIndex).limit(limit).sort({likesCount:'asc'}).exec(async (err,posts) => {
+    Post.find().skip(startIndex).limit(limit).sort({likesCount:'desc'}).exec(async (err,posts) => {
         if(err){
             console.log(err);
             return res.status(200).json({

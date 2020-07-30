@@ -11,10 +11,6 @@ export const ADD_POSTS_HOME = (posts:Array<IPost>):AppActions => ({
     }
 })
 
-export const INCREMENT_POST_INDEX = ():AppActions => ({
-    type: 'SET_POST_INDEX_INCREMENT',
-})
-
 export const CALL_POST_LOADING = ():AppActions => ({
     type: 'SET_POST_LOADING',
 });

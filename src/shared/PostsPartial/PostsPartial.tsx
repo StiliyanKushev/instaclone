@@ -9,12 +9,12 @@ import { WindowScroller, List, AutoSizer, CellMeasurer, CellMeasurerCache, Infin
 // IMPORT REDUX RELETED
 import { connect } from 'react-redux';
 import { ADD_POSTS_HOME } from '../../actions/postActions';
+import { AppState, ReduxProps } from '../../reducers';
 
 // OTHER
 import Post from '../Post/Post';
 import { getNewPostsChunk } from '../../handlers/post';
 import { IPostsChunkResponse } from '../../types/response';
-import { AppState, ReduxProps } from '../../reducers';
 
 interface IParentProps {
     token: string,
@@ -26,13 +26,13 @@ export interface IPostComment {
 }
 export interface IPost {
     postIndex:number,
-    creator: string,
-    _id: string,
-    description: string,
+    creator:string,
+    _id:string,
+    description:string,
     isLiked:boolean,
-    likesCount: number,
+    likesCount:number,
     source:{
-        data: any,
+        data:any,
         contentType:string,
     },
     comments: Array<IPostComment>,
@@ -95,6 +95,7 @@ class PostsPartial extends React.PureComponent<IProps>{
                 {({ measure, registerChild }: any) => (
                     <div className={styles.paddingContainer} ref={registerChild} style={style}>
                         <Post
+                            postIndex={index}
                             isLoaded={this.isRowLoaded({index})}
                             measure={measure}
                             postData={this.props.post?.homePosts[index]}

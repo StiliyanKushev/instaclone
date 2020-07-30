@@ -7,7 +7,6 @@ export interface IPostState {
     isPostLoading:boolean,
     isPostUploaded:boolean,
     homePosts:Array<IPost>,
-    latestIndex:number,
 }
 
 const userState:IPostState = {
@@ -16,11 +15,6 @@ const userState:IPostState = {
     isPostLoading:false,
     isPostUploaded:false,
     homePosts:[],
-    latestIndex:0, 
-    // A post will fetch this and save it when loaded.
-    // Then it will be incremented and be ready for the next post.
-    // This way the post component knows it's index and we can create this 2 way connection,
-    // between the component and the redux store.
 }
 
 const postReducer = (state = userState, action:postActionTypes) => {
@@ -107,13 +101,6 @@ const postReducer = (state = userState, action:postActionTypes) => {
             return {
                 ...state,
                 homePosts: [...state.homePosts, ...action.payload.posts]
-            } as IPostState
-        }
-
-        case 'SET_POST_INDEX_INCREMENT':{
-            return {
-                ...state,
-                latestIndex: state.latestIndex + 1,
             } as IPostState
         }
 
