@@ -11,7 +11,7 @@ import { Segment, Image, Header, Menu, Item, Icon, Form, Button, Placeholder, Pl
 import { AppState, ReduxProps } from '../../reducers';
 import { connect } from 'react-redux';
 import { AppActions } from '../../actions/types/actions';
-import { COMMENT_POST,LIKE_POST } from '../../actions/postActions';
+import { COMMENT_POST,LIKE_POST,TOGGLE_FULL_POST_VIEW } from '../../actions/postActions';
 import { ThunkDispatch } from 'redux-thunk';
 import {bindActionCreators} from 'redux';
 
@@ -120,37 +120,32 @@ class Post extends React.PureComponent<IProps,IState> {
                 </div>
                 
                 <Segment className={styles.bottomSegment} attached='bottom'>
-                    <>
-                        <Menu className={styles.postMenu}>
-                            <Item className='left'>
-                                <Icon onClick={this.handleLike.bind(this)} className={`${styles.iconBtn} heart ${this.props.post.homePosts[this.props.postIndex].isLiked ? '' : 'outline'}`} size='big'></Icon>
-                                <Icon className={styles.iconBtn} size='big' name='comment outline'></Icon>
-                                <Icon className={styles.iconBtn} size='big' name='paper plane outline'></Icon>
-                            </Item>
-                            <Item className='right'>
-                                <Icon className={styles.iconBtn} size='big' name='bookmark outline'></Icon>
-                            </Item>
-                        </Menu>
-                    </>
+                    <Menu className={styles.postMenu}>
+                        <Item className='left'>
+                            <Icon onClick={this.handleLike.bind(this)} id={!this.props.post.homePosts[this.props.postIndex].isLiked ? `${styles.likeOutline}` : ''} className={`${styles.likeBtn} ${styles.iconBtn} heart ${this.props.post.homePosts[this.props.postIndex].isLiked ? '' : 'outline'}`} size='big'></Icon>                                
+                            <Icon className={styles.iconBtn} size='big' name='comment outline'></Icon>
+                            <Icon className={styles.iconBtn} size='big' name='paper plane outline'></Icon>
+                        </Item>
+                        <Item className='right'>
+                            <Icon className={styles.iconBtn} size='big' name='bookmark outline'></Icon>
+                        </Item>
+                    </Menu>
                     <Header className={styles.likes} size='tiny'>{this.props.post.homePosts[this.props.postIndex].likesCount} likes</Header>
                     <Header className={styles.description} size='tiny'>
                         <Header size='tiny' className={styles.commentUsername} as='span'>{this.props.postData.creator}</Header>
                         <Header className={styles.commentText} as='span' size='tiny'> {this.props.postData.description}</Header>
                     </Header>
-                    <Link to='#'>
-                        <Header className={styles.viewAllComments} size='tiny' disabled>View all comments</Header>
-                    </Link>
+                    <Header onClick={() => this.props.toggleFullView(this.props.postIndex)} className={styles.viewAllComments} size='tiny' disabled>View all comments</Header>
                     {
-                        //backend will return the first 3-4 messeges only
+                        // backend will return the first 3-4 messeges only (own comments + other comments)
                         this.props.post.homePosts[this.props.postIndex].ownComments.map((comment:any,index) => (
                             <Header key={index} className={styles.description} size='tiny'>
                                 <Header size='tiny' className={styles.commentUsername} as='span'>{this.props.auth?.username}</Header>
                                 <Header className={styles.commentText} as='span' size='tiny'> {comment.content}</Header>
                             </Header>
                         ))
-                    }
+                    } 
                     {
-                        //backend will return the first 3-4 messeges only
                         this.props.postData.comments.map((comment:any,index) => (
                             <Header key={index} className={styles.description} size='tiny'>
                                 <Header size='tiny' className={styles.commentUsername} as='span'>{comment.creator}</Header>
@@ -185,11 +180,13 @@ const mapStateToProps = (state:AppState):ReduxProps => ({
 interface DispatchProps {
     like:(postIndex:number,postId:string,username:string,token:string) => void
     comment: (postIndex:number,postId: string, username: string, comment: string, token: string) => void,
+    toggleFullView:(postIndex:number) => void
 }
 
 const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
     comment:bindActionCreators(COMMENT_POST,dispatch),
     like:bindActionCreators(LIKE_POST,dispatch),
+    toggleFullView:bindActionCreators(TOGGLE_FULL_POST_VIEW,dispatch),
 })
 
 export default React.memo(connect(mapStateToProps,mapDispatchToProps)(Post as ComponentType<any>));

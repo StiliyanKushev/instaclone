@@ -31,6 +31,14 @@
             transition-duration: 300ms;
 }
 
+.likeBtn{
+    color:red;
+}
+
+#likeOutline{
+    color: rgba(0,0,0,.87) !important;
+}
+
 .iconBtn:hover{
     -webkit-transform: scale(1.2);
         -ms-transform: scale(1.2);
@@ -38,7 +46,9 @@
 }
 
 .viewAllComments{
+    cursor: pointer;
     margin-top: 0rem !important;
+    margin-bottom: 9px !important;
 }
 
 .commentUsername{
@@ -57,7 +67,8 @@
 }
 
 .likes{
-    margin-top: 0.2rem !important;
+    font-size: 1.1rem !important;
+    margin-top: -1rem !important;
     margin-bottom: .5rem !important;
     color: rgb(55,55,55) !important;
 }

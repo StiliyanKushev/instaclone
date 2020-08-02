@@ -23,6 +23,7 @@ import { validatePostCreate } from '../../validators/post';
 import $ from 'jquery';
 import _ from 'lodash';
 import { settings } from '../../settings';
+import FullViewPost from '../FullViewPost/FullViewPost'
 import PostsPartial from '../../shared/PostsPartial/PostsPartial';
 import { IValidationResult, IValidationResultErrors } from '../../types/form-validation';
 
@@ -34,7 +35,7 @@ export interface IHomeState {
 }
 
 class HomeView extends React.Component<IProps, IHomeState>{
-    state: IHomeState = {postDescription: '', errors: {} }
+    state: IHomeState = {postDescription: '', errors: {}}
     
     private formData: FormData = new FormData();
 
@@ -101,6 +102,9 @@ class HomeView extends React.Component<IProps, IHomeState>{
     public render() {
         return (
             <div className='view-container'>
+                {
+                    this.props.post?.fullViewToggled && <FullViewPost postIndex={this.props.post?.fullViewPostIndex}/>
+                }
                 <Container>
                     <Grid id={styles.gridID} className={styles.grid}>
                         <Grid.Column id={styles.firstColumn} width='9'>

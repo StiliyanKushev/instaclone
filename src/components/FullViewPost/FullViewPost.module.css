@@ -1,0 +1,43 @@
+.dimmer{
+    position: fixed !important;
+    top:0;
+    left:0;
+}
+
+#closeIcon{
+    color:white !important;
+    position: fixed !important;
+    right: 30px;
+    top: 30px;
+    cursor: pointer;
+}
+
+.container{
+    width:100vw;
+    height: 100vh;
+
+    overflow-y: scroll;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.innerContainer{
+    margin: 2.5rem;
+}
+
+@media screen and (max-height:660px){
+    .container{
+        display:block;
+    }
+
+    .innerContainer{
+        margin-left: 2.8rem;
+        margin-top: 4rem;
+    }
+
+    #closeIcon{
+        right: 10px !important;
+        top: 10px !important;
+    }
+}

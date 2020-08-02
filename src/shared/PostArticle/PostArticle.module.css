@@ -1,0 +1,221 @@
+.article{
+    height: 40rem !important;
+    background: white !important;
+}
+
+.grid{
+    height: 40rem !important;
+}
+
+.row{
+    height: 40rem !important;
+    padding: 0rem !important;
+    display: flex !important;
+    justify-content: space-around !important;
+}
+
+.leftCol{
+    max-height: 40rem !important;
+    padding: 0rem !important;
+    display: flex !important;
+    align-items: center !important;
+    background: black !important;
+    width:60%;
+}
+
+.rightCol{
+    width: 40%;
+    padding: 0rem !important;
+    box-sizing: border-box;
+}
+
+.postImage{
+    max-height: 40rem !important;
+    object-fit: cover !important;
+}
+
+.profileSegmentInternal{
+    width: calc(100% - 13px) !important;
+
+    padding: .5rem !important;
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+    display: flex !important;
+    /* justify-content: space-around !important; */
+    -webkit-box-align: center !important;
+        -ms-flex-align: center !important;
+            align-items: center !important;
+}
+
+.verySmallImg{
+    width:40px !important;
+    height:40px !important;
+}
+
+.headerName{
+    margin-left: 1rem !important;
+    margin-top: 0rem !important;
+}
+
+.postMenu{
+    margin-top: 0rem !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin-bottom: 0.3rem;
+    width: 100% !important;
+}
+
+.postMenu > *::before{
+    content:none !important;
+}
+
+.iconBtn{
+    cursor: pointer;
+    font-size: 1.8em !important;
+    -webkit-transition-duration: 300ms;
+         -o-transition-duration: 300ms;
+            transition-duration: 300ms;
+}
+
+.iconBtn:hover{
+    -webkit-transform: scale(1.2);
+        -ms-transform: scale(1.2);
+            transform: scale(1.2);
+}
+
+.actionSegment{
+    padding: 0rem !important;
+    width: calc(100% - 14px) !important;
+    margin-top: 0rem !important;
+}
+
+.likes{
+    width: calc(100% - 14px) !important;
+    text-align: left !important;
+    padding-left: 1.3rem !important;
+    margin-top: 0rem !important;
+    margin-bottom: 1rem !important;
+    font-size: 1.1rem !important;
+}
+
+.commentField{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+    height: 2.6rem;
+}
+
+.commentInput{
+    width: 70%;
+}
+
+.commentInput input{
+    padding-left: 0rem !important;
+    padding-right: 0rem !important;
+    border: none !important;
+}
+
+.commentSubmit{
+    background-color: transparent !important;
+    margin-left: 1rem !important;
+    color:#0095F6 !important;
+    padding: 0rem !important;
+}
+
+.commentForm{
+    margin-top: 1rem;
+}
+
+.commentSegment{
+    padding-top: 0.3rem !important;
+    width: calc(100% - 13px) !important;
+}
+
+.commentsContainer{
+    height: 60% !important;
+    width: calc(100% - 14px) !important;
+    /* padding: 7px !important;
+    padding-top: 25px !important; */
+    padding: 0rem 7px !important;
+    outline: none !important;
+}
+
+.commentsContainer *{
+    outline: none !important;
+}
+
+.commentItemContainer{
+    padding: 1rem 0rem !important;
+    display: flex !important;
+    width: 100% !important;
+}
+
+.commentItemContainer > div{
+    display: flex!important;
+}
+
+.commentItemContainer > div > img{
+    height: 40px !important;
+    min-width: 40px !important;
+    border: 1px solid rgba(1,1,1,0.4) !important;
+}
+
+.commentItemHeader{
+    font-size: 15px !important;
+    font-weight: 100 !important;
+    /* width: 89% !important; */
+    width: auto !important;
+    margin: auto !important;
+    margin-left: 1rem !important;
+    text-align: left !important;
+}
+
+.commentItemHeader span{
+    font-size: 16px !important;
+    font-weight: bold !important;
+    margin-right: 5px !important;
+}
+
+.commentItemBtns{
+    display: flex !important;
+    align-items: center !important;
+    margin-top: 10px !important;
+    padding-left: 1rem !important;
+    font-size: .7rem !important;
+}
+
+.commentItemBtns > *{
+    margin: 0rem !important;
+    cursor: pointer;
+}
+
+.commentItemReply{
+    margin-left: 2.5rem !important;
+}
+
+
+.commentItemContainer > i{
+    margin-left: 10px !important;
+    position: relative !important;
+    bottom: -15px !important;
+    cursor: pointer !important;
+}
+
+.commentsList::-webkit-scrollbar{
+    width: 0px;
+}
+
+.commentItemLeftSide{
+    width:90% !important;
+}
+
+.likeBtn{
+    color:red;
+}
+
+#likeOutline{
+    color: rgba(0,0,0,.87) !important;
+}

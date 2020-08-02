@@ -53,12 +53,48 @@ export const CALL_POST_LIKE_SUCCESS = (postIndex:number, messege:string):AppActi
     }
 });
 
+export const CALL_FULL_POST_LIKE_FAILURE = (messege:string):AppActions => ({
+    type: 'SET_FULL_POST_LIKE_FAILURE',
+    payload:{
+        messege
+    }
+});
+
+export const CALL_FULL_POST_LIKE_SUCCESS = (messege:string):AppActions => ({
+    type: 'SET_FULL_POST_LIKE_SUCCESS',
+    payload:{
+        messege,
+    }
+});
+
 export const CALL_POST_COMMENT_FAILURE = (messege:string):AppActions => ({
     type: 'SET_POST_COMMENT_FAILURE',
     payload:{
         messege
     }
 });
+
+export const CALL_TOGGLE_FULL_POST_VIEW = (postIndex?:number):AppActions => ({
+    type: 'SET_TOGGLE_FULL_POST_VIEW',
+    payload: {
+        postIndex: postIndex
+    }
+})
+
+export const CALL_FULL_POST_DATA_VIEW = (postData:IPost):AppActions => ({
+    type: 'SET_FULL_POST_DATA_VIEW',
+    payload: {
+        postData: postData
+    }
+})
+
+export const SET_FULL_POST_DATA_VIEW = (postData:IPost) => (dispatch:Dispatch<AppActions>) => {
+    dispatch(CALL_FULL_POST_DATA_VIEW(postData));
+}
+
+export const TOGGLE_FULL_POST_VIEW = (postIndex?:number) => (dispatch:Dispatch<AppActions>) => {
+    dispatch(CALL_TOGGLE_FULL_POST_VIEW(postIndex));
+}
 
 export const UPLOAD_POST = (form:FormData,username:string,token:string) => (dispatch:Dispatch<AppActions>) => {
     dispatch(CALL_POST_LOADING());
@@ -86,7 +122,7 @@ export const COMMENT_POST = (postIndex:number,postId:string,username:string,comm
     });
 }
 
-export const LIKE_POST = (postIndex:number,postId:string,username:string,token:string) => (dispatch:Dispatch<AppActions>):Promise<IGenericResponse> => {
+export const LIKE_POST = (postIndex:number,postId:string,username:string,token:string) => (dispatch:Dispatch<AppActions>) => {
     let promise:Promise<IGenericResponse> = likePost(postId,username,token);
     promise.then((res:IGenericResponse) => {
         if(res.success){
@@ -96,6 +132,21 @@ export const LIKE_POST = (postIndex:number,postId:string,username:string,token:s
             dispatch(CALL_POST_LIKE_FAILURE(res.messege));
         }
     });
+}
 
-    return promise;
+export const LIKE_FULL_POST = (postId?:string,username?:string,token?:string) => (dispatch:Dispatch<AppActions>) => {
+    if(!postId || !username || !token){
+        dispatch(CALL_FULL_POST_LIKE_SUCCESS('Full post liked.'));
+    }
+    else {
+        let promise:Promise<IGenericResponse> = likePost(postId,username,token);
+        promise.then((res:IGenericResponse) => {
+            if(res.success){
+                dispatch(CALL_FULL_POST_LIKE_SUCCESS(res.messege));
+            }
+            else{
+                dispatch(CALL_FULL_POST_LIKE_FAILURE(res.messege));
+            }
+        });
+    }
 }

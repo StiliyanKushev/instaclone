@@ -22,7 +22,7 @@ interface IParentProps {
 
 export interface IPostComment {
     content:string,
-    creator:string
+    creator?:string
 }
 export interface IPost {
     postIndex:number,
@@ -36,7 +36,7 @@ export interface IPost {
         contentType:string,
     },
     comments: Array<IPostComment>,
-    ownComments: Array<{content:string}>, //this doesnt need a creator prop
+    ownComments: Array<IPostComment>, //this doesnt need a creator prop
 }
 
 export interface IPostsPartialState {
@@ -117,8 +117,8 @@ class PostsPartial extends React.PureComponent<IProps>{
                     isRowLoaded={this.isRowLoaded}
                     loadMoreRows={this.fetchPosts}
                     rowCount={this.rowCount}
-                    minimumBatchSize={15}
-                    threshold={10}
+                    minimumBatchSize={10}
+                    threshold={6}
                 >
                     {({ onRowsRendered, registerChild }: InfiniteLoaderChildProps) => (
                         <WindowScroller>
