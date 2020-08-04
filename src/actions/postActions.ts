@@ -38,6 +38,29 @@ export const CALL_POST_COMMENT_SUCCESS = (postIndex:number,comment:string,messeg
     }
 });
 
+export const CALL_POST_COMMENT_FAILURE = (messege:string):AppActions => ({
+    type: 'SET_POST_COMMENT_FAILURE',
+    payload:{
+        messege
+    }
+});
+
+export const CALL_FULL_POST_COMMENT_SUCCESS = (username:string,comment:string,messege:string):AppActions => ({
+    type: 'SET_FULL_POST_COMMENT_SUCCESS',
+    payload:{
+        messege,
+        comment,
+        username
+    }
+});
+
+export const CALL_FULL_POST_COMMENT_FAILURE = (messege:string):AppActions => ({
+    type: 'SET_FULL_POST_COMMENT_FAILURE',
+    payload:{
+        messege
+    }
+});
+
 export const CALL_POST_LIKE_FAILURE = (messege:string):AppActions => ({
     type: 'SET_POST_LIKE_FAILURE',
     payload:{
@@ -64,13 +87,6 @@ export const CALL_FULL_POST_LIKE_SUCCESS = (messege:string):AppActions => ({
     type: 'SET_FULL_POST_LIKE_SUCCESS',
     payload:{
         messege,
-    }
-});
-
-export const CALL_POST_COMMENT_FAILURE = (messege:string):AppActions => ({
-    type: 'SET_POST_COMMENT_FAILURE',
-    payload:{
-        messege
     }
 });
 
@@ -109,10 +125,28 @@ export const UPLOAD_POST = (form:FormData,username:string,token:string) => (disp
     });
 }
 
+export const COMMENT_FULL_POST = (comment:string,username:string,postId?:string,token?:string) => (dispatch:Dispatch<AppActions>) => {
+    if(!postId || !token){
+        dispatch(CALL_FULL_POST_COMMENT_SUCCESS(username,comment,'Full post commented.'));
+    }
+    else{
+        dispatch(CALL_POST_LOADING());
+        commentPost(postId,comment,username,token).then((res:IGenericResponse) => {
+            if(res.success){
+                dispatch(CALL_FULL_POST_COMMENT_SUCCESS(username,comment,res.messege));
+            }
+            else{
+                dispatch(CALL_FULL_POST_COMMENT_FAILURE(res.messege));
+            }
+        });
+    }
+}
+
 export const COMMENT_POST = (postIndex:number,postId:string,username:string,comment:string,token:string) => (dispatch:Dispatch<AppActions>) => {
     dispatch(CALL_POST_LOADING());
 
-    commentPost(postId,comment,username,token).then((res:IGenericResponse) => {
+    let promise:Promise<IGenericResponse> = commentPost(postId,comment,username,token);
+    promise.then((res:IGenericResponse) => {
         if(res.success){
             dispatch(CALL_POST_COMMENT_SUCCESS(postIndex,comment,res.messege));
         }
@@ -120,6 +154,8 @@ export const COMMENT_POST = (postIndex:number,postId:string,username:string,comm
             dispatch(CALL_POST_COMMENT_FAILURE(res.messege));
         }
     });
+
+    return promise;
 }
 
 export const LIKE_POST = (postIndex:number,postId:string,username:string,token:string) => (dispatch:Dispatch<AppActions>) => {

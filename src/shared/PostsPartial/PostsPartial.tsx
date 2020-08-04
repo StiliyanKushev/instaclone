@@ -98,7 +98,6 @@ class PostsPartial extends React.PureComponent<IProps>{
                             postIndex={index}
                             isLoaded={this.isRowLoaded({index})}
                             measure={measure}
-                            postData={this.props.post?.homePosts[index]}
                         />
                     </div>
                 )}
@@ -139,7 +138,7 @@ class PostsPartial extends React.PureComponent<IProps>{
                                                 rowHeight={this.cache.rowHeight}
                                                 rowRenderer={this.renderRow}
                                                 rowCount={this.rowCount}
-                                                overscanRowCount={1}
+                                                overscanRowCount={3}
                                             />
                                         )
                                     }

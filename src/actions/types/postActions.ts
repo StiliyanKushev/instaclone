@@ -5,6 +5,8 @@ const SET_POST_UPLOAD_FAILURE = 'SET_POST_UPLOAD_FAILURE';
 const SET_POST_COMMENT_SUCCESS = 'SET_POST_COMMENT_SUCCESS';
 const SET_TOGGLE_FULL_POST_VIEW = 'SET_TOGGLE_FULL_POST_VIEW';
 const SET_POST_COMMENT_FAILURE = 'SET_POST_COMMENT_FAILURE';
+const SET_FULL_POST_COMMENT_SUCCESS = 'SET_FULL_POST_COMMENT_SUCCESS';
+const SET_FULL_POST_COMMENT_FAILURE = 'SET_FULL_POST_COMMENT_FAILURE';
 const SET_FULL_POST_DATA_VIEW = 'SET_FULL_POST_DATA_VIEW';
 const SET_POST_LIKE_SUCCESS = 'SET_POST_LIKE_SUCCESS';
 const SET_POST_LIKE_FAILURE = 'SET_POST_LIKE_FAILURE';
@@ -38,6 +40,20 @@ export interface setPostCommentSuccess {
 }
 export interface setPostCommentFailure {
     type: typeof SET_POST_COMMENT_FAILURE,
+    payload:{
+        messege:string
+    }
+}
+export interface setFullPostCommentSuccess {
+    type: typeof SET_FULL_POST_COMMENT_SUCCESS,
+    payload:{
+        messege:string,
+        comment:string,
+        username:string
+    }
+}
+export interface setFullPostCommentFailure {
+    type: typeof SET_FULL_POST_COMMENT_FAILURE,
     payload:{
         messege:string
     }
@@ -94,6 +110,8 @@ setFullPostLikeFailure |
 setToggleFullPostView |
 setPostCommentFailure | 
 setPostCommentSuccess | 
+setFullPostCommentFailure | 
+setFullPostCommentSuccess | 
 setPostUploadFailure | 
 setPostUploadSuccess | 
 setFullPostDataView |

@@ -186,6 +186,27 @@ const postReducer = (state = userState, action:postActionTypes) => {
             } as IPostState
         }
 
+        case 'SET_FULL_POST_COMMENT_SUCCESS':{
+            // add comment to the start of the list (after the description)
+            state.fullViewPostData.commentsList.splice(1, 0,{creator:action.payload.username,content:action.payload.comment} as IPostComment);
+
+            return {
+                ...state,
+                error:false,
+                isPostLoading:false,
+                messege:action.payload.messege
+            } as IPostState
+        }
+
+        case 'SET_FULL_POST_COMMENT_FAILURE':{
+            return {
+                ...state,
+                error:true,
+                isPostLoading:false,
+                messege:action.payload.messege
+            } as IPostState
+        }
+
         default: {
             return {...state};
         }

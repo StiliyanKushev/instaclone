@@ -199,7 +199,7 @@ class PostArticle extends React.PureComponent<IProps,IState> {
                                         ></Form.Input>
                                         <Button
                                             loading={this.props.post?.isPostLoading}
-                                            onClick={() => this.props.handleComment(this.state.comment)}
+                                            onClick={() => { this.props.handleComment(this.state.comment); this.setState({comment:''})}}
                                             className={styles.commentSubmit}
                                             size="medium"
                                             primary

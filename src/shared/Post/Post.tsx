@@ -9,7 +9,7 @@ import { Segment, Image, Header, Menu, Item, Icon, Form, Button, Placeholder, Pl
 
 // IMPORT REDUX RELETED
 import { AppState, ReduxProps } from '../../reducers';
-import { connect } from 'react-redux';
+import { connect, shallowEqual } from 'react-redux';
 import { AppActions } from '../../actions/types/actions';
 import { COMMENT_POST,LIKE_POST,TOGGLE_FULL_POST_VIEW } from '../../actions/postActions';
 import { ThunkDispatch } from 'redux-thunk';
@@ -17,12 +17,10 @@ import {bindActionCreators} from 'redux';
 
 // IMPORT OTHER
 import { settings } from '../../settings';
-import { IPost } from '../PostsPartial/PostsPartial';
 import defaultUserImage from '../../assets/avatar.jpg';
 
 interface IParentProps {
     postIndex:number,
-    postData: IPost,
     isLoaded:boolean,
     measure: () => void,
 }
@@ -36,9 +34,16 @@ interface IState {
 class Post extends React.PureComponent<IProps,IState> {
     public state: IState = { comment:'' }
 
+    public shouldComponentUpdate(nextProps:IProps,nextState:IState){
+        if(shallowEqual(this.props.post?.homePosts[this.props.postIndex],nextProps.post?.homePosts[this.props.postIndex]))
+        return true;
+        
+        return false;
+    }
+
     private handleComment(){
-        if(this.props.auth) // just so es-lint shuts up
-        this.props.comment(this.props.postIndex,this.props.postData._id,this.props.auth?.username,this.state.comment,this.props.auth?.token);
+        if(this.props.auth && this.props.post) // just so es-lint shuts up
+        this.props.comment(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.username,this.state.comment,this.props.auth?.token);
         this.setState({comment:''});
 
         // resize the row size after adding new comment
@@ -46,8 +51,8 @@ class Post extends React.PureComponent<IProps,IState> {
     }
 
     private handleLike(){
-        if(this.props.auth) // just so es-lint shuts up
-        this.props.like(this.props.postIndex,this.props.postData._id,this.props.auth?.username,this.props.auth?.token)
+        if(this.props.auth && this.props.post) // just so es-lint shuts up
+        this.props.like(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.username,this.props.auth?.token)
     }
 
     public render(){
@@ -110,13 +115,13 @@ class Post extends React.PureComponent<IProps,IState> {
         return (
             <div className={styles.container}>
                 <Segment className={styles.profileSegmentInternal} attached='top'>
-                    <Image className={styles.verySmallImg} circular size='tiny' src={`${settings.BASE_URL}/feed/photo/user/${this.props.postData.creator}`}></Image>
-                    <Link to={`/profile/${this.props.postData.creator}`}>
-                        <Header size='small' className={styles.headerName} as='span'>{this.props.postData.creator}</Header>
+                    <Image className={styles.verySmallImg} circular size='tiny' src={`${settings.BASE_URL}/feed/photo/user/${this.props.post?.homePosts[this.props.postIndex].creator}`}></Image>
+                    <Link to={`/profile/${this.props.post?.homePosts[this.props.postIndex].creator}`}>
+                        <Header size='small' className={styles.headerName} as='span'>{this.props.post?.homePosts[this.props.postIndex].creator}</Header>
                     </Link>
                 </Segment>
                 <div className={styles.imageContainer}>
-                    <Image className={styles.image} onLoad={this.props.measure} src={`data:${this.props.postData.source.contentType};base64,${Buffer.from(this.props.postData.source.data).toString('base64')}`} />
+                    <Image className={styles.image} onLoad={this.props.measure} src={`data:${this.props.post?.homePosts[this.props.postIndex].source.contentType};base64,${Buffer.from(this.props.post?.homePosts[this.props.postIndex].source.data).toString('base64')}`} />
                 </div>
                 
                 <Segment className={styles.bottomSegment} attached='bottom'>
@@ -132,8 +137,8 @@ class Post extends React.PureComponent<IProps,IState> {
                     </Menu>
                     <Header className={styles.likes} size='tiny'>{this.props.post.homePosts[this.props.postIndex].likesCount} likes</Header>
                     <Header className={styles.description} size='tiny'>
-                        <Header size='tiny' className={styles.commentUsername} as='span'>{this.props.postData.creator}</Header>
-                        <Header className={styles.commentText} as='span' size='tiny'> {this.props.postData.description}</Header>
+                        <Header size='tiny' className={styles.commentUsername} as='span'>{this.props.post?.homePosts[this.props.postIndex].creator}</Header>
+                        <Header className={styles.commentText} as='span' size='tiny'> {this.props.post?.homePosts[this.props.postIndex].description}</Header>
                     </Header>
                     <Header onClick={() => this.props.toggleFullView(this.props.postIndex)} className={styles.viewAllComments} size='tiny' disabled>View all comments</Header>
                     {
@@ -146,7 +151,7 @@ class Post extends React.PureComponent<IProps,IState> {
                         ))
                     } 
                     {
-                        this.props.postData.comments.map((comment:any,index) => (
+                        this.props.post?.homePosts[this.props.postIndex].comments.map((comment:any,index) => (
                             <Header key={index} className={styles.description} size='tiny'>
                                 <Header size='tiny' className={styles.commentUsername} as='span'>{comment.creator}</Header>
                                 <Header className={styles.commentText} as='span' size='tiny'> {comment.content}</Header>

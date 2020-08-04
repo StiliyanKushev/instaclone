@@ -2,7 +2,7 @@
 import styles from './FullViewPost.module.css';
 
 // IMPORT REACT RELETED
-import React from 'react';
+import React, { ComponentType } from 'react';
 import { Dimmer, Icon } from 'semantic-ui-react';
 
 // IMPORT REDUX RELTED
@@ -11,12 +11,13 @@ import { AppActions } from '../../actions/types/actions';
 import { ThunkDispatch } from 'redux-thunk';
 import {bindActionCreators} from 'redux';
 import { AppState, ReduxProps } from '../../reducers';
-import { TOGGLE_FULL_POST_VIEW,SET_FULL_POST_DATA_VIEW, COMMENT_POST, LIKE_POST, LIKE_FULL_POST } from '../../actions/postActions';
+import { TOGGLE_FULL_POST_VIEW,SET_FULL_POST_DATA_VIEW, COMMENT_POST, LIKE_POST, LIKE_FULL_POST, COMMENT_FULL_POST } from '../../actions/postActions';
 
 // IMPORT OTHER
 import $ from 'jquery';
 import { IPost } from '../../shared/PostsPartial/PostsPartial';
 import PostArticle from '../../shared/PostArticle/PostArticle';
+import IGenericResponse from '../../types/response';
 
 interface IParentProps {
     postIndex:number,
@@ -47,7 +48,14 @@ class FullViewPost extends React.PureComponent<IProps>{
     }
 
     private handleComment(comment:string){
-        //todo
+        if(this.props.auth && this.props.post){ // just so es-lint shuts up
+            this.props.comment(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.username,comment,this.props.auth?.token)
+            .then(() => {
+                if(this.props.auth)
+                this.props.commentFullView(comment,this.props.auth?.username);
+            });
+        }
+        this.setState({comment:''});
     }
     
     public render(){
@@ -77,15 +85,22 @@ interface DispatchProps {
     setFullViewPostData:(PostData:IPost) => void,
     like:(postIndex:number,postId:string,username:string,token:string) => void,
     likeFullView:() => void,
-    comment: (postIndex:number,postId: string, username: string, comment: string, token: string) => void,
+    comment: (postIndex:number,postId: string, username: string, comment: string, token: string) => Promise<IGenericResponse>,
+    commentFullView:(comment:string,username:string) => void
 }
 
-const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
+// mapDispatchToProps does not recognise Promise so I have to give it void
+interface DispatchPropsFixedPromise {
+    comment: (postIndex:number,postId: string, username: string, comment: string, token: string) => void
+}
+
+const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps | DispatchPropsFixedPromise => ({
     toggleFullView:bindActionCreators(TOGGLE_FULL_POST_VIEW,dispatch),
     setFullViewPostData:bindActionCreators(SET_FULL_POST_DATA_VIEW,dispatch),
     comment:bindActionCreators(COMMENT_POST,dispatch),
+    commentFullView:bindActionCreators(COMMENT_FULL_POST,dispatch),
     like:bindActionCreators(LIKE_POST,dispatch),
     likeFullView:bindActionCreators(LIKE_FULL_POST,dispatch)
 })
 
-export default connect(mapStateToProps,mapDispatchToProps)(FullViewPost);
+export default connect(mapStateToProps,mapDispatchToProps)(FullViewPost as ComponentType<any>);
