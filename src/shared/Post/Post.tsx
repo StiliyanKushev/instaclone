@@ -9,7 +9,7 @@ import { Segment, Image, Header, Menu, Item, Icon, Form, Button, Placeholder, Pl
 
 // IMPORT REDUX RELETED
 import { AppState, ReduxProps } from '../../reducers';
-import { connect, shallowEqual } from 'react-redux';
+import { connect } from 'react-redux';
 import { AppActions } from '../../actions/types/actions';
 import { COMMENT_POST,LIKE_POST,TOGGLE_FULL_POST_VIEW } from '../../actions/postActions';
 import { ThunkDispatch } from 'redux-thunk';
@@ -33,13 +33,6 @@ interface IState {
 
 class Post extends React.PureComponent<IProps,IState> {
     public state: IState = { comment:'' }
-
-    public shouldComponentUpdate(nextProps:IProps,nextState:IState){
-        if(shallowEqual(this.props.post?.homePosts[this.props.postIndex],nextProps.post?.homePosts[this.props.postIndex]))
-        return true;
-        
-        return false;
-    }
 
     private handleComment(){
         if(this.props.auth && this.props.post) // just so es-lint shuts up
@@ -71,8 +64,6 @@ class Post extends React.PureComponent<IProps,IState> {
 
                         </PlaceholderImage>
                     </Placeholder>
-                    {/* <Image onLoad={this.props.measure} src={`${settings.BASE_URL}/feed/photo/post/${this.props.post._id}`} className={styles.image}></Image> */}
-                    {/* <Image onLoad={this.props.measure} src={`data:${this.props.post.source.contentType};base64,${Buffer.from(this.props.post.source.data).toString('base64')}`} /> */}
                 </div>
                 
                 <Segment className={styles.bottomSegment} attached='bottom'>
@@ -121,7 +112,7 @@ class Post extends React.PureComponent<IProps,IState> {
                     </Link>
                 </Segment>
                 <div className={styles.imageContainer}>
-                    <Image className={styles.image} onLoad={this.props.measure} src={`data:${this.props.post?.homePosts[this.props.postIndex].source.contentType};base64,${Buffer.from(this.props.post?.homePosts[this.props.postIndex].source.data).toString('base64')}`} />
+                    <Image onLoad={this.props.measure} className={styles.image}  src={`data:${this.props.post?.homePosts[this.props.postIndex].source.contentType};base64,${Buffer.from(this.props.post?.homePosts[this.props.postIndex].source.data).toString('base64')}`} />
                 </div>
                 
                 <Segment className={styles.bottomSegment} attached='bottom'>

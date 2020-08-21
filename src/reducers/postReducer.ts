@@ -4,6 +4,17 @@ import { postActionTypes } from "../actions/types/postActions";
 export type IFullViewPostCommentList = Array<IPostComment & {isDescription?:boolean}>;
 export type IFullViewPostData = IPost & {commentsList:IFullViewPostCommentList};
 
+export interface IPostState {
+    error:boolean,
+    messege:string,
+    isPostLoading:boolean,
+    isPostUploaded:boolean,
+    homePosts:Array<IPost>,
+    fullViewToggled:boolean,
+    fullViewPostData:IFullViewPostData,
+    fullViewPostIndex:number,
+}
+
 // doing this so there are no run time errors on inital render (before setting the data in the componentDidMount in some cases)
 const emptyFullViewPostData: IFullViewPostData = {
     postIndex:0,
@@ -20,17 +31,6 @@ const emptyFullViewPostData: IFullViewPostData = {
     ownComments:[],
     commentsList:[],
 };
-
-export interface IPostState {
-    error:boolean,
-    messege:string,
-    isPostLoading:boolean,
-    isPostUploaded:boolean,
-    homePosts:Array<IPost>,
-    fullViewToggled:boolean,
-    fullViewPostData:IFullViewPostData,
-    fullViewPostIndex:number,
-}
 
 const userState:IPostState = {
     error:false,

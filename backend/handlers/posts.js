@@ -277,14 +277,14 @@ function likePost(req,res,next){
                 })
             }
 
-            let isAlreadyLiked = await UserLike.findOne({uniqueCombo:`${post._id}${user.username}`});
+            let isAlreadyLiked = await UserLike.findOne({post_id:post._id,username:user.username});
             
             // like it now
             if(!isAlreadyLiked){
                 post.likesCount++;
                 post.save();
 
-                new UserLike({post_id:post._id,username:user.username,uniqueCombo:`${post._id}${user.username}`}).save().then(userLike => {
+                new UserLike({post_id:post._id,username:user.username}).save().then(userLike => {
                     return res.status(200).json({
                         success:true,
                         messege: 'Post liked.'

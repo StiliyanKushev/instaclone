@@ -117,10 +117,12 @@ class PostsPartial extends React.PureComponent<IProps>{
                     loadMoreRows={this.fetchPosts}
                     rowCount={this.rowCount}
                     minimumBatchSize={10}
-                    threshold={6}
+                    threshold={15}
                 >
                     {({ onRowsRendered, registerChild }: InfiniteLoaderChildProps) => (
-                        <WindowScroller>
+                        <WindowScroller
+                            scrollingResetTimeInterval={10}
+                        >
                             {({ height, isScrolling, onChildScroll, scrollTop }) => (
                                 <AutoSizer disableHeight>
                                     {
