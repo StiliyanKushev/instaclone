@@ -186,6 +186,31 @@ function commentPost(req,res,next){
     })
 }
 
+async function getCommentsFromPost(req,res,next){
+    let startIndex = Number(req.params.startIndex);
+    let stopIndex = Number(req.params.stopIndex);
+
+    let postId = req.params.id;
+
+    let limit = stopIndex - startIndex;
+    if(limit === 0) limit = 1;
+
+    Comment.find({post:postId}).skip(startIndex).limit(limit).exec(async (err,commnents) => {
+        if(err){
+            console.log(err);
+            return res.status(200).json({
+                success:false,
+                comments:[]
+            })
+        }
+
+        return res.status(200).json({
+            success:true,
+            comments:commnents
+        })
+    })
+}
+
 async function getPopularFromAllPost(req,res,next){
     let startIndex = Number(req.params.startIndex);
     let stopIndex = Number(req.params.stopIndex);
@@ -236,7 +261,7 @@ async function getPopularFromAllPost(req,res,next){
 
             resPosts.push(newPost);
         }
-
+        
         return res.status(200).json({
             success:true,
             posts:resPosts
@@ -322,6 +347,7 @@ function likePost(req,res,next){
 module.exports = {
     createPost,
     getPopularFromAllPost,
+    getCommentsFromPost,
     commentPost,
     likePost
 }

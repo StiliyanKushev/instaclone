@@ -3,25 +3,10 @@ import styles from "./PostArticle.module.css";
 
 // IMPORT REACT RELETED
 import React from "react";
-import {
-    Grid,
-    Image,
-    Segment,
-    Header,
-    Menu,
-    Item,
-    Icon,
-    Form,
-    Button,
-} from "semantic-ui-react";
-import {
-    List,
-    AutoSizer,
-    CellMeasurer,
-    CellMeasurerCache,
-    InfiniteLoader,
-    InfiniteLoaderChildProps,
-} from "react-virtualized";
+import { ComponentType } from 'react';
+import { ReactCookieProps, withCookies } from 'react-cookie';
+import { Grid, Image, Segment, Header, Menu, Item, Icon, Form, Button } from 'semantic-ui-react';
+import { List, AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, InfiniteLoaderChildProps } from "react-virtualized";
 
 // IMPORT REDUX RELETED
 import { connect } from "react-redux";
@@ -32,6 +17,11 @@ import { Link } from "react-router-dom";
 
 // IMPORT OTHER
 import { settings } from "../../settings";
+import { getNewCommentsChunk } from '../../handlers/post';
+import { ICommentsChunkResponse } from '../../types/response';
+import { ADD_COMMENTS_POST } from '../../actions/postActions';
+import { IPostComment } from '../PostsPartial/PostsPartial';
+import PostComment from "../PostComment/PostComment";
 
 interface IState {
     comment: string;
@@ -43,7 +33,7 @@ interface IParentProps {
     handleComment: (comment: string) => void;
 }
 
-type IProps = IParentProps & ReduxProps;
+type IProps = IParentProps & ReduxProps & ReactCookieProps & DispatchProps;
 
 class PostArticle extends React.PureComponent<IProps, IState> {
     public state: IState = { comment: "", hasMoreComments: true };
@@ -64,29 +54,28 @@ class PostArticle extends React.PureComponent<IProps, IState> {
     }
 
     private fetchComments = ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => {
-        // todo
-        return new Promise(() => {});
-        // return getNewPostsChunk(startIndex, stopIndex,this.props.auth?.username as any, this.props.token).then((res: IPostsChunkResponse) => {
-        //     if (res.success) {
-        //         if (res.posts.length === 0) {
-        //             // no more posts
-        //             this.setState({ hasMorePosts: false })
-        //         }
-        //         else {
-        //             this.props.ADD_POSTS_HOME(res.posts);
-        //         }
-        //     }
-        //     else {
-        //         // internal error
-        //     }
-        // })
+        console.log('fetching comments');
+        return getNewCommentsChunk(startIndex, stopIndex, this.props.post?.fullViewPostData._id as string, this.props.auth?.token as string).then((res:ICommentsChunkResponse) => {
+            if (res.success) {
+                if (res.comments.length === 0) {
+                    // no more comments
+                    this.setState({ hasMoreComments: false })
+                }
+                else {
+                    this.props.ADD_COMMENTS_POST(res.comments);
+                }
+            }
+            else {
+                // internal error
+            }
+        })
     };
 
     private isRowLoaded = ({ index }: { index: number }) => {
         return !!this.props.post?.fullViewPostData.commentsList[index];
     };
 
-    renderRow({ index, key, style, parent }: any) {
+    private renderRow({ index, key, style, parent }: any) {
         return (
             <CellMeasurer
                 key={key}
@@ -95,52 +84,15 @@ class PostArticle extends React.PureComponent<IProps, IState> {
                 columnIndex={0}
                 rowIndex={index}
             >
-                <div style={style} className="row">
-                    <div className={styles.commentItemContainer}>
-                        <div className={styles.commentItemLeftSide}>
-                            <Image
-                                className={styles.verySmallImg}
-                                circular
-                                size="tiny"
-                                src={`${settings.BASE_URL}/feed/photo/user/${this.props.post?.fullViewPostData.commentsList[index].creator}`}
-                            ></Image>
-                            <div>
-                                <Header className={styles.commentItemHeader}>
-                                    <span>
-                                        {
-                                            this.props.post?.fullViewPostData
-                                                .commentsList[index].creator
-                                        }
-                                    </span>{" "}
-                                    {
-                                        this.props.post?.fullViewPostData
-                                            .commentsList[index].content
-                                    }
-                                </Header>
-                                {!this.props.post?.fullViewPostData
-                                    .commentsList[index].isDescription && (
-                                    <div className={styles.commentItemBtns}>
-                                        <Header disabled>x likes</Header>
-                                        <Header
-                                            disabled
-                                            className={styles.commentItemReply}
-                                        >
-                                            Reply
-                                        </Header>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                        {!this.props.post?.fullViewPostData.commentsList[index]
-                            .isDescription && (
-                            <Icon
-                                name="heart outline"
-                                size="small"
-                                color="black"
-                            ></Icon>
-                        )}
+                {({ measure, registerChild }: any) => (
+                    <div className="row" ref={registerChild} style={style}>
+                        <PostComment
+                            commentIndex={index}
+                            isLoaded={this.isRowLoaded({index})}
+                            measure={measure}
+                        />
                     </div>
-                </div>
+                )}
             </CellMeasurer>
         );
     }
@@ -154,86 +106,50 @@ class PostArticle extends React.PureComponent<IProps, IState> {
                             <Image
                                 className={styles.postImage}
                                 size="huge"
-                                src={`data:${
-                                    this.props.post?.fullViewPostData.source
-                                        .contentType
-                                };base64,${Buffer.from(
-                                    this.props.post?.fullViewPostData.source
-                                        .data
-                                ).toString("base64")}`}
+                                src={`data:${this.props.post?.fullViewPostData.source.contentType};base64,${Buffer.from(this.props.post?.fullViewPostData.source.data).toString("base64")}`}
                             />
                         </div>
                         <div className={styles.rightCol}>
-                            <Segment
-                                className={styles.profileSegmentInternal}
-                                attached="top"
-                            >
+                            <Segment className={styles.profileSegmentInternal} attached="top">
                                 <Image
                                     className={styles.verySmallImg}
                                     circular
                                     size="tiny"
                                     src={`${settings.BASE_URL}/feed/photo/user/${this.props.post?.fullViewPostData.creator}`}
                                 ></Image>
-                                <Link
-                                    to={`/profile/${this.props.post?.fullViewPostData.creator}`}
-                                >
-                                    <Header
-                                        size="small"
-                                        className={styles.headerName}
-                                        as="span"
-                                    >
-                                        {
-                                            this.props.post?.fullViewPostData
-                                                .creator
-                                        }
+                                <Link to={`/profile/${this.props.post?.fullViewPostData.creator}`}>
+                                    <Header size="small" className={styles.headerName} as="span">
+                                        {this.props.post?.fullViewPostData.creator}
                                     </Header>
                                 </Link>
                             </Segment>
-                            <Segment
-                                attached
-                                className={styles.commentsContainer}
-                            >
+                            <Segment attached className={styles.commentsContainer}>
                                 <InfiniteLoader
                                     isRowLoaded={this.isRowLoaded}
-                                    loadMoreRows={this.fetchComments}
+                                    loadMoreRows={this.fetchComments.bind(this)}
                                     rowCount={this.rowCount}
                                     minimumBatchSize={10}
-                                    threshold={15}
-                                >
-                                    {({
-                                        onRowsRendered,
-                                        registerChild,
-                                    }: InfiniteLoaderChildProps) => (
-                                        <AutoSizer className={styles.AutoSizer}>
-                                            {({ width, height }) => {
-                                                return (
-                                                    <List
-                                                        className={
-                                                            styles.commentsList
-                                                        }
-                                                        width={width}
-                                                        height={height}
-                                                        deferredMeasurementCache={
-                                                            this.cache
-                                                        }
-                                                        rowHeight={
-                                                            this.cache.rowHeight
-                                                        }
-                                                        rowRenderer={this.renderRow.bind(
-                                                            this
-                                                        )}
-                                                        rowCount={
-                                                            this.props.post
-                                                                ?.fullViewPostData
-                                                                .commentsList
-                                                                .length as number
-                                                        }
-                                                        overscanRowCount={3}
-                                                    />
-                                                );
-                                            }}
-                                        </AutoSizer>
-                                    )}
+                                    threshold={15}>
+                                    {({ onRowsRendered,registerChild }: InfiniteLoaderChildProps) => (
+                                            <AutoSizer className={styles.AutoSizer}>
+                                                {({ width, height }) => {
+                                                    return (
+                                                        <List
+                                                            ref={registerChild}
+                                                            onRowsRendered={onRowsRendered}
+                                                            className={styles.commentsList}
+                                                            width={width}
+                                                            height={height}
+                                                            deferredMeasurementCache={this.cache}
+                                                            rowHeight={this.cache.rowHeight}
+                                                            rowRenderer={this.renderRow.bind(this)}
+                                                            rowCount={this.rowCount}
+                                                            overscanRowCount={3}
+                                                        />
+                                                    );
+                                                }}
+                                            </AutoSizer>
+                                        )}
                                 </InfiniteLoader>
                             </Segment>
                             <Segment attached className={styles.actionSegment}>
@@ -241,20 +157,8 @@ class PostArticle extends React.PureComponent<IProps, IState> {
                                     <Item className="left">
                                         <Icon
                                             onClick={this.props.handleLike}
-                                            id={
-                                                !this.props.post
-                                                    ?.fullViewPostData.isLiked
-                                                    ? `${styles.likeOutline}`
-                                                    : ""
-                                            }
-                                            className={`${styles.likeBtn} ${
-                                                styles.iconBtn
-                                            } heart ${
-                                                this.props.post
-                                                    ?.fullViewPostData.isLiked
-                                                    ? ""
-                                                    : "outline"
-                                            }`}
+                                            id={!this.props.post?.fullViewPostData.isLiked ? `${styles.likeOutline}`: ""}
+                                            className={`${styles.likeBtn} ${styles.iconBtn} heart ${this.props.post?.fullViewPostData.isLiked ? "": "outline"}`}
                                             size="big"
                                         ></Icon>
                                         <Icon
@@ -278,42 +182,31 @@ class PostArticle extends React.PureComponent<IProps, IState> {
                                 </Menu>
                                 <Header className={styles.likes} size="tiny">
                                     {
-                                        this.props.post?.fullViewPostData
-                                            .likesCount
+                                        this.props.post?.fullViewPostData.likesCount
                                     }{" "}
                                     likes
                                 </Header>
                             </Segment>
                             <Segment
                                 className={styles.commentSegment}
-                                attached="bottom"
-                            >
+                                attached="bottom">
                                 <Form className={styles.commentForm}>
                                     <Form.Field className={styles.commentField}>
                                         <Form.Input
                                             className={styles.commentInput}
                                             placeholder="Adding comment ..."
                                             value={this.state.comment}
-                                            onChange={(e) =>
-                                                this.setState({
-                                                    comment: e.target.value,
-                                                })
-                                            }
+                                            onChange={(e) => this.setState({comment: e.target.value})}
                                         ></Form.Input>
                                         <Button
-                                            loading={
-                                                this.props.post?.isPostLoading
-                                            }
+                                            loading={this.props.post?.isPostLoading}
                                             onClick={() => {
-                                                this.props.handleComment(
-                                                    this.state.comment
-                                                );
+                                                this.props.handleComment(this.state.comment);
                                                 this.setState({ comment: "" });
                                             }}
                                             className={styles.commentSubmit}
                                             size="medium"
-                                            primary
-                                        >
+                                            primary>
                                             Comment
                                         </Button>
                                     </Form.Field>
@@ -329,6 +222,11 @@ class PostArticle extends React.PureComponent<IProps, IState> {
 
 const mapStateToProps = (state: AppState): ReduxProps => ({
     post: state.post,
+    auth: state.auth
 });
 
-export default connect(mapStateToProps, null)(PostArticle);
+interface DispatchProps {
+    ADD_COMMENTS_POST: (comments: Array<IPostComment>) => void
+}
+
+export default withCookies(connect(mapStateToProps, {ADD_COMMENTS_POST})(PostArticle as ComponentType<IProps>));

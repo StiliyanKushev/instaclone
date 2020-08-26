@@ -1,5 +1,5 @@
 import { IValidationResultErrors } from "./form-validation";
-import { IPost } from "../shared/PostsPartial/PostsPartial";
+import { IPost, IPostComment } from '../shared/PostsPartial/PostsPartial';
 
 export default interface IGenericResponse {
     success: boolean,
@@ -10,4 +10,9 @@ export default interface IGenericResponse {
 export interface IPostsChunkResponse {
     success: boolean,
     posts: Array<IPost>
+}
+
+export interface ICommentsChunkResponse {
+    success: boolean,
+    comments: Array<IPostComment>
 }

@@ -19,6 +19,7 @@ import ChangePassword from '../ChangePassword/ChangePassword';
 import ReportBug from '../ReportBug/ReportBug';
 import { clearUser } from '../../handlers/serializationData';
 import { toast } from 'react-toastify';
+import { SET_POST_DATA_CLEAR } from '../../actions/postActions';
 
 interface IProps extends DispatchProps {
     handleClose: Function
@@ -34,6 +35,8 @@ class UserSettings extends React.Component<IProps> {
         clearUser();
         //logout form global state
         this.props.logout();
+        //clear post data from global state
+        this.props.clearPostData();
     }
 
     render() {
@@ -79,11 +82,13 @@ class UserSettings extends React.Component<IProps> {
 }
 
 interface DispatchProps {
-    logout: () => void
+    logout: () => void,
+    clearPostData: () => void
 }
 
 const mapDispathToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
-    logout: bindActionCreators(LOGOUT_AUTH,dispatch)
+    logout: bindActionCreators(LOGOUT_AUTH,dispatch),
+    clearPostData: bindActionCreators(SET_POST_DATA_CLEAR,dispatch)
 })
 
 export default connect(null,mapDispathToProps)(UserSettings as ComponentType<IProps>);

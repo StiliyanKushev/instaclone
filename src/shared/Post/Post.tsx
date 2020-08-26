@@ -65,20 +65,17 @@ class Post extends React.PureComponent<IProps,IState> {
                         </PlaceholderImage>
                     </Placeholder>
                 </div>
-                
                 <Segment className={styles.bottomSegment} attached='bottom'>
-                    <>
-                        <Menu className={styles.postMenu}>
-                            <Item className='left'>
-                                <Icon className={styles.iconBtn} size='big' name='heart outline'></Icon>
-                                <Icon className={styles.iconBtn} size='big' name='comment outline'></Icon>
-                                <Icon className={styles.iconBtn} size='big' name='paper plane outline'></Icon>
-                            </Item>
-                            <Item className='right'>
-                                <Icon className={styles.iconBtn} size='big' name='bookmark outline'></Icon>
-                            </Item>
-                        </Menu>
-                    </>
+                    <Menu className={styles.postMenu}>
+                        <Item className='left'>
+                            <Icon className={styles.iconBtn} size='big' name='heart outline'></Icon>
+                            <Icon className={styles.iconBtn} size='big' name='comment outline'></Icon>
+                            <Icon className={styles.iconBtn} size='big' name='paper plane outline'></Icon>
+                        </Item>
+                        <Item className='right'>
+                            <Icon className={styles.iconBtn} size='big' name='bookmark outline'></Icon>
+                        </Item>
+                    </Menu>
                     <Header className={styles.likes} size='tiny'>{0} likes</Header>
                     <Header className={styles.description} size='tiny'>
                         <Header size='tiny' className={styles.commentUsername} as='span'>loading</Header>
@@ -114,7 +111,6 @@ class Post extends React.PureComponent<IProps,IState> {
                 <div className={styles.imageContainer}>
                     <Image onLoad={this.props.measure} className={styles.image}  src={`data:${this.props.post?.homePosts[this.props.postIndex].source.contentType};base64,${Buffer.from(this.props.post?.homePosts[this.props.postIndex].source.data).toString('base64')}`} />
                 </div>
-                
                 <Segment className={styles.bottomSegment} attached='bottom'>
                     <Menu className={styles.postMenu}>
                         <Item className='left'>
@@ -134,15 +130,16 @@ class Post extends React.PureComponent<IProps,IState> {
                     <Header onClick={() => this.props.toggleFullView(this.props.postIndex)} className={styles.viewAllComments} size='tiny' disabled>View all comments</Header>
                     {
                         // backend will return the first 3-4 messeges only (own comments + other comments)
-                        this.props.post.homePosts[this.props.postIndex].ownComments.map((comment:any,index) => (
+                        // todo There is a bug when login in with different account and loading these again.  
+                        this.props.post.homePosts[this.props.postIndex].ownComments.map((comment,index) => (
                             <Header key={index} className={styles.description} size='tiny'>
                                 <Header size='tiny' className={styles.commentUsername} as='span'>{this.props.auth?.username}</Header>
                                 <Header className={styles.commentText} as='span' size='tiny'> {comment.content}</Header>
                             </Header>
                         ))
-                    } 
+                    }
                     {
-                        this.props.post?.homePosts[this.props.postIndex].comments.map((comment:any,index) => (
+                        this.props.post?.homePosts[this.props.postIndex].comments.map((comment,index) => (
                             <Header key={index} className={styles.description} size='tiny'>
                                 <Header size='tiny' className={styles.commentUsername} as='span'>{comment.creator}</Header>
                                 <Header className={styles.commentText} as='span' size='tiny'> {comment.content}</Header>

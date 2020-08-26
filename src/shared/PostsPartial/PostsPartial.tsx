@@ -74,6 +74,7 @@ class PostsPartial extends React.PureComponent<IProps>{
                     this.setState({ hasMorePosts: false })
                 }
                 else {
+                    console.log(res.posts);
                     this.props.ADD_POSTS_HOME(res.posts);
                 }
             }

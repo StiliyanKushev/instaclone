@@ -11,7 +11,7 @@ import { AppActions } from '../../actions/types/actions';
 import { ThunkDispatch } from 'redux-thunk';
 import {bindActionCreators} from 'redux';
 import { AppState, ReduxProps } from '../../reducers';
-import { TOGGLE_FULL_POST_VIEW,SET_FULL_POST_DATA_VIEW, COMMENT_POST, LIKE_POST, LIKE_FULL_POST, COMMENT_FULL_POST } from '../../actions/postActions';
+import { TOGGLE_FULL_POST_VIEW, CALL_FULL_POST_DATA_VIEW, COMMENT_POST, LIKE_POST, LIKE_FULL_POST, COMMENT_FULL_POST } from '../../actions/postActions';
 
 // IMPORT OTHER
 import $ from 'jquery';
@@ -96,7 +96,7 @@ interface DispatchPropsFixedPromise {
 
 const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps | DispatchPropsFixedPromise => ({
     toggleFullView:bindActionCreators(TOGGLE_FULL_POST_VIEW,dispatch),
-    setFullViewPostData:bindActionCreators(SET_FULL_POST_DATA_VIEW,dispatch),
+    setFullViewPostData:bindActionCreators(CALL_FULL_POST_DATA_VIEW,dispatch),
     comment:bindActionCreators(COMMENT_POST,dispatch),
     commentFullView:bindActionCreators(COMMENT_FULL_POST,dispatch),
     like:bindActionCreators(LIKE_POST,dispatch),

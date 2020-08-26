@@ -32,7 +32,7 @@ const emptyFullViewPostData: IFullViewPostData = {
     commentsList:[],
 };
 
-const userState:IPostState = {
+const postState:IPostState = {
     error:false,
     messege:'',
     isPostLoading:false,
@@ -43,8 +43,14 @@ const userState:IPostState = {
     fullViewPostIndex: -1,
 }
 
-const postReducer = (state = userState, action:postActionTypes) => {
+const postReducer = (state = postState, action:postActionTypes) => {
     switch (action.type) {
+        case 'SET_POST_CLEAR':{
+            return {
+                ...postState
+            } as IPostState;
+        }
+
         case 'SET_POST_LOADING':{
             return {
                 ...state,
@@ -127,6 +133,14 @@ const postReducer = (state = userState, action:postActionTypes) => {
             return {
                 ...state,
                 homePosts: [...state.homePosts, ...action.payload.posts]
+            } as IPostState
+        }
+
+        case 'ADD_COMMENTS_POST':{
+            state.fullViewPostData.commentsList = [...state.fullViewPostData.commentsList,...action.payload.comments]
+
+            return {
+                ...state,
             } as IPostState
         }
 

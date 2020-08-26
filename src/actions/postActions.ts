@@ -3,11 +3,19 @@ import { AppActions } from "./types/actions";
 import { Dispatch } from "react";
 import IGenericResponse from "../types/response";
 import { uploadPost, commentPost , likePost } from "../handlers/post";
+import { IPostComment } from '../shared/PostsPartial/PostsPartial';
 
 export const ADD_POSTS_HOME = (posts:Array<IPost>):AppActions => ({
     type: 'ADD_POSTS_HOME',
     payload: {
         posts
+    }
+})
+
+export const ADD_COMMENTS_POST = (comments:Array<IPostComment>):AppActions => ({
+    type: 'ADD_COMMENTS_POST',
+    payload: {
+        comments
     }
 })
 
@@ -97,15 +105,24 @@ export const CALL_TOGGLE_FULL_POST_VIEW = (postIndex?:number):AppActions => ({
     }
 })
 
-export const CALL_FULL_POST_DATA_VIEW = (postData:IPost):AppActions => ({
+export const SET_FULL_POST_DATA_VIEW = (postData:IPost):AppActions => ({
     type: 'SET_FULL_POST_DATA_VIEW',
     payload: {
         postData: postData
     }
 })
 
-export const SET_FULL_POST_DATA_VIEW = (postData:IPost) => (dispatch:Dispatch<AppActions>) => {
-    dispatch(CALL_FULL_POST_DATA_VIEW(postData));
+export const SET_POST_DATA_CLEAR = ():AppActions => ({
+    type: 'SET_POST_CLEAR',
+})
+
+export const CALL_POST_DATA_CLEAR = () => (dispatch:Dispatch<AppActions>) => {
+    dispatch(SET_POST_DATA_CLEAR());
+}
+
+
+export const CALL_FULL_POST_DATA_VIEW = (postData:IPost) => (dispatch:Dispatch<AppActions>) => {
+    dispatch(SET_FULL_POST_DATA_VIEW(postData));
 }
 
 export const TOGGLE_FULL_POST_VIEW = (postIndex?:number) => (dispatch:Dispatch<AppActions>) => {

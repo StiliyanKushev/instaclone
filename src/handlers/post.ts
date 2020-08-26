@@ -30,3 +30,7 @@ export function commentPost(postId:string,comment:string,username:string,token:s
 export function getNewPostsChunk(startIndex:number,stopIndex:number,username:string,token:string){
     return get<IGenericResponse>(`/feed/posts/get/all/popular/${startIndex}/${stopIndex}/as/${username}`,token).then((res: any) => res.data);
 }
+
+export function getNewCommentsChunk(startIndex:number,stopIndex:number,id:string,token:string){
+    return get<IGenericResponse>(`/feed/posts/${id}/comments/${startIndex}/${stopIndex}`,token).then((res: any) => res.data);
+}
