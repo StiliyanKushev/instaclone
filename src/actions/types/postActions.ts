@@ -17,6 +17,7 @@ const SET_POST_LOADING = 'SET_POST_LOADING';
 const ADD_COMMENTS_POST = 'ADD_COMMENTS_POST';
 const ADD_POSTS_HOME = 'ADD_POSTS_HOME';
 const SET_POST_CLEAR = 'SET_POST_CLEAR';
+const SET_FIX_POST_AFTER_UPDATE = 'SET_FIX_POST_AFTER_UPDATE';
 
 export  interface setPostLoading{
     type: typeof SET_POST_LOADING,
@@ -32,6 +33,14 @@ export interface setPostUploadSuccess {
         messege:string
     }
 }
+
+export interface setFixPostAfterUpdate {
+    type: typeof SET_FIX_POST_AFTER_UPDATE,
+    payload:{
+        arr:[{index:number,post:IPost}]
+    }
+}
+
 
 export interface setPostUploadFailure {
     type: typeof SET_POST_UPLOAD_FAILURE,
@@ -61,7 +70,10 @@ export interface setFullPostCommentSuccess {
     payload:{
         messege:string,
         comment:string,
-        username:string
+        creator:{
+            id:string,
+            username:string,
+        }
     }
 }
 
@@ -135,6 +147,7 @@ setFullPostLikeFailure |
 setToggleFullPostView |
 setPostCommentFailure | 
 setPostCommentSuccess | 
+setFixPostAfterUpdate |
 setFullPostCommentFailure | 
 setFullPostCommentSuccess | 
 setPostUploadFailure | 

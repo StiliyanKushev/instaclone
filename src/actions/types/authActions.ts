@@ -16,7 +16,8 @@ export interface setAuthSuccess {
         username:string,
         token:string,
         email:string,
-        messege:string
+        messege:string,
+        userId:string,
     }
 }
 

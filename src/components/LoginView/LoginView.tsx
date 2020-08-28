@@ -55,7 +55,7 @@ class LoginView extends React.Component<IProps,ILoginState>{
                     toast.success(this.props.auth.messege);
                     
                     //save user in cookies
-                    saveUser(this.props.auth.email,this.props.auth.username,this.props.auth.token);
+                    saveUser(this.props.auth.email,this.props.auth.username,this.props.auth.token,this.props.auth.userId);
 
                     //redirect to home and update app only after success msg is shown
                     this.props.history.push('/');

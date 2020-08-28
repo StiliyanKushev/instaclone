@@ -22,11 +22,17 @@ interface IParentProps {
 
 export interface IPostComment {
     content:string,
-    creator?:string
+    creator?:{
+        id:string,
+        username:string,
+    }
 }
 export interface IPost {
     postIndex:number,
-    creator:string,
+    creator:{
+        id:string,
+        username:string,
+    },
     _id:string,
     description:string,
     isLiked:boolean,
@@ -74,7 +80,6 @@ class PostsPartial extends React.PureComponent<IProps>{
                     this.setState({ hasMorePosts: false })
                 }
                 else {
-                    console.log(res.posts);
                     this.props.ADD_POSTS_HOME(res.posts);
                 }
             }

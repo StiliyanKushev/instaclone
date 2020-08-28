@@ -4,6 +4,7 @@ import { Dispatch } from "react";
 import IGenericResponse from "../types/response";
 import { uploadPost, commentPost , likePost } from "../handlers/post";
 import { IPostComment } from '../shared/PostsPartial/PostsPartial';
+import { ICreator } from '../types/auth';
 
 export const ADD_POSTS_HOME = (posts:Array<IPost>):AppActions => ({
     type: 'ADD_POSTS_HOME',
@@ -53,12 +54,12 @@ export const CALL_POST_COMMENT_FAILURE = (messege:string):AppActions => ({
     }
 });
 
-export const CALL_FULL_POST_COMMENT_SUCCESS = (username:string,comment:string,messege:string):AppActions => ({
+export const CALL_FULL_POST_COMMENT_SUCCESS = (creator:ICreator,comment:string,messege:string):AppActions => ({
     type: 'SET_FULL_POST_COMMENT_SUCCESS',
     payload:{
         messege,
         comment,
-        username
+        creator
     }
 });
 
@@ -116,6 +117,17 @@ export const SET_POST_DATA_CLEAR = ():AppActions => ({
     type: 'SET_POST_CLEAR',
 })
 
+export const SET_FIX_POST_AFTER_UPDATE = (arr:[{index:number,post:IPost}]):AppActions => ({
+    type: 'SET_FIX_POST_AFTER_UPDATE',
+    payload:{
+        arr
+    }
+})
+
+export const CALL_FIX_POST_AFTER_UPDATE = (arr:[{index:number,post:IPost}]) => (dispatch:Dispatch<AppActions>) => {
+    dispatch(SET_FIX_POST_AFTER_UPDATE(arr));
+}
+
 export const CALL_POST_DATA_CLEAR = () => (dispatch:Dispatch<AppActions>) => {
     dispatch(SET_POST_DATA_CLEAR());
 }
@@ -142,15 +154,15 @@ export const UPLOAD_POST = (form:FormData,username:string,token:string) => (disp
     });
 }
 
-export const COMMENT_FULL_POST = (comment:string,username:string,postId?:string,token?:string) => (dispatch:Dispatch<AppActions>) => {
+export const COMMENT_FULL_POST = (comment:string,creator:ICreator,postId?:string,token?:string) => (dispatch:Dispatch<AppActions>) => {
     if(!postId || !token){
-        dispatch(CALL_FULL_POST_COMMENT_SUCCESS(username,comment,'Full post commented.'));
+        dispatch(CALL_FULL_POST_COMMENT_SUCCESS(creator,comment,'Full post commented.'));
     }
     else{
         dispatch(CALL_POST_LOADING());
-        commentPost(postId,comment,username,token).then((res:IGenericResponse) => {
+        commentPost(postId,comment,creator.id,token).then((res:IGenericResponse) => {
             if(res.success){
-                dispatch(CALL_FULL_POST_COMMENT_SUCCESS(username,comment,res.messege));
+                dispatch(CALL_FULL_POST_COMMENT_SUCCESS(creator,comment,res.messege));
             }
             else{
                 dispatch(CALL_FULL_POST_COMMENT_FAILURE(res.messege));

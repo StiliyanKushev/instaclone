@@ -11,6 +11,7 @@ export interface IAuthState {
     isLoading:boolean,
     error:boolean,
     messege:string,
+    userId:string,
     username:string,
     token:string,
     email:string,
@@ -25,6 +26,7 @@ const authState:IAuthState = {
     isLoading:false,
     error:false,
     messege:'',
+    userId:cookies.get('userId') || '',
     username:cookies.get('username') || '',
     token:cookies.get('token') || '',
     email:cookies.get('email') || ''
@@ -60,6 +62,7 @@ const authReducer = (state = authState, action:authActionTypes) => {
                 isLogged: true,
                 error: false, 
                 messege: action.payload.messege, 
+                userId: action.payload.userId,
                 username: action.payload.username,
                 email: action.payload.email,
                 token: action.payload.token

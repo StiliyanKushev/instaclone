@@ -20,6 +20,8 @@ import { IValidationResult, IValidationResultErrors } from '../../types/form-val
 
 // IMPORT OTHER
 import { toast } from 'react-toastify';
+import { IPost } from '../../shared/PostsPartial/PostsPartial';
+import { CALL_FIX_POST_AFTER_UPDATE } from '../../actions/postActions';
 
 interface IParentProps {
     handleClose: Function
@@ -35,7 +37,8 @@ export interface IEditProfileState{
 }
 
 class EditProfile extends React.Component<IProps,IEditProfileState> {
-    state:IEditProfileState = { password:'', email:this.props.auth?.email || '', username:this.props.auth?.username || '', errors: {}}
+    initialState:IEditProfileState = { password:'', email:this.props.auth?.email || '', username:this.props.auth?.username || '', errors: {}}
+    state:IEditProfileState = Object.assign(this.initialState,this.state)
 
     private handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -45,6 +48,25 @@ class EditProfile extends React.Component<IProps,IEditProfileState> {
         
         if(result.success){
             this.props.editProfile(this.state,this.props.auth?.email || this.props.cookies?.get('email'),this.props.auth?.token || this.props.cookies?.get('token'));
+
+            // compare initial state's usernames
+            if(this.initialState.username !== this.state.username && this.props.post){
+
+                // fix usernames for every post in the home view that is from this user
+                let fixedPosts : [{index:number,post:IPost}] = [] as any;
+
+                for(let i = 0; i < this.props.post.homePosts.length;i++){
+                    let post = this.props.post.homePosts[i];
+
+                    if(post.creator.id === this.props.auth?.userId && post.creator.username !== this.state.username){
+                        post.creator.username = this.state.username;
+                        fixedPosts.push({index:i,post:post});
+                    }
+                }
+
+                // give the result to redux to update the homeposts in store
+                this.props.fixHomePostUsernames(fixedPosts);
+            }
         }
     }
 
@@ -114,15 +136,19 @@ class EditProfile extends React.Component<IProps,IEditProfileState> {
 }
 
 const mapStateToProps = (state:AppState):ReduxProps => ({
-    auth:state.auth
+    auth:state.auth,
+    post:state.post,
 })
 
 interface DispatchProps {
     editProfile: (state:IEditProfileState,email:string,token:string) => void,
+    fixHomePostUsernames: (arr:[{index:number,post:IPost}]) => void
 }
 
 const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
     editProfile:bindActionCreators(EDIT_PROFILE_AUTH,dispatch),
+    fixHomePostUsernames:bindActionCreators(CALL_FIX_POST_AFTER_UPDATE,dispatch),
+
 })
 
 export default withCookies(connect(mapStateToProps,mapDispatchToProps)(EditProfile as ComponentType<IProps>));

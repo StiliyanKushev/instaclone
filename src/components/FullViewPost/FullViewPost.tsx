@@ -18,6 +18,7 @@ import $ from 'jquery';
 import { IPost } from '../../shared/PostsPartial/PostsPartial';
 import PostArticle from '../../shared/PostArticle/PostArticle';
 import IGenericResponse from '../../types/response';
+import { ICreator } from '../../types/auth';
 
 interface IParentProps {
     postIndex:number,
@@ -52,7 +53,7 @@ class FullViewPost extends React.PureComponent<IProps>{
             this.props.comment(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.username,comment,this.props.auth?.token)
             .then(() => {
                 if(this.props.auth)
-                this.props.commentFullView(comment,this.props.auth?.username);
+                this.props.commentFullView(comment,{id:this.props.auth?.userId,username:this.props.auth?.username});
             });
         }
         this.setState({comment:''});
@@ -86,7 +87,7 @@ interface DispatchProps {
     like:(postIndex:number,postId:string,username:string,token:string) => void,
     likeFullView:() => void,
     comment: (postIndex:number,postId: string, username: string, comment: string, token: string) => Promise<IGenericResponse>,
-    commentFullView:(comment:string,username:string) => void
+    commentFullView:(comment:string,creator:ICreator) => void
 }
 
 // mapDispatchToProps does not recognise Promise so I have to give it void

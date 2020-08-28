@@ -103,9 +103,9 @@ class Post extends React.PureComponent<IProps,IState> {
         return (
             <div className={styles.container}>
                 <Segment className={styles.profileSegmentInternal} attached='top'>
-                    <Image className={styles.verySmallImg} circular size='tiny' src={`${settings.BASE_URL}/feed/photo/user/${this.props.post?.homePosts[this.props.postIndex].creator}`}></Image>
-                    <Link to={`/profile/${this.props.post?.homePosts[this.props.postIndex].creator}`}>
-                        <Header size='small' className={styles.headerName} as='span'>{this.props.post?.homePosts[this.props.postIndex].creator}</Header>
+                    <Image className={styles.verySmallImg} circular size='tiny' src={`${settings.BASE_URL}/feed/photo/user/${this.props.post?.homePosts[this.props.postIndex].creator.username}`}></Image>
+                    <Link to={`/profile/${this.props.post?.homePosts[this.props.postIndex].creator.username}`}>
+                        <Header size='small' className={styles.headerName} as='span'>{this.props.post?.homePosts[this.props.postIndex].creator.username}</Header>
                     </Link>
                 </Segment>
                 <div className={styles.imageContainer}>
@@ -124,7 +124,7 @@ class Post extends React.PureComponent<IProps,IState> {
                     </Menu>
                     <Header className={styles.likes} size='tiny'>{this.props.post.homePosts[this.props.postIndex].likesCount} likes</Header>
                     <Header className={styles.description} size='tiny'>
-                        <Header size='tiny' className={styles.commentUsername} as='span'>{this.props.post?.homePosts[this.props.postIndex].creator}</Header>
+                        <Header size='tiny' className={styles.commentUsername} as='span'>{this.props.post?.homePosts[this.props.postIndex].creator.username}</Header>
                         <Header className={styles.commentText} as='span' size='tiny'> {this.props.post?.homePosts[this.props.postIndex].description}</Header>
                     </Header>
                     <Header onClick={() => this.props.toggleFullView(this.props.postIndex)} className={styles.viewAllComments} size='tiny' disabled>View all comments</Header>
@@ -141,7 +141,7 @@ class Post extends React.PureComponent<IProps,IState> {
                     {
                         this.props.post?.homePosts[this.props.postIndex].comments.map((comment,index) => (
                             <Header key={index} className={styles.description} size='tiny'>
-                                <Header size='tiny' className={styles.commentUsername} as='span'>{comment.creator}</Header>
+                                <Header size='tiny' className={styles.commentUsername} as='span'>{comment.creator?.username}</Header>
                                 <Header className={styles.commentText} as='span' size='tiny'> {comment.content}</Header>
                             </Header>
                         ))

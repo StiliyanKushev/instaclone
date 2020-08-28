@@ -18,10 +18,10 @@ export function likePost(postId:string,username:string,token:string){
     return post<typeof data,IGenericResponse>(data,`/feed/posts/${postId}/like`,token).then((res:any) => res.data);
 }
 
-export function commentPost(postId:string,comment:string,username:string,token:string){
+export function commentPost(postId:string,comment:string,userId:string,token:string){
     let data = {
         description:comment,
-        username
+        userId
     }
 
     return post<typeof data,IGenericResponse>(data,`/feed/posts/${postId}/comment`,token).then((res:any) => res.data);

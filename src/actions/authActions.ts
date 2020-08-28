@@ -66,10 +66,10 @@ export const CALL_AUTH_EDIT_PROFILE_FAILURE = (messege:string):AppActions => ({
     }
 });
 
-export const CALL_AUTH_SUCCESS = (email:string,username:string,token:string,messege:string):AppActions => ({
+export const CALL_AUTH_SUCCESS = (email:string,username:string,token:string,userId:string,messege:string):AppActions => ({
     type: 'SET_AUTH_SUCCESS',
     payload:{
-        username,token,messege,email
+        username,token,messege,email,userId
     }
 });
 
@@ -89,7 +89,7 @@ export const LOGIN_AUTH = (state:ILoginState) => (dispatch:Dispatch<AppActions>)
 
     login(state).then((res: IAuthResponse) => {
         if(res.success){
-            dispatch(CALL_AUTH_SUCCESS(res.user.email,res.user.username,res.token,res.messege));
+            dispatch(CALL_AUTH_SUCCESS(res.user.email,res.user.username,res.token,res.user.userId,res.messege));
         }
         else{
             dispatch(CALL_AUTH_FAILURE(res.messege));
@@ -102,7 +102,7 @@ export const REGISTER_AUTH = (state:IRegisterState) => (dispatch:Dispatch<AppAct
 
     register(state).then((res: IAuthResponse) => {
         if(res.success){
-            dispatch(CALL_AUTH_SUCCESS(res.user.email,res.user.username,res.token,res.messege));
+            dispatch(CALL_AUTH_SUCCESS(res.user.email,res.user.username,res.token,res.user.userId,res.messege));
         }
         else{
             dispatch(CALL_AUTH_FAILURE(res.messege));

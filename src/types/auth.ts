@@ -5,7 +5,13 @@ export interface IAuthResponse extends IGenericResponse{
     user:{
         username:string,
         email:string,
+        userId:string
     }
+}
+
+export interface ICreator {
+    id:string,
+    username:string,
 }
 
 export interface IEditProfileResponse extends IGenericResponse{

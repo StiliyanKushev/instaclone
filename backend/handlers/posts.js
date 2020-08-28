@@ -110,8 +110,10 @@ async function createPost(req, res, next) {
         //remove original image after resized is created
         fs.unlinkSync(originalImgPath);
 
+        let creatorUser = await User.findOne({username:req.headers.username});
+
         new Post({
-            creator: req.headers.username,
+            creator: creatorUser,
             source: {
                 data: fs.readFileSync(resizedImgPath),
                 contentType: req.file.mimetype,
@@ -124,6 +126,7 @@ async function createPost(req, res, next) {
                 messege:'Post uploaded successfully.'
             });
         }).catch(err => {
+            console.log(err);
             return res.status(200).json({
                 success:false,
                 messege:'Image size is too large. GridFS will be implemented soon. :('
@@ -247,9 +250,11 @@ async function getPopularFromAllPost(req,res,next){
             let isLikedQ = await UserLike.find({post_id:post._id,username:req.params.username});
             let isLiked = isLikedQ[0] === undefined ? false : true;
 
+            let postCreator = await User.findById(post.creator);
+
             let newPost = {
                 _id:post._id,
-                creator: post.creator,
+                creator: {id:postCreator.id,username:postCreator.username},
                 source: post.source,
                 description: post.description,
                 likesCount: post.likesCount,

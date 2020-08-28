@@ -18,7 +18,10 @@ export interface IPostState {
 // doing this so there are no run time errors on inital render (before setting the data in the componentDidMount in some cases)
 const emptyFullViewPostData: IFullViewPostData = {
     postIndex:0,
-    creator:'',
+    creator:{
+        id:'',
+        username:'',
+    },
     description:'',
     _id:'',
     isLiked:false,
@@ -202,7 +205,7 @@ const postReducer = (state = postState, action:postActionTypes) => {
 
         case 'SET_FULL_POST_COMMENT_SUCCESS':{
             // add comment to the start of the list (after the description)
-            state.fullViewPostData.commentsList.splice(1, 0,{creator:action.payload.username,content:action.payload.comment} as IPostComment);
+            state.fullViewPostData.commentsList.splice(1, 0,{creator:action.payload.creator,content:action.payload.comment} as IPostComment);
 
             return {
                 ...state,
@@ -218,6 +221,16 @@ const postReducer = (state = postState, action:postActionTypes) => {
                 error:true,
                 isPostLoading:false,
                 messege:action.payload.messege
+            } as IPostState
+        }
+
+        case 'SET_FIX_POST_AFTER_UPDATE':{
+            for(let item of action.payload.arr){
+                state.homePosts[item.index] = item.post;
+            }
+
+            return {
+                ...state,
             } as IPostState
         }
 
