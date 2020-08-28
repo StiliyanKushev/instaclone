@@ -138,7 +138,7 @@ class Post extends React.PureComponent<IProps,IState> {
                         ))
                     }
                     {
-                        this.props.post?.homePosts[this.props.postIndex].comments.map((comment,index) => (
+                        this.props.post.homePosts[this.props.postIndex].comments.map((comment,index) => (
                             <Header key={index} className={styles.description} size='tiny'>
                                 <Header size='tiny' className={styles.commentUsername} as='span'>{comment.creator?.username}</Header>
                                 <Header className={styles.commentText} as='span' size='tiny'> {comment.content}</Header>

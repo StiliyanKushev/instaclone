@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 const REQUIRED_VALIDATION_MESSAGE = '{PATH} is required'
 
 let CommentSchema = new mongoose.Schema({
-    post:   {type:mongoose.Schema.Types.ObjectId,ref:'Post'},
+    post:    {type:mongoose.Schema.Types.ObjectId,ref:'Post'},
     content: {type:String, required: REQUIRED_VALIDATION_MESSAGE},
-    creator: Object,
+    creator: {type: mongoose.Schema.Types.ObjectId, ref:'User'},
     created: {type:Date, default: Date.now },
 });
 

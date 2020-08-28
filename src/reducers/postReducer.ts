@@ -133,6 +133,7 @@ const postReducer = (state = postState, action:postActionTypes) => {
         }
 
         case 'ADD_POSTS_HOME':{
+            console.log(action.payload.posts);
             return {
                 ...state,
                 homePosts: [...state.homePosts, ...action.payload.posts]

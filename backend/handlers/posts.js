@@ -145,7 +145,7 @@ function commentPost(req,res,next){
 
             new Comment({
                 post: post,
-                creator:{id:user.id,username:user.username},
+                creator:user.id,
                 content:req.body.description
             }).save().then(comment => {
                 return res.status(200).json({
@@ -213,11 +213,23 @@ async function getPopularFromAllPost(req,res,next){
             let comments = [];
             let ownComments = [];
             for(let comment of allComments){
-                if(comment.creator === req.params.username){
-                    ownComments.push(comment);
+                // append creator username to every comment
+                let commentCreator = await User.findById(comment.creator);
+
+                let newComment = {
+                    post:    comment.post,
+                    content: comment.content,
+                    creator: {
+                        id: comment.creator,
+                        username: commentCreator.username,
+                    },
+                }
+
+                if(comment.creator.toString() === req.params.userId){
+                    ownComments.push(newComment);
                 }
                 else{
-                    comments.push(comment);
+                    comments.push(newComment);
                 }
             }
 
@@ -242,7 +254,7 @@ async function getPopularFromAllPost(req,res,next){
 
             resPosts.push(newPost);
         }
-        
+
         return res.status(200).json({
             success:true,
             posts:resPosts
