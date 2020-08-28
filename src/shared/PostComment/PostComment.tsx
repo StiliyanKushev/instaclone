@@ -29,13 +29,13 @@ class PostComment extends React.PureComponent<IProps, IState>{
                             className={styles.verySmallImg}
                             circular
                             size="tiny"
-                            src={`${settings.BASE_URL}/feed/photo/user/${this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].creator || this.props.auth?.username || this.props.cookies?.get('username')}`}
+                            src={`${settings.BASE_URL}/feed/photo/user/${this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].creator?.username || this.props.auth?.username || this.props.cookies?.get('username')}`}
                             onLoad={() => this.props.measure()}
                         ></Image>
                         <div>
                             <Header className={styles.commentItemHeader}>
                                 <span>
-                                    {this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].creator || this.props.auth?.username || this.props.cookies?.get('username')}
+                                    {this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].creator?.username || this.props.auth?.username || this.props.cookies?.get('username')}
                                 </span>{" "}
                                 {this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].content}
                             </Header>
@@ -44,7 +44,7 @@ class PostComment extends React.PureComponent<IProps, IState>{
                                 <div className={styles.commentItemBtns}>
                                     <Header disabled>x likes</Header>
                                     {
-                                        this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].creator && (
+                                        this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].creator?.username && (
                                             <Header disabled className={styles.commentItemReply}>
                                                 Reply
                                             </Header>
@@ -56,7 +56,7 @@ class PostComment extends React.PureComponent<IProps, IState>{
                     </div>
                     
                     {!this.props.post?.fullViewPostData.commentsList[this.props.commentIndex]
-                        .isDescription && !(!this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].creator as any || this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].creator === (this.props.auth?.username || this.props.cookies?.get('username'))) && (
+                        .isDescription && !(!this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].creator?.username as any || this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].creator?.username === (this.props.auth?.username || this.props.cookies?.get('username'))) && (
                         <Icon
                             name="heart outline"
                             size="small"

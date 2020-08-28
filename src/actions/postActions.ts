@@ -171,10 +171,10 @@ export const COMMENT_FULL_POST = (comment:string,creator:ICreator,postId?:string
     }
 }
 
-export const COMMENT_POST = (postIndex:number,postId:string,username:string,comment:string,token:string) => (dispatch:Dispatch<AppActions>) => {
+export const COMMENT_POST = (postIndex:number,postId:string,userId:string,comment:string,token:string) => (dispatch:Dispatch<AppActions>) => {
     dispatch(CALL_POST_LOADING());
 
-    let promise:Promise<IGenericResponse> = commentPost(postId,comment,username,token);
+    let promise:Promise<IGenericResponse> = commentPost(postId,comment,userId,token);
     promise.then((res:IGenericResponse) => {
         if(res.success){
             dispatch(CALL_POST_COMMENT_SUCCESS(postIndex,comment,res.messege));
@@ -187,8 +187,8 @@ export const COMMENT_POST = (postIndex:number,postId:string,username:string,comm
     return promise;
 }
 
-export const LIKE_POST = (postIndex:number,postId:string,username:string,token:string) => (dispatch:Dispatch<AppActions>) => {
-    let promise:Promise<IGenericResponse> = likePost(postId,username,token);
+export const LIKE_POST = (postIndex:number,postId:string,userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
+    let promise:Promise<IGenericResponse> = likePost(postId,userId,token);
     promise.then((res:IGenericResponse) => {
         if(res.success){
             dispatch(CALL_POST_LIKE_SUCCESS(postIndex,res.messege));

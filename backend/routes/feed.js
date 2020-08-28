@@ -47,7 +47,7 @@ router.get('/photo/post/:id',(req,res,next) => {
 //posts
 // router.get('/posts/get/user/recent/:index/:length',authCheck,getRecentFromUserPost)
 // router.get('/posts/get/user/popular/:index/:length',authCheck,getPopularFromUserPost)
-router.get('/posts/get/all/popular/:startIndex/:stopIndex/as/:username',authCheck,getPopularFromAllPost)
+router.get('/posts/get/all/popular/:startIndex/:stopIndex/as/:userId',authCheck,getPopularFromAllPost)
 // router.get('/posts/:id/get',authCheck,getPost)
 router.post('/posts/create',authCheck,upload.single('image'),createPost)
 // router.delete('/posts/:id/delete',authCheck,deletePost)

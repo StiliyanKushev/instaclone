@@ -12,36 +12,10 @@ function validateCreateAndCommentPost(payload){
     const errors = {}
     let isFormValid = true
     let messege = ''
-  
-    if (!payload || typeof payload.username !== 'string' || payload.username.trim().length < 5 || payload.username.trim().length > 20) {
-      isFormValid = false
-      errors.username = 'Creator username must be between 5 and 20 chars long.'
-    }
 
     if(!payload || typeof payload.description !== 'string' || payload.description.trim().length < 5 || payload.description.trim().length > 300){
         isFormValid = false
         errors.description = 'Description should be between 5 and 300 charachters long.'
-    }
-    
-    if (!isFormValid) {
-      messege = 'Check the form for errors.'
-    }
-  
-    return {
-      success: isFormValid,
-      messege,
-      errors
-    }
-}
-
-function validateLikePost(payload){
-    const errors = {}
-    let isFormValid = true
-    let messege = ''
-  
-    if (!payload || typeof payload.username !== 'string' || payload.username.trim().length < 5 || payload.username.trim().length > 20) {
-      isFormValid = false
-      errors.username = 'Creator username must be between 5 and 20 chars long.'
     }
     
     if (!isFormValid) {
@@ -136,7 +110,7 @@ async function createPost(req, res, next) {
 }
 
 function commentPost(req,res,next){
-    const validationResult = validateCreateAndCommentPost({username:req.body.username,description:req.body.description})
+    const validationResult = validateCreateAndCommentPost({description:req.body.description})
     if (!validationResult.success) {
         return res.status(200).json({
             success: false,
@@ -145,7 +119,7 @@ function commentPost(req,res,next){
         })
     }
 
-    User.findOne({username:req.body.username}).then(async (user) => {
+    User.findById(req.body.userId).then(async (user) => {
         if(!user){
             return res.status(200).json({
                 success:false,
@@ -171,7 +145,7 @@ function commentPost(req,res,next){
 
             new Comment({
                 post: post,
-                creator:req.body.username,
+                creator:{id:user.id,username:user.username},
                 content:req.body.description
             }).save().then(comment => {
                 return res.status(200).json({
@@ -247,7 +221,9 @@ async function getPopularFromAllPost(req,res,next){
                 }
             }
 
-            let isLikedQ = await UserLike.find({post_id:post._id,username:req.params.username});
+            let givenUser = await User.findById(req.params.userId);
+
+            let isLikedQ = await UserLike.find({post_id:post._id,user:givenUser});
             let isLiked = isLikedQ[0] === undefined ? false : true;
 
             let postCreator = await User.findById(post.creator);
@@ -275,16 +251,7 @@ async function getPopularFromAllPost(req,res,next){
 }
 
 function likePost(req,res,next){
-    const validationResult = validateLikePost({username:req.body.username})
-    if (!validationResult.success) {
-        return res.status(200).json({
-            success: false,
-            messege: validationResult.messege,
-            errors: validationResult.errors
-        })
-    }
-
-    User.findOne({username:req.body.username}).then(async (user) => {
+    User.findById(req.body.userId).then(async (user) => {
         if(!user){
             return res.status(200).json({
                 success:false,
@@ -296,7 +263,7 @@ function likePost(req,res,next){
 
         //check if user is the one from the username's user id
         if(tempToken !== req.headers.token){
-            return res.status(401).end('Cannot comment a post for different account');
+            return res.status(401).end('Cannot comment a post from different account');
         }
 
         Post.findOne({_id:req.params.id}).then(async (post) => {
@@ -307,14 +274,14 @@ function likePost(req,res,next){
                 })
             }
 
-            let isAlreadyLiked = await UserLike.findOne({post_id:post._id,username:user.username});
+            let isAlreadyLiked = await UserLike.findOne({post_id:post._id,user:user});
             
             // like it now
             if(!isAlreadyLiked){
                 post.likesCount++;
                 post.save();
 
-                new UserLike({post_id:post._id,username:user.username}).save().then(userLike => {
+                new UserLike({post_id:post._id,user:user}).save().then(userLike => {
                     return res.status(200).json({
                         success:true,
                         messege: 'Post liked.'
@@ -332,7 +299,7 @@ function likePost(req,res,next){
                 post.likesCount--;
                 post.save();
 
-                UserLike.find({post_id:post._id,username:user.username}).remove().exec().then(() => {
+                UserLike.find({post_id:post._id,user:user}).remove().exec().then(() => {
                     return res.status(200).json({
                         success:true,
                         messege: 'Post unliked.'

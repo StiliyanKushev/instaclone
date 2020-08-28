@@ -44,13 +44,13 @@ class FullViewPost extends React.PureComponent<IProps>{
 
     private handleLike(){
         if(this.props.auth && this.props.post) // just so es-lint shuts up
-        this.props.like(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.username,this.props.auth?.token);
+        this.props.like(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.userId,this.props.auth?.token);
         this.props.likeFullView();
     }
 
     private handleComment(comment:string){
         if(this.props.auth && this.props.post){ // just so es-lint shuts up
-            this.props.comment(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.username,comment,this.props.auth?.token)
+            this.props.comment(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.userId,comment,this.props.auth?.token)
             .then(() => {
                 if(this.props.auth)
                 this.props.commentFullView(comment,{id:this.props.auth?.userId,username:this.props.auth?.username});
@@ -84,15 +84,15 @@ const mapStateToProps = (state:AppState):ReduxProps => ({
 interface DispatchProps {
     toggleFullView:() => void,
     setFullViewPostData:(PostData:IPost) => void,
-    like:(postIndex:number,postId:string,username:string,token:string) => void,
+    like:(postIndex:number,postId:string,userId:string,token:string) => void,
     likeFullView:() => void,
-    comment: (postIndex:number,postId: string, username: string, comment: string, token: string) => Promise<IGenericResponse>,
+    comment: (postIndex:number,postId: string, userId: string, comment: string, token: string) => Promise<IGenericResponse>,
     commentFullView:(comment:string,creator:ICreator) => void
 }
 
 // mapDispatchToProps does not recognise Promise so I have to give it void
 interface DispatchPropsFixedPromise {
-    comment: (postIndex:number,postId: string, username: string, comment: string, token: string) => void
+    comment: (postIndex:number,postId: string, userId: string, comment: string, token: string) => void
 }
 
 const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps | DispatchPropsFixedPromise => ({

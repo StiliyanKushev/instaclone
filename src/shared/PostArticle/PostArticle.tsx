@@ -115,11 +115,11 @@ class PostArticle extends React.PureComponent<IProps, IState> {
                                     className={styles.verySmallImg}
                                     circular
                                     size="tiny"
-                                    src={`${settings.BASE_URL}/feed/photo/user/${this.props.post?.fullViewPostData.creator}`}
+                                    src={`${settings.BASE_URL}/feed/photo/user/${this.props.post?.fullViewPostData.creator.username}`}
                                 ></Image>
-                                <Link to={`/profile/${this.props.post?.fullViewPostData.creator}`}>
+                                <Link to={`/profile/${this.props.post?.fullViewPostData.creator.username}`}>
                                     <Header size="small" className={styles.headerName} as="span">
-                                        {this.props.post?.fullViewPostData.creator}
+                                        {this.props.post?.fullViewPostData.creator.username}
                                     </Header>
                                 </Link>
                             </Segment>

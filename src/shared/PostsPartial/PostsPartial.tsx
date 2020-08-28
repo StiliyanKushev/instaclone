@@ -73,7 +73,7 @@ class PostsPartial extends React.PureComponent<IProps>{
     }
 
     private fetchPosts = ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => {
-        return getNewPostsChunk(startIndex, stopIndex,this.props.auth?.username as any, this.props.token).then((res: IPostsChunkResponse) => {
+        return getNewPostsChunk(startIndex, stopIndex,this.props.auth?.userId as string, this.props.token).then((res: IPostsChunkResponse) => {
             if (res.success) {
                 if (res.posts.length === 0) {
                     // no more posts

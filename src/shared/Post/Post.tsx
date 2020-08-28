@@ -36,7 +36,7 @@ class Post extends React.PureComponent<IProps,IState> {
 
     private handleComment(){
         if(this.props.auth && this.props.post) // just so es-lint shuts up
-        this.props.comment(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.username,this.state.comment,this.props.auth?.token);
+        this.props.comment(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.userId,this.state.comment,this.props.auth?.token);
         this.setState({comment:''});
 
         // resize the row size after adding new comment
@@ -45,7 +45,7 @@ class Post extends React.PureComponent<IProps,IState> {
 
     private handleLike(){
         if(this.props.auth && this.props.post) // just so es-lint shuts up
-        this.props.like(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.username,this.props.auth?.token)
+        this.props.like(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.userId,this.props.auth?.token)
     }
 
     public render(){
@@ -130,7 +130,6 @@ class Post extends React.PureComponent<IProps,IState> {
                     <Header onClick={() => this.props.toggleFullView(this.props.postIndex)} className={styles.viewAllComments} size='tiny' disabled>View all comments</Header>
                     {
                         // backend will return the first 3-4 messeges only (own comments + other comments)
-                        // todo There is a bug when login in with different account and loading these again.  
                         this.props.post.homePosts[this.props.postIndex].ownComments.map((comment,index) => (
                             <Header key={index} className={styles.description} size='tiny'>
                                 <Header size='tiny' className={styles.commentUsername} as='span'>{this.props.auth?.username}</Header>
@@ -171,8 +170,8 @@ const mapStateToProps = (state:AppState):ReduxProps => ({
 })
 
 interface DispatchProps {
-    like:(postIndex:number,postId:string,username:string,token:string) => void
-    comment: (postIndex:number,postId: string, username: string, comment: string, token: string) => void,
+    like:(postIndex:number,postId:string,userID:string,token:string) => void
+    comment: (postIndex:number,postId: string, userId: string, comment: string, token: string) => void,
     toggleFullView:(postIndex:number) => void
 }
 
