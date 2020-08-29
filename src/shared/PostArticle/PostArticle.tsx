@@ -42,7 +42,7 @@ class PostArticle extends React.PureComponent<IProps, IState> {
 
     private get rowCount(): number {
         let comments: any = this.props.post?.fullViewPostData.commentsList;
-        return this.state.hasMoreComments ? comments.length + 2 : comments.length;
+        return this.state.hasMoreComments ? comments.length + 10 : comments.length;
     }
 
     constructor(props: IProps) {
