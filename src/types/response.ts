@@ -16,3 +16,7 @@ export interface ICommentsChunkResponse {
     success: boolean,
     comments: Array<IPostComment>
 }
+
+export interface IPostCommentResponse extends IGenericResponse{
+    comment: IPostComment,
+}

@@ -85,7 +85,7 @@ const postReducer = (state = postState, action:postActionTypes) => {
 
         case 'SET_POST_COMMENT_SUCCESS':{
             // add comment to ownComments
-            state.homePosts[action.payload.postIndex].ownComments.push({content:action.payload.comment});
+            state.homePosts[action.payload.postIndex].ownComments.push(action.payload.comment);
             
             return {
                 ...state,
@@ -133,7 +133,6 @@ const postReducer = (state = postState, action:postActionTypes) => {
         }
 
         case 'ADD_POSTS_HOME':{
-            console.log(action.payload.posts);
             return {
                 ...state,
                 homePosts: [...state.homePosts, ...action.payload.posts]
@@ -206,7 +205,7 @@ const postReducer = (state = postState, action:postActionTypes) => {
 
         case 'SET_FULL_POST_COMMENT_SUCCESS':{
             // add comment to the start of the list (after the description)
-            state.fullViewPostData.commentsList.splice(1, 0,{creator:action.payload.creator,content:action.payload.comment} as IPostComment);
+            state.fullViewPostData.commentsList.splice(1, 0,action.payload.comment);
 
             return {
                 ...state,

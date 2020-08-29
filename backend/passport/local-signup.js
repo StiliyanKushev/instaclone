@@ -43,7 +43,7 @@ module.exports = new PassportLocalStrategy({
     
           userData.username = user.username;
           userData.email = email.toLowerCase().trim();
-          userData.userId = user.id;
+          userData.userId = usr.id;
 
           if (user.roles) {
             userData.roles = user.roles

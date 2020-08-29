@@ -18,6 +18,7 @@ import {bindActionCreators} from 'redux';
 // IMPORT OTHER
 import { settings } from '../../settings';
 import defaultUserImage from '../../assets/avatar.jpg';
+import { toast } from 'react-toastify';
 
 interface IParentProps {
     postIndex:number,
@@ -35,12 +36,17 @@ class Post extends React.PureComponent<IProps,IState> {
     public state: IState = { comment:'' }
 
     private handleComment(){
-        if(this.props.auth && this.props.post) // just so es-lint shuts up
-        this.props.comment(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.userId,this.state.comment,this.props.auth?.token);
-        this.setState({comment:''});
+        if(this.state.comment.trim().length >= 5){
+            if(this.props.auth && this.props.post) // just so es-lint shuts up
+            this.props.comment(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.userId,this.state.comment,this.props.auth?.token);
+            this.setState({comment:''});
 
-        // resize the row size after adding new comment
-        this.props.measure();
+            // resize the row size after adding new comment
+            this.props.measure();
+        }
+        else{
+            toast.error('Comment has to be at least 5 chars long.');
+        }
     }
 
     private handleLike(){

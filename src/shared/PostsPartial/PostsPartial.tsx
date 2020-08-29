@@ -15,17 +15,17 @@ import { AppState, ReduxProps } from '../../reducers';
 import Post from '../Post/Post';
 import { getNewPostsChunk } from '../../handlers/post';
 import { IPostsChunkResponse } from '../../types/response';
+import { ICreator } from '../../types/auth';
 
 interface IParentProps {
     token: string,
 }
 
 export interface IPostComment {
+    id?: string,
+    post?: string,
     content:string,
-    creator?:{
-        id:string,
-        username:string,
-    }
+    creator?:ICreator
 }
 export interface IPost {
     postIndex:number,

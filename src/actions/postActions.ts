@@ -4,7 +4,7 @@ import { Dispatch } from "react";
 import IGenericResponse from "../types/response";
 import { uploadPost, commentPost , likePost } from "../handlers/post";
 import { IPostComment } from '../shared/PostsPartial/PostsPartial';
-import { ICreator } from '../types/auth';
+import { IPostCommentResponse } from '../types/response';
 
 export const ADD_POSTS_HOME = (posts:Array<IPost>):AppActions => ({
     type: 'ADD_POSTS_HOME',
@@ -38,7 +38,7 @@ export const CALL_POST_UPLOAD_FAILURE = (messege:string):AppActions => ({
     }
 });
 
-export const CALL_POST_COMMENT_SUCCESS = (postIndex:number,comment:string,messege:string):AppActions => ({
+export const CALL_POST_COMMENT_SUCCESS = (postIndex:number,comment:IPostComment,messege:string):AppActions => ({
     type: 'SET_POST_COMMENT_SUCCESS',
     payload:{
         messege,
@@ -54,12 +54,11 @@ export const CALL_POST_COMMENT_FAILURE = (messege:string):AppActions => ({
     }
 });
 
-export const CALL_FULL_POST_COMMENT_SUCCESS = (creator:ICreator,comment:string,messege:string):AppActions => ({
+export const CALL_FULL_POST_COMMENT_SUCCESS = (comment:IPostComment,messege:string):AppActions => ({
     type: 'SET_FULL_POST_COMMENT_SUCCESS',
     payload:{
         messege,
         comment,
-        creator
     }
 });
 
@@ -154,15 +153,15 @@ export const UPLOAD_POST = (form:FormData,username:string,token:string) => (disp
     });
 }
 
-export const COMMENT_FULL_POST = (comment:string,creator:ICreator,postId?:string,token?:string) => (dispatch:Dispatch<AppActions>) => {
+export const COMMENT_FULL_POST = (comment:IPostComment,postId?:string,token?:string) => (dispatch:Dispatch<AppActions>) => {
     if(!postId || !token){
-        dispatch(CALL_FULL_POST_COMMENT_SUCCESS(creator,comment,'Full post commented.'));
+        dispatch(CALL_FULL_POST_COMMENT_SUCCESS(comment,'Full post commented.'));
     }
     else{
         dispatch(CALL_POST_LOADING());
-        commentPost(postId,comment,creator.id,token).then((res:IGenericResponse) => {
+        commentPost(postId,comment.content,comment.creator?.id as string,token).then((res:IPostCommentResponse) => {
             if(res.success){
-                dispatch(CALL_FULL_POST_COMMENT_SUCCESS(creator,comment,res.messege));
+                dispatch(CALL_FULL_POST_COMMENT_SUCCESS(res.comment,res.messege));
             }
             else{
                 dispatch(CALL_FULL_POST_COMMENT_FAILURE(res.messege));
@@ -174,10 +173,10 @@ export const COMMENT_FULL_POST = (comment:string,creator:ICreator,postId?:string
 export const COMMENT_POST = (postIndex:number,postId:string,userId:string,comment:string,token:string) => (dispatch:Dispatch<AppActions>) => {
     dispatch(CALL_POST_LOADING());
 
-    let promise:Promise<IGenericResponse> = commentPost(postId,comment,userId,token);
-    promise.then((res:IGenericResponse) => {
+    let promise:Promise<IPostCommentResponse> = commentPost(postId,comment,userId,token);
+    promise.then((res:IPostCommentResponse) => {
         if(res.success){
-            dispatch(CALL_POST_COMMENT_SUCCESS(postIndex,comment,res.messege));
+            dispatch(CALL_POST_COMMENT_SUCCESS(postIndex,res.comment,res.messege));
         }
         else{
             dispatch(CALL_POST_COMMENT_FAILURE(res.messege));

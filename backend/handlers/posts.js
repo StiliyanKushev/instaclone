@@ -147,10 +147,20 @@ function commentPost(req,res,next){
                 post: post,
                 creator:user.id,
                 content:req.body.description
-            }).save().then(comment => {
+            }).save().then(async (comment) => {
+                let commentCreator = await User.findById(comment.creator);
                 return res.status(200).json({
                     success:true,
-                    messege:'Comment added.'
+                    messege:'Comment added.',
+                    comment:{
+                        content: comment.content,
+                        id:      comment.id,
+                        post:    comment.post.id,
+                        creator: {
+                            id: commentCreator.id,
+                            username: commentCreator.username,
+                        }
+                    }
                 })
             }).catch(err => {
                 console.log(err);
@@ -172,7 +182,7 @@ async function getCommentsFromPost(req,res,next){
     let limit = stopIndex - startIndex;
     if(limit === 0) limit = 1;
 
-    Comment.find({post:postId}).skip(startIndex).limit(limit).exec(async (err,commnents) => {
+    Comment.find({post:postId}).skip(startIndex).limit(limit).exec(async (err,comments) => {
         if(err){
             console.log(err);
             return res.status(200).json({
@@ -181,9 +191,25 @@ async function getCommentsFromPost(req,res,next){
             })
         }
 
+        let newComments = [];
+
+        for(let comment of comments){
+            let commentCreator = await User.findById(comment.creator);
+
+            newComments.push({
+                id: comment.id,
+                post: comment.post.toString(),
+                content: comment.content,
+                creator: {
+                    id: commentCreator.id,
+                    username: commentCreator.username,
+                }
+            });
+        }
+
         return res.status(200).json({
             success:true,
-            comments:commnents
+            comments:newComments
         })
     })
 }
@@ -218,6 +244,7 @@ async function getPopularFromAllPost(req,res,next){
 
                 let newComment = {
                     post:    comment.post,
+                    id:      comment.id,
                     content: comment.content,
                     creator: {
                         id: comment.creator,
@@ -235,7 +262,7 @@ async function getPopularFromAllPost(req,res,next){
 
             let givenUser = await User.findById(req.params.userId);
 
-            let isLikedQ = await UserLike.find({post_id:post._id,user:givenUser});
+            let isLikedQ = await UserLike.find({item_id:post._id,user:givenUser});
             let isLiked = isLikedQ[0] === undefined ? false : true;
 
             let postCreator = await User.findById(post.creator);
@@ -286,14 +313,14 @@ function likePost(req,res,next){
                 })
             }
 
-            let isAlreadyLiked = await UserLike.findOne({post_id:post._id,user:user});
+            let isAlreadyLiked = await UserLike.findOne({item_id:post._id,user:user});
             
             // like it now
             if(!isAlreadyLiked){
                 post.likesCount++;
                 post.save();
 
-                new UserLike({post_id:post._id,user:user}).save().then(userLike => {
+                new UserLike({item_id:post._id,user:user}).save().then(userLike => {
                     return res.status(200).json({
                         success:true,
                         messege: 'Post liked.'
@@ -311,7 +338,7 @@ function likePost(req,res,next){
                 post.likesCount--;
                 post.save();
 
-                UserLike.find({post_id:post._id,user:user}).remove().exec().then(() => {
+                UserLike.find({item_id:post._id,user:user}).remove().exec().then(() => {
                     return res.status(200).json({
                         success:true,
                         messege: 'Post unliked.'

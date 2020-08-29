@@ -54,7 +54,7 @@ export interface setPostCommentSuccess {
     payload:{
         messege:string,
         postIndex:number,
-        comment:string,
+        comment:IPostComment,
     }
 }
 
@@ -69,11 +69,7 @@ export interface setFullPostCommentSuccess {
     type: typeof SET_FULL_POST_COMMENT_SUCCESS,
     payload:{
         messege:string,
-        comment:string,
-        creator:{
-            id:string,
-            username:string,
-        }
+        comment:IPostComment,
     }
 }
 

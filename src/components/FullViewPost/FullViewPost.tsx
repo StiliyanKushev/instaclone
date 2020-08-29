@@ -15,10 +15,9 @@ import { TOGGLE_FULL_POST_VIEW, CALL_FULL_POST_DATA_VIEW, COMMENT_POST, LIKE_POS
 
 // IMPORT OTHER
 import $ from 'jquery';
-import { IPost } from '../../shared/PostsPartial/PostsPartial';
+import { IPost, IPostComment } from '../../shared/PostsPartial/PostsPartial';
 import PostArticle from '../../shared/PostArticle/PostArticle';
-import IGenericResponse from '../../types/response';
-import { ICreator } from '../../types/auth';
+import { IPostCommentResponse } from '../../types/response';
 
 interface IParentProps {
     postIndex:number,
@@ -51,9 +50,9 @@ class FullViewPost extends React.PureComponent<IProps>{
     private handleComment(comment:string){
         if(this.props.auth && this.props.post){ // just so es-lint shuts up
             this.props.comment(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.userId,comment,this.props.auth?.token)
-            .then(() => {
-                if(this.props.auth)
-                this.props.commentFullView(comment,{id:this.props.auth?.userId,username:this.props.auth?.username});
+            .then((res) => {
+                if(this.props.auth && res.success)
+                this.props.commentFullView(res.comment);
             });
         }
         this.setState({comment:''});
@@ -86,8 +85,8 @@ interface DispatchProps {
     setFullViewPostData:(PostData:IPost) => void,
     like:(postIndex:number,postId:string,userId:string,token:string) => void,
     likeFullView:() => void,
-    comment: (postIndex:number,postId: string, userId: string, comment: string, token: string) => Promise<IGenericResponse>,
-    commentFullView:(comment:string,creator:ICreator) => void
+    comment: (postIndex:number,postId: string, userId: string, comment: string, token: string) => Promise<IPostCommentResponse>,
+    commentFullView:(comment:IPostComment,postId?:string,token?:string) => void
 }
 
 // mapDispatchToProps does not recognise Promise so I have to give it void

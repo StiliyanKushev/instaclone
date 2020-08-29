@@ -22,6 +22,7 @@ import { ICommentsChunkResponse } from '../../types/response';
 import { ADD_COMMENTS_POST } from '../../actions/postActions';
 import { IPostComment } from '../PostsPartial/PostsPartial';
 import PostComment from "../PostComment/PostComment";
+import { toast } from 'react-toastify';
 
 interface IState {
     comment: string;
@@ -51,6 +52,16 @@ class PostArticle extends React.PureComponent<IProps, IState> {
             fixedWidth: true,
             defaultHeight: 46,
         });
+    }
+
+    private handleComment(){
+        if(this.state.comment.trim().length >= 5){
+            this.props.handleComment(this.state.comment);
+            this.setState({ comment: "" });
+        }
+        else{
+            toast.error('Comment has to be at least 5 chars long.');
+        }
     }
 
     private fetchComments = ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => {
@@ -200,10 +211,7 @@ class PostArticle extends React.PureComponent<IProps, IState> {
                                         ></Form.Input>
                                         <Button
                                             loading={this.props.post?.isPostLoading}
-                                            onClick={() => {
-                                                this.props.handleComment(this.state.comment);
-                                                this.setState({ comment: "" });
-                                            }}
+                                            onClick={this.handleComment.bind(this)}
                                             className={styles.commentSubmit}
                                             size="medium"
                                             primary>
