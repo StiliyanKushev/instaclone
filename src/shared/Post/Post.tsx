@@ -176,7 +176,7 @@ const mapStateToProps = (state:AppState):ReduxProps => ({
 })
 
 interface DispatchProps {
-    like:(postIndex:number,postId:string,userID:string,token:string) => void
+    like:(postIndex:number,postId:string,userId:string,token:string) => void
     comment: (postIndex:number,postId: string, userId: string, comment: string, token: string) => void,
     toggleFullView:(postIndex:number) => void
 }

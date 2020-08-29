@@ -104,6 +104,34 @@ const postReducer = (state = postState, action:postActionTypes) => {
             } as IPostState
         }
 
+        case 'SET_COMMENT_LIKE_SUCCESS':{
+            if(!state.fullViewPostData.commentsList[action.payload.commentIndex].isLiked){
+                // change the value of specific index to increment
+                state.fullViewPostData.commentsList[action.payload.commentIndex].likesCount++;
+            }
+            else{
+                // change the value of specific index to decrement
+                state.fullViewPostData.commentsList[action.payload.commentIndex].likesCount--;
+            }
+
+            // update the isliked value of the post
+            state.fullViewPostData.commentsList[action.payload.commentIndex].isLiked = !state.fullViewPostData.commentsList[action.payload.commentIndex].isLiked;
+
+            return {
+                ...state,
+                error:false,
+                messege:action.payload.messege
+            } as IPostState
+        }
+
+        case 'SET_COMMENT_LIKE_FAILURE':{
+            return {
+                ...state,
+                error:true,
+                messege:action.payload.messege
+            } as IPostState
+        }
+
         case 'SET_POST_LIKE_SUCCESS':{
             if(!state.homePosts[action.payload.postIndex].isLiked){
                 // change the value of specific index to increment
@@ -161,7 +189,7 @@ const postReducer = (state = postState, action:postActionTypes) => {
                     isDescription: true,
                     content: action.payload.postData.description,
                     creator: action.payload.postData.creator,
-                },
+                } as any,
                 ...action.payload.postData.ownComments,
                 ...action.payload.postData.comments,
             ];

@@ -22,10 +22,12 @@ interface IParentProps {
 }
 
 export interface IPostComment {
-    id?: string,
-    post?: string,
+    id: string,
+    post: string,
     content:string,
-    creator?:ICreator
+    creator?:ICreator,
+    isLiked:boolean,
+    likesCount:number,
 }
 export interface IPost {
     postIndex:number,

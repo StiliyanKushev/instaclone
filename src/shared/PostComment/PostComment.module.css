@@ -69,3 +69,15 @@
 .commentItemLeftSide{
     width:90% !important;
 }
+
+.likeBtn{
+    color:red !important;
+}
+
+#likeBtnId{
+    color:red !important;
+}
+
+#likeOutline{
+    color: rgba(0,0,0,.87) !important;
+}

@@ -1,3 +1,4 @@
+// todo format these
 import React, { ComponentType } from 'react';
 import { Header, Icon, Segment, Dimmer, Loader, Image } from 'semantic-ui-react';
 
@@ -6,6 +7,10 @@ import { settings } from '../../settings';
 import { AppState, ReduxProps } from '../../reducers/index';
 import { connect } from 'react-redux';
 import { withCookies, ReactCookieProps } from 'react-cookie';
+import { ThunkDispatch } from 'redux-thunk';
+import { AppActions } from '../../actions/types/actions';
+import { LIKE_COMMENT } from '../../actions/postActions';
+import { bindActionCreators } from 'redux';
 
 interface ParentProps {
     commentIndex: number,
@@ -13,17 +18,16 @@ interface ParentProps {
     measure: () => void
 }
 
-type IProps = ParentProps & ReduxProps & ReactCookieProps;
+type IProps = ParentProps & ReduxProps & ReactCookieProps & DispatchProps;
 
-interface IState {
-    // todo
-}
+interface IState { /*empty*/ }
 
 class PostComment extends React.PureComponent<IProps, IState>{
     private handleCommentLike(){
         let commentData = this.props.post?.fullViewPostData.commentsList[this.props.commentIndex];
 
-        // todo
+        if(this.props.auth && commentData?.id) // just so es-lint shuts up
+        this.props.likeComment(this.props.commentIndex,commentData.id ,this.props.auth?.userId,this.props.auth?.token);
     }
 
     public render() {
@@ -49,7 +53,7 @@ class PostComment extends React.PureComponent<IProps, IState>{
                             
                             {!this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].isDescription && (
                                 <div className={styles.commentItemBtns}>
-                                    <Header disabled>x likes</Header>
+                                    <Header disabled>{this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].likesCount} likes</Header>
                                     {
                                         this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].creator?.username && (
                                             <Header disabled className={styles.commentItemReply}>
@@ -65,10 +69,12 @@ class PostComment extends React.PureComponent<IProps, IState>{
                     {!this.props.post?.fullViewPostData.commentsList[this.props.commentIndex]
                         .isDescription && !(!this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].creator?.username as any || this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].creator?.username === (this.props.auth?.username || this.props.cookies?.get('username'))) && (
                         <Icon
-                            name="heart outline"
+                            //name="heart outline"
                             size="small"
                             color="black"
                             onClick={this.handleCommentLike.bind(this)}
+                            id={!this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].isLiked ? `${styles.likeOutline}` : `${styles.likeBtnId}`}
+                            className={`${styles.likeBtn} heart ${this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].isLiked ? '' : 'outline'}`}
                         ></Icon>
                     )}
                 </div>
@@ -92,4 +98,12 @@ const mapStateToProps = (state: AppState): ReduxProps => ({
     auth: state.auth
 });
 
-export default withCookies(connect(mapStateToProps,null)(PostComment as ComponentType<IProps>));
+interface DispatchProps {
+    likeComment: (commentIndex:number,commentId:string,userId:string,token:string) => void
+}
+
+const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
+    likeComment:bindActionCreators(LIKE_COMMENT,dispatch),
+})
+
+export default withCookies(connect(mapStateToProps,mapDispatchToProps)(PostComment as ComponentType<IProps>));

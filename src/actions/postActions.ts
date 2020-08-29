@@ -2,7 +2,7 @@ import { IPost } from './../shared/PostsPartial/PostsPartial';
 import { AppActions } from "./types/actions";
 import { Dispatch } from "react";
 import IGenericResponse from "../types/response";
-import { uploadPost, commentPost , likePost } from "../handlers/post";
+import { uploadPost, commentPost, likePost, likeComment } from '../handlers/post';
 import { IPostComment } from '../shared/PostsPartial/PostsPartial';
 import { IPostCommentResponse } from '../types/response';
 
@@ -66,6 +66,21 @@ export const CALL_FULL_POST_COMMENT_FAILURE = (messege:string):AppActions => ({
     type: 'SET_FULL_POST_COMMENT_FAILURE',
     payload:{
         messege
+    }
+});
+
+export const CALL_COMMENT_LIKE_FAILURE = (messege:string):AppActions => ({
+    type: 'SET_COMMENT_LIKE_FAILURE',
+    payload:{
+        messege
+    }
+});
+
+export const CALL_COMMENT_LIKE_SUCCESS = (commentIndex:number, messege:string):AppActions => ({
+    type: 'SET_COMMENT_LIKE_SUCCESS',
+    payload:{
+        messege,
+        commentIndex
     }
 });
 
@@ -184,6 +199,18 @@ export const COMMENT_POST = (postIndex:number,postId:string,userId:string,commen
     });
 
     return promise;
+}
+
+export const LIKE_COMMENT = (commentIndex:number,commentId:string,userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
+    let promise:Promise<IGenericResponse> = likeComment(commentId,userId,token);
+    promise.then((res:IGenericResponse) => {
+        if(res.success){
+            dispatch(CALL_COMMENT_LIKE_SUCCESS(commentIndex,res.messege));
+        }
+        else{
+            dispatch(CALL_COMMENT_LIKE_FAILURE(res.messege));
+        }
+    });
 }
 
 export const LIKE_POST = (postIndex:number,postId:string,userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
