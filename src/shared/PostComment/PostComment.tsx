@@ -43,7 +43,6 @@ class PostComment extends React.PureComponent<IProps, IState>{
                             onLoad={() => this.props.measure()}
                         ></Image>
                         <div>
-                            {console.log(this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].content)}
                             <Header className={styles.commentItemHeader}>
                                 <span>
                                     {this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].creator?.username || this.props.auth?.username || this.props.cookies?.get('username')}

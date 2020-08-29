@@ -65,7 +65,6 @@ class PostArticle extends React.PureComponent<IProps, IState> {
     }
 
     private fetchComments = ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => {
-        console.log('fetching comments');
         return getNewCommentsChunk(startIndex, stopIndex, this.props.post?.fullViewPostData._id as string,this.props.auth?.userId as string , this.props.auth?.token as string).then((res:ICommentsChunkResponse) => {
             if (res.success) {
                 if (res.comments.length === 0) {

@@ -35,6 +35,10 @@ interface IState {
 class Post extends React.PureComponent<IProps,IState> {
     public state: IState = { comment:'' }
 
+    public componentDidUpdate(){
+        this.props.measure();
+    }
+
     private handleComment(){
         if(this.state.comment.trim().length >= 5){
             if(this.props.auth && this.props.post) // just so es-lint shuts up
