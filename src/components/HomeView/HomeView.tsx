@@ -109,7 +109,7 @@ class HomeView extends React.Component<IProps, IHomeState>{
         return (
             <div className='view-container'>
                 {
-                    this.props.user?.usersListToggled && <UsersList fetchFunction={this.props.user?.currentUsersFetchFunction}/>
+                    this.props.user?.usersListToggled && <UsersList lowerDim={this.props.post?.fullViewToggled} fetchFunction={this.props.user?.currentUsersFetchFunction}/>
                 }
                 {
                     this.props.post?.fullViewToggled && <FullViewPost postIndex={this.props.post?.fullViewPostIndex}/>

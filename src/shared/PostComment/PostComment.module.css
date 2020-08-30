@@ -74,6 +74,10 @@
     color:red !important;
 }
 
+.likesBtn{
+    cursor: pointer;
+}
+
 #likeBtnId{
     color:red !important;
 }

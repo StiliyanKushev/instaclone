@@ -16,6 +16,7 @@ import { InfiniteLoader, InfiniteLoaderChildProps, AutoSizer, List, CellMeasurer
 import { AppState, ReduxProps } from '../../reducers/index';
 
 interface IParentProps {
+    lowerDim?: boolean,
     fetchFunction: (startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:Array<ICreator>}>
 }
 
@@ -49,6 +50,7 @@ class UsersList extends React.PureComponent<IProps, IState>{
     }
 
     public componentWillUnmount() {
+        if(!this.props.post?.fullViewToggled)
         $('body').css('overflow', 'initial');
     }
 
@@ -102,7 +104,7 @@ class UsersList extends React.PureComponent<IProps, IState>{
 
     public render() {
         return (
-            <Dimmer className={styles.container} active>
+            <Dimmer id={this.props.lowerDim ? `${styles.lowerDim}` : ''} className={styles.container} active>
                 <Segment className={styles.likes} attached='top'>
                     Likes
                     <Icon onClick={this.handleClose.bind(this)} name='close' size='big' className={styles.closeIcon}></Icon>
@@ -144,7 +146,8 @@ class UsersList extends React.PureComponent<IProps, IState>{
 }
 
 const mapStateToProps = (state: AppState): ReduxProps => ({
-    user: state.user
+    user: state.user,
+    post: state.post
 });
 
 interface DispatchProps {

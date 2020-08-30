@@ -16,6 +16,10 @@ import styles from './PostComment.module.css';
 
  // IMPORT OTHER
  import { settings } from '../../settings';
+import IGenericResponse from '../../types/response';
+import { ICreator } from '../../types/auth';
+import { TOGGLE_USERS_LIST } from '../../actions/userActions';
+import { getUserLikesFromComment } from '../../handlers/post';
 
 interface ParentProps {
     commentIndex: number,
@@ -33,6 +37,12 @@ class PostComment extends React.PureComponent<IProps, IState>{
 
         if(this.props.auth && commentData?.id) // just so es-lint shuts up
         this.props.likeComment(this.props.commentIndex,commentData.id ,this.props.auth?.userId,this.props.auth?.token);
+    }
+
+    private handleLikesClick(){
+        this.props.toggleUserLikes((startIndex:number,stopIndex:number) => {
+            return getUserLikesFromComment(startIndex,stopIndex,this.props.auth?.userId as string, this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].id as string,this.props.auth?.token as string);
+        });
     }
 
     public render() {
@@ -57,7 +67,7 @@ class PostComment extends React.PureComponent<IProps, IState>{
                             
                             {!this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].isDescription && (
                                 <div className={styles.commentItemBtns}>
-                                    <Header disabled>{this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].likesCount} likes</Header>
+                                    <Header onClick={this.handleLikesClick.bind(this)} className={styles.likesBtn} disabled>{this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].likesCount} likes</Header>
                                     {
                                         this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].creator?.username && (
                                             <Header disabled className={styles.commentItemReply}>
@@ -103,11 +113,13 @@ const mapStateToProps = (state: AppState): ReduxProps => ({
 });
 
 interface DispatchProps {
-    likeComment: (commentIndex:number,commentId:string,userId:string,token:string) => void
+    likeComment: (commentIndex:number,commentId:string,userId:string,token:string) => void,
+    toggleUserLikes: (fetchFunction:(startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:[ICreator]}>) => void,
 }
 
 const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
     likeComment:bindActionCreators(LIKE_COMMENT,dispatch),
+    toggleUserLikes:bindActionCreators(TOGGLE_USERS_LIST,dispatch)
 })
 
 export default withCookies(connect(mapStateToProps,mapDispatchToProps)(PostComment as ComponentType<IProps>));
