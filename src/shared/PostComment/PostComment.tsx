@@ -1,16 +1,21 @@
-// todo format these
-import React, { ComponentType } from 'react';
-import { Header, Icon, Segment, Dimmer, Loader, Image } from 'semantic-ui-react';
-
+// IMPORT STYLES
 import styles from './PostComment.module.css';
-import { settings } from '../../settings';
-import { AppState, ReduxProps } from '../../reducers/index';
-import { connect } from 'react-redux';
-import { withCookies, ReactCookieProps } from 'react-cookie';
-import { ThunkDispatch } from 'redux-thunk';
-import { AppActions } from '../../actions/types/actions';
-import { LIKE_COMMENT } from '../../actions/postActions';
-import { bindActionCreators } from 'redux';
+
+ // IMPORT REACT RELETED
+ import React, { ComponentType } from 'react';
+ import { Header, Icon, Segment, Dimmer, Loader, Image } from 'semantic-ui-react';
+ import { withCookies, ReactCookieProps } from 'react-cookie';
+
+ // IMPORT REDUX RELETED
+ import { connect } from 'react-redux';
+ import { AppActions } from '../../actions/types/actions';
+ import { LIKE_COMMENT } from '../../actions/postActions';
+ import { ThunkDispatch } from 'redux-thunk';
+ import { bindActionCreators } from 'redux';
+ import { AppState, ReduxProps } from '../../reducers/index';
+
+ // IMPORT OTHER
+ import { settings } from '../../settings';
 
 interface ParentProps {
     commentIndex: number,

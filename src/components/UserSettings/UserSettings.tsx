@@ -25,8 +25,16 @@ interface IProps extends DispatchProps {
     handleClose: Function
 }
 
-class UserSettings extends React.Component<IProps> {
-    state ={showTabView:''}
+const REPORT_BUG_OPTION = 'report-bug';
+const CHANGE_PASSWORD_OPTION = 'change-password';
+const NO_OPTION = '';
+
+interface IState {
+    showTabView: typeof REPORT_BUG_OPTION | typeof CHANGE_PASSWORD_OPTION | typeof NO_OPTION
+}
+
+class UserSettings extends React.Component<IProps,IState> {
+    state:IState = {showTabView:''}
 
     private logout(){
         //toast for goodbye

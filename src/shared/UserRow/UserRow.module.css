@@ -1,0 +1,39 @@
+.profileSegmentInternal{
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+    display: flex !important;
+    -webkit-box-align: center !important;
+        -ms-flex-align: center !important;
+            align-items: center !important;
+    border: none !important;
+    -webkit-box-shadow: none !important;
+            box-shadow: none !important;
+    margin-bottom: 0rem !important;
+}
+
+.profileSegmentInternal{
+    padding: 0rem !important;
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+    display: flex !important;
+    -ms-flex-pack: distribute !important;
+    justify-content: space-between !important;
+    -webkit-box-align: center !important;
+    -ms-flex-align: center !important;
+    align-items: center !important;
+}
+
+.verySmallImg{
+    width:40px !important;
+    height:40px !important;
+}
+
+.profileUsernameSmall{
+    margin: 0rem !important;
+}
+
+.loadingSegment{
+    height: 46px !important;
+    border: none !important;
+    box-shadow: none !important;
+}

@@ -13,10 +13,12 @@ import { AppActions } from '../../actions/types/actions';
 import { UPLOAD_POST } from '../../actions/postActions';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
+import { GET_SUGGESTED_USERS } from '../../actions/userActions';
 import { AppState, ReduxProps } from '../../reducers';
 
 // IMPORT VALIDATION
 import { validatePostCreate } from '../../validators/post';
+import { IValidationResult, IValidationResultErrors } from '../../types/form-validation';
 
 // IMPORT OTHER
 import $ from 'jquery';
@@ -24,8 +26,8 @@ import _ from 'lodash';
 import { settings } from '../../settings';
 import FullViewPost from '../FullViewPost/FullViewPost'
 import PostsPartial from '../../shared/PostsPartial/PostsPartial';
-import { IValidationResult, IValidationResultErrors } from '../../types/form-validation';
-import { GET_SUGGESTED_USERS } from '../../actions/userActions';
+import UsersList from '../../shared/UsersList/UsersList';
+import UserRow from '../../shared/UserRow/UserRow';
 
 type IProps = ReduxProps & DispatchProps & ReactCookieProps;
 
@@ -107,6 +109,9 @@ class HomeView extends React.Component<IProps, IHomeState>{
         return (
             <div className='view-container'>
                 {
+                    this.props.user?.usersListToggled && <UsersList fetchFunction={this.props.user?.currentUsersFetchFunction}/>
+                }
+                {
                     this.props.post?.fullViewToggled && <FullViewPost postIndex={this.props.post?.fullViewPostIndex}/>
                 }
                 <Container>
@@ -153,11 +158,7 @@ class HomeView extends React.Component<IProps, IHomeState>{
                                 <Segment>
                                     {
                                         this.props.user?.suggestedUsers.map(user => (
-                                            <Segment className={styles.profileSegmentInternal}>
-                                                <Image className={styles.verySmallImg} circular size='tiny' src={`${settings.BASE_URL}/feed/photo/user/${user.username}`}></Image>
-                                                <Header className={styles.profileUsernameSmall} size='tiny'>{user.username}</Header>
-                                                <Button primary size='tiny'>Folllow</Button>
-                                            </Segment>
+                                            <UserRow username={user.username} userId={user.id} />
                                         ))
                                     }
                                 </Segment>

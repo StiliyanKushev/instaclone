@@ -1,12 +1,16 @@
 import { userActionTypes } from "../actions/types/userActions";
 import { ICreator } from '../types/auth';
+import IGenericResponse from '../types/response';
 
 export interface IUserState {
     error:boolean,
     messege:string,
     isUserLoading:boolean,
     isUserAvatarUpdated:boolean,
-    suggestedUsers:[ICreator],
+    suggestedUsers:Array<ICreator>,
+    usersList:Array<ICreator>,
+    usersListToggled:boolean,
+    currentUsersFetchFunction: (startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:Array<ICreator>}>
 }
 
 const userState:IUserState = {
@@ -15,6 +19,9 @@ const userState:IUserState = {
     isUserLoading:false,
     isUserAvatarUpdated:false,
     suggestedUsers:[] as any,
+    usersList:[] as any,
+    usersListToggled: false,
+    currentUsersFetchFunction: (startIndex:number,stopIndex:number) => (1 as any)
 }
 
 const userReducer = (state = userState, action:userActionTypes) => {
@@ -61,6 +68,25 @@ const userReducer = (state = userState, action:userActionTypes) => {
             return {
                 error: true,
                 messege: action.payload.messege
+            } as IUserState
+        }
+
+        case 'SET_TOGGLE_USERS_LIST':{
+            if(!state.usersListToggled === false)
+            state.usersList = []
+
+            return {
+                ...state,
+                usersListToggled: !state.usersListToggled,
+                currentUsersFetchFunction: action.payload.fetchFunction
+            } as IUserState
+        }
+
+        case 'ADD_USER_LIST_ENTRIES':{
+            state.usersList = [...state.usersList,...action.payload.entries]
+
+            return {
+                ...state,
             } as IUserState
         }
 

@@ -1,0 +1,27 @@
+.container{
+    position: fixed !important;
+}
+
+.likes{
+    font-weight: bold !important;
+    color: rgb(51,51,51) !important;
+    font-size: 16px !important;
+}
+
+.menu{
+    border: none !important;
+    box-shadow: none !important;
+    height: 310px !important;
+}
+
+.closeIcon{
+    cursor: pointer;
+    position: absolute !important;
+    font-size: 23px !important;
+    right: 10px !important;
+    top: 13px !important;
+}
+
+.likesList::-webkit-scrollbar{
+    width: 0px;
+}

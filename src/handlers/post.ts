@@ -39,6 +39,10 @@ export function getNewPostsChunk(startIndex:number,stopIndex:number,userId:strin
     return get<IGenericResponse>(`/feed/posts/get/all/popular/${startIndex}/${stopIndex}/as/${userId}`,token).then((res: any) => res.data);
 }
 
+export function getUserLikesFromPost(startIndex:number,stopIndex:number,userId:string,postId:string,token:string){
+    return get<IGenericResponse>(`/feed/posts/${postId}/likes/${startIndex}/${stopIndex}/as/${userId}`,token).then((res: any) => res.data);
+}
+
 export function getNewCommentsChunk(startIndex:number,stopIndex:number,id:string,userId:string,token:string){
     return get<IGenericResponse>(`/feed/posts/${id}/comments/${startIndex}/${stopIndex}/as/${userId}`,token).then((res: any) => res.data);
 }

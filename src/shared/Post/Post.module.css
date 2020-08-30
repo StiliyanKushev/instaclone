@@ -67,6 +67,7 @@
 }
 
 .likes{
+    cursor: pointer !important;
     font-size: 1.1rem !important;
     margin-top: -1rem !important;
     margin-bottom: .5rem !important;

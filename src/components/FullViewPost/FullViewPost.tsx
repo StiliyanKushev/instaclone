@@ -34,11 +34,11 @@ class FullViewPost extends React.PureComponent<IProps>{
     }
 
     public componentDidMount(){
-        $('#root').css('overflow','hidden');
+        $('body').css('overflow','hidden');
     }
 
     public componentWillUnmount(){
-        $('#root').css('overflow','initial');
+        $('body').css('overflow','initial');
     }
 
     private handleLike(){

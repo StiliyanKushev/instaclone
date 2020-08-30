@@ -440,11 +440,57 @@ function likePost(req,res,next){
     })
 }
 
+async function getLikesFromPost(req,res,next){
+    let startIndex = Number(req.params.startIndex);
+    let stopIndex = Number(req.params.stopIndex);
+
+    let postId = req.params.id;
+
+    let limit = stopIndex - startIndex;
+    if(limit === 0) limit = 1;
+
+    let user = await User.findById(req.params.userId);
+
+    UserLike.find({item_id:postId,user: { $ne: user }}).skip(startIndex).limit(limit).exec(async (err,likes) => {
+        if(err){
+            console.log(err);
+            return res.status(200).json({
+                success:false,
+                likes:[],
+                messege: 'Error When finding likes.'
+            })
+        }
+
+        let newLikes = [];
+
+        for(let like of likes){
+            let likeUser = await User.findById(like.user);
+
+            newLikes.push({
+                id: likeUser._id,
+                username: likeUser.username
+            })
+        }
+
+        return res.status(200).json({
+            success:true,
+            likes:newLikes,
+            messege: 'Here are all accounts that find that cool.'
+        })
+    })
+}
+
+function getLikesFromComment(req,res,next){
+
+}
+
 module.exports = {
     createPost,
     getPopularFromAllPost,
     getCommentsFromPost,
     commentPost,
     likePost,
-    likeComment
+    likeComment,
+    getLikesFromPost,
+    getLikesFromComment
 }

@@ -19,6 +19,10 @@ import {bindActionCreators} from 'redux';
 import { settings } from '../../settings';
 import defaultUserImage from '../../assets/avatar.jpg';
 import { toast } from 'react-toastify';
+import { TOGGLE_USERS_LIST } from '../../actions/userActions';
+import { getUserLikesFromPost } from '../../handlers/post';
+import IGenericResponse from '../../types/response';
+import { ICreator } from '../../types/auth';
 
 interface IParentProps {
     postIndex:number,
@@ -51,6 +55,12 @@ class Post extends React.PureComponent<IProps,IState> {
         else{
             toast.error('Comment has to be at least 5 chars long.');
         }
+    }
+
+    private handleLikesClick(){
+        this.props.toggleUserLikes((startIndex:number,stopIndex:number) => {
+            return getUserLikesFromPost(startIndex,stopIndex,this.props.auth?.userId as string, this.props.post?.homePosts[this.props.postIndex]._id as string,this.props.auth?.token as string);
+        });
     }
 
     private handleLike(){
@@ -132,7 +142,7 @@ class Post extends React.PureComponent<IProps,IState> {
                             <Icon className={styles.iconBtn} size='big' name='bookmark outline'></Icon>
                         </Item>
                     </Menu>
-                    <Header className={styles.likes} size='tiny'>{this.props.post.homePosts[this.props.postIndex].likesCount} likes</Header>
+                    <Header onClick={this.handleLikesClick.bind(this)} className={styles.likes} size='tiny'>{this.props.post.homePosts[this.props.postIndex].likesCount} likes</Header>
                     <Header className={styles.description} size='tiny'>
                         <Header size='tiny' className={styles.commentUsername} as='span'>{this.props.post?.homePosts[this.props.postIndex].creator.username}</Header>
                         <Header className={styles.commentText} as='span' size='tiny'> {this.props.post?.homePosts[this.props.postIndex].description}</Header>
@@ -182,13 +192,15 @@ const mapStateToProps = (state:AppState):ReduxProps => ({
 interface DispatchProps {
     like:(postIndex:number,postId:string,userId:string,token:string) => void
     comment: (postIndex:number,postId: string, userId: string, comment: string, token: string) => void,
-    toggleFullView:(postIndex:number) => void
+    toggleFullView:(postIndex:number) => void,
+    toggleUserLikes: (fetchFunction:(startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:[ICreator]}>) => void,
 }
 
 const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
     comment:bindActionCreators(COMMENT_POST,dispatch),
     like:bindActionCreators(LIKE_POST,dispatch),
     toggleFullView:bindActionCreators(TOGGLE_FULL_POST_VIEW,dispatch),
+    toggleUserLikes:bindActionCreators(TOGGLE_USERS_LIST,dispatch)
 })
 
 export default React.memo(connect(mapStateToProps,mapDispatchToProps)(Post as ComponentType<any>));

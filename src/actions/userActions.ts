@@ -28,7 +28,7 @@ export const CALL_GET_SUGGESTED_USERS_FAILURE = (messege:string):AppActions => (
     }
 });
 
-export const CALL_GET_SUGGESTED_USERS_SUCCESS = (users:[ICreator],messege:string):AppActions => ({
+export const CALL_GET_SUGGESTED_USERS_SUCCESS = (users:Array<ICreator>,messege:string):AppActions => ({
     type: 'GET_SUGGESTED_USERS_SUCCESS',
     payload:{
         users,
@@ -36,6 +36,12 @@ export const CALL_GET_SUGGESTED_USERS_SUCCESS = (users:[ICreator],messege:string
     }
 });
 
+export const CALL_TOGGLE_USERS_LIST = (fetchFunction?:(startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:Array<ICreator>}>):AppActions => ({
+    type: 'SET_TOGGLE_USERS_LIST',
+    payload: {
+        fetchFunction
+    }
+})
 
 export const UPDATE_AVATAR_USER = (form:FormData,username:string,token:string) => (dispatch:Dispatch<AppActions>) => {
     dispatch(CALL_USER_LOADING());
@@ -54,7 +60,7 @@ export const GET_SUGGESTED_USERS = (userId:string,token:string) => (dispatch:Dis
     // maybe remove this later?
     dispatch(CALL_USER_LOADING());
 
-    getSuggestedUsers(userId,token).then((res: {users:[ICreator]} & IGenericResponse) => {
+    getSuggestedUsers(userId,token).then((res: {users:Array<ICreator>} & IGenericResponse) => {
         if(res.success){
             dispatch(CALL_GET_SUGGESTED_USERS_SUCCESS(res.users,res.messege));
         }
@@ -63,3 +69,14 @@ export const GET_SUGGESTED_USERS = (userId:string,token:string) => (dispatch:Dis
         }
     })
 }
+
+export const TOGGLE_USERS_LIST = (fetchFunction?:(startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:Array<ICreator>}>) => (dispatch:Dispatch<AppActions>) => {
+    dispatch(CALL_TOGGLE_USERS_LIST(fetchFunction));
+}
+
+export const ADD_USER_LIST_ENTRIES = (entries:Array<ICreator>):AppActions => ({
+    type: 'ADD_USER_LIST_ENTRIES',
+    payload: {
+        entries
+    }
+})
