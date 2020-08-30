@@ -193,7 +193,7 @@ interface DispatchProps {
     like:(postIndex:number,postId:string,userId:string,token:string) => void
     comment: (postIndex:number,postId: string, userId: string, comment: string, token: string) => void,
     toggleFullView:(postIndex:number) => void,
-    toggleUserLikes: (fetchFunction:(startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:[ICreator]}>) => void,
+    toggleUserLikes: (fetchFunction:(startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:Array<ICreator>}>) => void,
 }
 
 const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({

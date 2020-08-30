@@ -89,6 +89,7 @@
 }
 
 .likes{
+    cursor: pointer;
     width: calc(100% - 14px) !important;
     text-align: left !important;
     padding-left: 1.3rem !important;

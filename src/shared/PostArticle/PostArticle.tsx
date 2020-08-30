@@ -17,12 +17,18 @@ import { Link } from "react-router-dom";
 
 // IMPORT OTHER
 import { settings } from "../../settings";
-import { getNewCommentsChunk } from '../../handlers/post';
+import { getNewCommentsChunk, getUserLikesFromPost } from '../../handlers/post';
 import { ICommentsChunkResponse } from '../../types/response';
 import { ADD_COMMENTS_POST } from '../../actions/postActions';
 import { IPostComment } from '../PostsPartial/PostsPartial';
 import PostComment from "../PostComment/PostComment";
 import { toast } from 'react-toastify';
+import IGenericResponse from '../../types/response';
+import { ICreator } from '../../types/auth';
+import { ThunkDispatch } from 'redux-thunk';
+import { AppActions } from '../../actions/types/actions';
+import { bindActionCreators } from 'redux';
+import { TOGGLE_USERS_LIST } from '../../actions/userActions';
 
 interface IState {
     comment: string;
@@ -51,6 +57,12 @@ class PostArticle extends React.PureComponent<IProps, IState> {
         this.cache = new CellMeasurerCache({
             fixedWidth: true,
             defaultHeight: 46,
+        });
+    }
+
+    private handleLikesClick(){
+        this.props.toggleUserLikes((startIndex:number,stopIndex:number) => {
+            return getUserLikesFromPost(startIndex,stopIndex,this.props.auth?.userId as string, this.props.post?.fullViewPostData._id as string,this.props.auth?.token as string);
         });
     }
 
@@ -190,7 +202,7 @@ class PostArticle extends React.PureComponent<IProps, IState> {
                                         ></Icon>
                                     </Item>
                                 </Menu>
-                                <Header className={styles.likes} size="tiny">
+                                <Header onClick={this.handleLikesClick.bind(this)} className={styles.likes} size="tiny">
                                     {
                                         this.props.post?.fullViewPostData.likesCount
                                     }{" "}
@@ -233,7 +245,14 @@ const mapStateToProps = (state: AppState): ReduxProps => ({
 });
 
 interface DispatchProps {
-    ADD_COMMENTS_POST: (comments: Array<IPostComment>) => void
+    ADD_COMMENTS_POST: (comments: Array<IPostComment>) => void,
+    toggleUserLikes: (fetchFunction:(startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:Array<ICreator>}>) => void,
 }
 
-export default withCookies(connect(mapStateToProps, {ADD_COMMENTS_POST})(PostArticle as ComponentType<IProps>));
+const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
+    toggleUserLikes:bindActionCreators(TOGGLE_USERS_LIST,dispatch),
+    ADD_COMMENTS_POST:bindActionCreators(ADD_COMMENTS_POST,dispatch)
+})
+
+
+export default withCookies(connect(mapStateToProps, mapDispatchToProps)(PostArticle as ComponentType<IProps>));
