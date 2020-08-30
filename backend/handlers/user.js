@@ -2,6 +2,47 @@ const User = require("../models/User");
 const fs = require('fs');
 const path = require('path');
 
+async function getSuggestedUsers(req,res,next){
+    User.count().exec(async function (err, count) {
+
+        const userId = req.params.userId;
+
+        // verify the user
+        let user = await User.findById(userId)
+
+        if(!user){
+            return res.status(200).json({
+                success: false,
+                messege: 'There was an error with fetching. Invalid userid given.',
+                users:[]
+            })
+        }
+
+
+        // Get a random entry
+        var randomIndex = Math.floor(Math.random() * count - 5)
+        if(randomIndex < 0) randomIndex = 0;
+        
+        User.find({_id: { $ne: user._id }}).skip(randomIndex).limit(5).exec(async (err,users) => {
+            let newUsers = [];
+
+            for(let user of users){
+                newUsers.push({
+                    id: user._id,
+                    username: user.username
+                })
+            }
+
+            // here we have at least 5 users
+            return res.status(200).json({
+                success:true,
+                messege:'Here are some new friends!',
+                users: newUsers
+            });
+        })
+    })
+}
+
 function sendAvatar(req, res, next) {
     //validation of username string
     const username = req.headers.username;
@@ -62,5 +103,6 @@ function sendAvatar(req, res, next) {
 }
 
 module.exports = {
-    sendAvatar
+    sendAvatar,
+    getSuggestedUsers
 }

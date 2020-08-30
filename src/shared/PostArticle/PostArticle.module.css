@@ -36,7 +36,6 @@
 
 .profileSegmentInternal{
     width: calc(100% - 13px) !important;
-
     padding: .5rem !important;
     display: -webkit-box !important;
     display: -ms-flexbox !important;

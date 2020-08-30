@@ -24,10 +24,10 @@
     display: -ms-flexbox !important;
     display: flex !important;
     -ms-flex-pack: distribute !important;
-        justify-content: space-around !important;
+    justify-content: space-between !important;
     -webkit-box-align: center !important;
-        -ms-flex-align: center !important;
-            align-items: center !important;
+    -ms-flex-align: center !important;
+    align-items: center !important;
 }
 
 .profileImage{
@@ -47,6 +47,7 @@
 
 .verySmallImg{
     width:40px !important;
+    height:40px !important;
 }
 
 .profileUsernameSmall{

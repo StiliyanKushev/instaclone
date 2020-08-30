@@ -1,10 +1,12 @@
 import { userActionTypes } from "../actions/types/userActions";
+import { ICreator } from '../types/auth';
 
 export interface IUserState {
     error:boolean,
     messege:string,
     isUserLoading:boolean,
     isUserAvatarUpdated:boolean,
+    suggestedUsers:[ICreator],
 }
 
 const userState:IUserState = {
@@ -12,6 +14,7 @@ const userState:IUserState = {
     messege:'',
     isUserLoading:false,
     isUserAvatarUpdated:false,
+    suggestedUsers:[] as any,
 }
 
 const userReducer = (state = userState, action:userActionTypes) => {
@@ -43,6 +46,22 @@ const userReducer = (state = userState, action:userActionTypes) => {
                 isUserAvatarUpdated:false,
                 messege:action.payload.messege
             } as IUserState;
+        }
+
+        case 'GET_SUGGESTED_USERS_SUCCESS':{
+            return {
+                ...state,
+                suggestedUsers: action.payload.users,
+                error: false,
+                messege: action.payload.messege,
+            } as IUserState
+        }
+
+        case 'GET_SUGGESTED_USERS_FAILURE':{
+            return {
+                error: true,
+                messege: action.payload.messege
+            } as IUserState
         }
 
         default: {

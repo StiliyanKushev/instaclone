@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const authCheck = require('../config/auth-check');
 const {createPost,getPopularFromAllPost,commentPost,likePost,likeComment,getCommentsFromPost} = require('../handlers/posts');
-const {sendAvatar} = require('../handlers/user');
+const {sendAvatar,getSuggestedUsers} = require('../handlers/user');
 const multer = require('multer'); 
 const User = require('../models/User');
 const Post = require('../models/Post');
@@ -58,9 +58,10 @@ router.post('/comments/:id/like',authCheck,likeComment)
 router.post('/posts/:id/like',authCheck,likePost)
 
 //users
+router.get('/user/suggested/:userId',authCheck,getSuggestedUsers)
 router.post('/user/send/avatar',authCheck,upload.single('image'),sendAvatar)
-// router.put('/user/save-post/:id',authCheck,userSavePost)
-// router.put('/user/follow/:username',authCheck,userFollowUserPost)
-// router.put('/user/unfollow/:username',authCheck,userUnfollowUserPost)
+// router.post('/user/save-post/:id',authCheck,userSavePost)
+// router.post('/user/follow/:username',authCheck,userFollowUserPost)
+// router.post('/user/unfollow/:username',authCheck,userUnfollowUserPost)
 
 module.exports = router;

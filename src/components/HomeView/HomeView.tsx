@@ -1,6 +1,5 @@
 // IMPORT STYLES
 import styles from './HomeView.module.css';
-import defaultUserImage from '../../assets/avatar.jpg';
 
 // IMPORT REACT RELATED
 import { ReactCookieProps, withCookies } from 'react-cookie';
@@ -26,6 +25,7 @@ import { settings } from '../../settings';
 import FullViewPost from '../FullViewPost/FullViewPost'
 import PostsPartial from '../../shared/PostsPartial/PostsPartial';
 import { IValidationResult, IValidationResultErrors } from '../../types/form-validation';
+import { GET_SUGGESTED_USERS } from '../../actions/userActions';
 
 type IProps = ReduxProps & DispatchProps & ReactCookieProps;
 
@@ -52,6 +52,10 @@ class HomeView extends React.Component<IProps, IHomeState>{
 
             $('#global-file-input').val('');
         });
+
+        // simple fetch for the suggested users
+        if(this.props.auth)
+        this.props.getSuggestedUsers(this.props.auth.userId,this.props.auth.token);
     }
 
     public componentDidUpdate(prevProps:IProps) {
@@ -147,33 +151,15 @@ class HomeView extends React.Component<IProps, IHomeState>{
                                 </Segment>
                                 <Divider className={styles.profileDivider} horizontal><Header disabled size='small'>Suggested</Header></Divider>
                                 <Segment>
-                                    <Segment className={styles.profileSegmentInternal}>
-                                        <Image className={styles.verySmallImg} circular size='tiny' src={defaultUserImage}></Image>
-                                        <Header className={styles.profileUsernameSmall} size='tiny'>randomtodo</Header>
-                                        <Button primary size='tiny'>Folllow</Button>
-                                    </Segment>
-
-                                    {/* TODO REMOVE THESE AND MAKE IT FROM BACKEND */}
-                                    <Segment className={styles.profileSegmentInternal}>
-                                        <Image className={styles.verySmallImg} circular size='tiny' src={defaultUserImage}></Image>
-                                        <Header className={styles.profileUsernameSmall} size='tiny'>randomtodo</Header>
-                                        <Button primary size='tiny'>Folllow</Button>
-                                    </Segment>
-                                    <Segment className={styles.profileSegmentInternal}>
-                                        <Image className={styles.verySmallImg} circular size='tiny' src={defaultUserImage}></Image>
-                                        <Header className={styles.profileUsernameSmall} size='tiny'>randomtodo</Header>
-                                        <Button primary size='tiny'>Folllow</Button>
-                                    </Segment>
-                                    <Segment className={styles.profileSegmentInternal}>
-                                        <Image className={styles.verySmallImg} circular size='tiny' src={defaultUserImage}></Image>
-                                        <Header className={styles.profileUsernameSmall} size='tiny'>randomtodo</Header>
-                                        <Button primary size='tiny'>Folllow</Button>
-                                    </Segment>
-                                    <Segment className={styles.profileSegmentInternal}>
-                                        <Image className={styles.verySmallImg} circular size='tiny' src={defaultUserImage}></Image>
-                                        <Header className={styles.profileUsernameSmall} size='tiny'>randomtodo</Header>
-                                        <Button primary size='tiny'>Folllow</Button>
-                                    </Segment>
+                                    {
+                                        this.props.user?.suggestedUsers.map(user => (
+                                            <Segment className={styles.profileSegmentInternal}>
+                                                <Image className={styles.verySmallImg} circular size='tiny' src={`${settings.BASE_URL}/feed/photo/user/${user.username}`}></Image>
+                                                <Header className={styles.profileUsernameSmall} size='tiny'>{user.username}</Header>
+                                                <Button primary size='tiny'>Folllow</Button>
+                                            </Segment>
+                                        ))
+                                    }
                                 </Segment>
                             </div>
                         </Grid.Column>
@@ -186,16 +172,18 @@ class HomeView extends React.Component<IProps, IHomeState>{
 
 const mapStateToProps = (state: AppState): ReduxProps => ({
     auth: state.auth,
-    post: state.post
+    post: state.post,
+    user: state.user
 })
 
 interface DispatchProps {
     uploadPost: (form:FormData,username:string,token:string) => void,
+    getSuggestedUsers: (userId:string,token:string) => void
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): DispatchProps => ({
     uploadPost: bindActionCreators(UPLOAD_POST, dispatch),
+    getSuggestedUsers: bindActionCreators(GET_SUGGESTED_USERS,dispatch)
 })
-
 
 export default withCookies(connect(mapStateToProps, mapDispatchToProps)(HomeView as ComponentType<IProps>));
