@@ -26,13 +26,18 @@ export function likeComment(commentId:string,userId:string,token:string){
     return post<typeof data,IGenericResponse>(data,`/feed/comments/${commentId}/like`,token).then((res:any) => res.data);
 }
 
-export function commentPost(postId:string,comment:string,userId:string,token:string){
+export function commentPost(postId:string,comment:string,userId:string,token:string,replyCommentId?:string){
     let data = {
         description:comment,
-        userId
+        userId,
+        replyCommentId
     }
 
     return post<typeof data,IGenericResponse>(data,`/feed/posts/${postId}/comment`,token).then((res:any) => res.data);
+}
+
+export function getSubComments(startIndex:number,stopIndex:number,commentId:string,userId:string,token:string){
+    return get<IGenericResponse>(`/feed/comments/${commentId}/subcomments/${startIndex}/${stopIndex}/as/${userId}`,token).then((res: any) => res.data);
 }
 
 export function getNewPostsChunk(startIndex:number,stopIndex:number,userId:string,token:string){

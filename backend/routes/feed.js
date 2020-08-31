@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const authCheck = require('../config/auth-check');
-const {createPost,getPopularFromAllPost,commentPost,likePost,likeComment,getCommentsFromPost,getLikesFromPost,getLikesFromComment} = require('../handlers/posts');
+const {getCommentsFromComment,createPost,getPopularFromAllPost,commentPost,likePost,likeComment,getCommentsFromPost,getLikesFromPost,getLikesFromComment} = require('../handlers/posts');
 const {sendAvatar,getSuggestedUsers} = require('../handlers/user');
 const multer = require('multer'); 
 const User = require('../models/User');
@@ -57,6 +57,7 @@ router.post('/posts/:id/comment',authCheck,commentPost)
 // router.post('/posts/:id/edit',authCheck,editPost)
 router.post('/comments/:id/like',authCheck,likeComment)
 router.get('/comments/:id/likes/:startIndex/:stopIndex/as/:userId',authCheck,getLikesFromComment)
+router.get('/comments/:id/subcomments/:startIndex/:stopIndex/as/:userId',authCheck,getCommentsFromComment)
 router.post('/posts/:id/like',authCheck,likePost)
 
 //users

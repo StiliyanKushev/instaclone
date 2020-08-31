@@ -158,7 +158,7 @@ class HomeView extends React.Component<IProps, IHomeState>{
                                 <Segment>
                                     {
                                         this.props.user?.suggestedUsers.map(user => (
-                                            <UserRow username={user.username} userId={user.id} />
+                                            <UserRow key={user.id} username={user.username} userId={user.id} />
                                         ))
                                     }
                                 </Segment>

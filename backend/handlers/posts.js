@@ -148,16 +148,30 @@ function commentPost(req,res,next){
                 creator:user.id,
                 content:req.body.description,
                 likesCount:0,
+                parentComment: req.body.replyCommentId || undefined
             }).save().then(async (comment) => {
                 let commentCreator = await User.findById(comment.creator);
                 
                 let isLikedQ = await UserLike.find({item_id:comment._id,user:user});
                 let isLiked = isLikedQ[0] === undefined ? false : true;
 
+                if(req.body.replyCommentId){
+                    let parentComment = await Comment.findById(req.body.replyCommentId);
+                    if(!parentComment){
+                        return res.status(200).json({
+                            success:false,
+                            messege:'Cannot reply to undefined comment.',
+                        })
+                    }
+                }
+
                 return res.status(200).json({
                     success:true,
                     messege:'Comment added.',
                     comment:{
+                        maxChildCommentsNumber:0,
+                        childCommentsNumber:0,
+                        parentComment: req.body.replyCommentId,
                         likesCount: comment.likesCount,
                         isLiked: isLiked,
                         content: comment.content,
@@ -180,16 +194,18 @@ function commentPost(req,res,next){
     })
 }
 
-async function getCommentsFromPost(req,res,next){
+async function getCommentsFromComment(req,res,next){
     let startIndex = Number(req.params.startIndex);
     let stopIndex = Number(req.params.stopIndex);
 
-    let postId = req.params.id;
+    console.log(startIndex,stopIndex)
+
+    let parentId = req.params.id;
 
     let limit = stopIndex - startIndex;
     if(limit === 0) limit = 1;
 
-    Comment.find({post:postId}).skip(startIndex).limit(limit).exec(async (err,comments) => {
+    Comment.find({parentComment:parentId}).skip(startIndex).limit(limit).exec(async (err,comments) => {
         if(err){
             console.log(err);
             return res.status(200).json({
@@ -205,11 +221,66 @@ async function getCommentsFromPost(req,res,next){
         for(let comment of comments){
             let commentCreator = await User.findById(comment.creator);
 
-
             let isLikedQ = await UserLike.find({item_id:comment._id,user:user});
             let isLiked = isLikedQ[0] === undefined ? false : true;
 
             newComments.push({
+                maxChildCommentsNumber:0,
+                childCommentsNumber: 0,
+                parentComment: parentId,
+                likesCount: comment.likesCount,
+                isLiked: isLiked,
+                id: comment.id,
+                post: comment.post.toString(),
+                content: comment.content,
+                creator: {
+                    id: commentCreator.id,
+                    username: commentCreator.username,
+                }
+            });
+        }
+
+        return res.status(200).json({
+            success:true,
+            comments:newComments
+        })
+    })
+}
+
+async function getCommentsFromPost(req,res,next){
+    let startIndex = Number(req.params.startIndex);
+    let stopIndex = Number(req.params.stopIndex);
+
+    let postId = req.params.id;
+
+    let limit = stopIndex - startIndex;
+    if(limit === 0) limit = 1;
+
+    Comment.find({post:postId,parentComment:undefined}).skip(startIndex).limit(limit).exec(async (err,comments) => {
+        if(err){
+            console.log(err);
+            return res.status(200).json({
+                success:false,
+                comments:[]
+            })
+        }
+
+        let newComments = [];
+
+        let user = await User.findById(req.params.userId);
+
+        for(let comment of comments){
+            let commentCreator = await User.findById(comment.creator);
+
+            let isLikedQ = await UserLike.find({item_id:comment._id,user:user});
+            let isLiked = isLikedQ[0] === undefined ? false : true;
+
+            let childCommentsNumber = await (await Comment.find({parentComment:comment.id})).length;
+
+            newComments.push({
+                maxChildCommentsNumber:childCommentsNumber,
+                childCommentsNumber: childCommentsNumber,
+                parentComment: comment.parentComment, // always undefined but I still prefer to return it to front-end
                 likesCount: comment.likesCount,
                 isLiked: isLiked,
                 id: comment.id,
@@ -250,7 +321,7 @@ async function getPopularFromAllPost(req,res,next){
         let resPosts = [];
 
         for(let post of posts){
-            let allComments = await Comment.find({post:post}).limit(3).exec();
+            let allComments = await Comment.find({post:post,parentComment:undefined}).limit(3).exec();
             
             // sort the comments 
             let comments = [];
@@ -262,12 +333,17 @@ async function getPopularFromAllPost(req,res,next){
                 let isLikedQ = await UserLike.find({item_id:comment._id,user:givenUser});
                 let isCommentLiked = isLikedQ[0] === undefined ? false : true;
 
+                let childCommentsNumber = await (await Comment.find({parentComment:comment.id})).length;
+
                 let newComment = {
                     post:    comment.post,
                     id:      comment.id,
                     content: comment.content,
                     isLiked: isCommentLiked,
                     likesCount: comment.likesCount,
+                    parentComment: comment.parentComment,
+                    maxChildCommentsNumber:childCommentsNumber,
+                    childCommentsNumber:childCommentsNumber,
                     creator: {
                         id: comment.creator,
                         username: commentCreator.username,
@@ -528,5 +604,6 @@ module.exports = {
     likePost,
     likeComment,
     getLikesFromPost,
-    getLikesFromComment
+    getLikesFromComment,
+    getCommentsFromComment
 }

@@ -47,9 +47,9 @@ class FullViewPost extends React.PureComponent<IProps>{
         this.props.likeFullView();
     }
 
-    private handleComment(comment:string){
+    private handleComment(comment:string,replyCommentId?:string){
         if(this.props.auth && this.props.post){ // just so es-lint shuts up
-            this.props.comment(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.userId,comment,this.props.auth?.token)
+            this.props.comment(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.userId,comment,this.props.auth?.token,replyCommentId)
             .then((res) => {
                 if(this.props.auth && res.success)
                 this.props.commentFullView(res.comment);
@@ -85,7 +85,7 @@ interface DispatchProps {
     setFullViewPostData:(PostData:IPost) => void,
     like:(postIndex:number,postId:string,userId:string,token:string) => void,
     likeFullView:() => void,
-    comment: (postIndex:number,postId: string, userId: string, comment: string, token: string) => Promise<IPostCommentResponse>,
+    comment: (postIndex:number,postId: string, userId: string, comment: string, token: string,replyCommentId?:string) => Promise<IPostCommentResponse>,
     commentFullView:(comment:IPostComment,postId?:string,token?:string) => void
 }
 

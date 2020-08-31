@@ -2,9 +2,17 @@ import { IPost } from './../shared/PostsPartial/PostsPartial';
 import { AppActions } from "./types/actions";
 import { Dispatch } from "react";
 import IGenericResponse from "../types/response";
-import { uploadPost, commentPost, likePost, likeComment } from '../handlers/post';
+import { uploadPost, commentPost, likePost, likeComment, getSubComments } from '../handlers/post';
 import { IPostComment } from '../shared/PostsPartial/PostsPartial';
-import { IPostCommentResponse } from '../types/response';
+import { IPostCommentResponse, ICommentsChunkResponse } from '../types/response';
+
+export const SET_REPLYING_COMMENT = (commentIndex:number,subCommentIndex?:number):AppActions => ({
+    type: 'SET_REPLYING_COMMENT',
+    payload: {
+        commentIndex,
+        subCommentIndex
+    }
+})
 
 export const ADD_POSTS_HOME = (posts:Array<IPost>):AppActions => ({
     type: 'ADD_POSTS_HOME',
@@ -76,11 +84,12 @@ export const CALL_COMMENT_LIKE_FAILURE = (messege:string):AppActions => ({
     }
 });
 
-export const CALL_COMMENT_LIKE_SUCCESS = (commentIndex:number, messege:string):AppActions => ({
+export const CALL_COMMENT_LIKE_SUCCESS = (commentIndex:number, messege:string,subCommentIndex?:number):AppActions => ({
     type: 'SET_COMMENT_LIKE_SUCCESS',
     payload:{
         messege,
-        commentIndex
+        commentIndex,
+        subCommentIndex
     }
 });
 
@@ -120,6 +129,15 @@ export const CALL_TOGGLE_FULL_POST_VIEW = (postIndex?:number):AppActions => ({
     }
 })
 
+export const CALL_TOGGLE_MORE_COMMENT = (commentIndex:number,comments?:Array<IPostComment>):AppActions => ({
+    type: 'SET_TOGGLE_MORE_COMMENT',
+    payload: {
+        commentIndex: commentIndex,
+        comments:comments
+    }
+})
+
+
 export const SET_FULL_POST_DATA_VIEW = (postData:IPost):AppActions => ({
     type: 'SET_FULL_POST_DATA_VIEW',
     payload: {
@@ -155,6 +173,18 @@ export const TOGGLE_FULL_POST_VIEW = (postIndex?:number) => (dispatch:Dispatch<A
     dispatch(CALL_TOGGLE_FULL_POST_VIEW(postIndex));
 }
 
+export const TOGGLE_MORE_COMMENT = (startIndex:number,stopIndex:number,commentId:string,commentIndex:number,userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
+    let promise:Promise<ICommentsChunkResponse> = getSubComments(startIndex,stopIndex,commentId,userId,token);
+    promise.then((res:ICommentsChunkResponse) => {
+        if(res.success){
+            if(res.comments.length > 0)
+            dispatch(CALL_TOGGLE_MORE_COMMENT(commentIndex,res.comments));
+            else
+            dispatch(CALL_TOGGLE_MORE_COMMENT(commentIndex));
+        }
+    });
+}
+
 export const UPLOAD_POST = (form:FormData,username:string,token:string) => (dispatch:Dispatch<AppActions>) => {
     dispatch(CALL_POST_LOADING());
 
@@ -185,10 +215,10 @@ export const COMMENT_FULL_POST = (comment:IPostComment,postId?:string,token?:str
     }
 }
 
-export const COMMENT_POST = (postIndex:number,postId:string,userId:string,comment:string,token:string) => (dispatch:Dispatch<AppActions>) => {
+export const COMMENT_POST = (postIndex:number,postId:string,userId:string,comment:string,token:string,replyCommentId?:string) => (dispatch:Dispatch<AppActions>) => {
     dispatch(CALL_POST_LOADING());
 
-    let promise:Promise<IPostCommentResponse> = commentPost(postId,comment,userId,token);
+    let promise:Promise<IPostCommentResponse> = commentPost(postId,comment,userId,token,replyCommentId);
     promise.then((res:IPostCommentResponse) => {
         if(res.success){
             dispatch(CALL_POST_COMMENT_SUCCESS(postIndex,res.comment,res.messege));
@@ -201,11 +231,11 @@ export const COMMENT_POST = (postIndex:number,postId:string,userId:string,commen
     return promise;
 }
 
-export const LIKE_COMMENT = (commentIndex:number,commentId:string,userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
+export const LIKE_COMMENT = (commentIndex:number,commentId:string,userId:string,token:string,subCommentIndex?:number) => (dispatch:Dispatch<AppActions>) => {
     let promise:Promise<IGenericResponse> = likeComment(commentId,userId,token);
     promise.then((res:IGenericResponse) => {
         if(res.success){
-            dispatch(CALL_COMMENT_LIKE_SUCCESS(commentIndex,res.messege));
+            dispatch(CALL_COMMENT_LIKE_SUCCESS(commentIndex,res.messege,subCommentIndex));
         }
         else{
             dispatch(CALL_COMMENT_LIKE_FAILURE(res.messege));

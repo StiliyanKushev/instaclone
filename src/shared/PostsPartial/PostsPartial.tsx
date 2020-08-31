@@ -28,6 +28,11 @@ export interface IPostComment {
     creator?:ICreator,
     isLiked:boolean,
     likesCount:number,
+    childCommentsNumber: number,
+    maxChildCommentsNumber: number,
+    subComments?: Array<IPostComment>,
+    parentComment?: string,
+    moreToggled?: boolean,
 }
 export interface IPost {
     postIndex:number,

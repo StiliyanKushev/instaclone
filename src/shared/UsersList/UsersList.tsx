@@ -105,6 +105,12 @@ class UsersList extends React.PureComponent<IProps, IState>{
     public render() {
         return (
             <Dimmer id={this.props.lowerDim ? `${styles.lowerDim}` : ''} className={styles.container} active>
+                {
+                    this.props.user?.usersList.length === 0 && (
+                        <p className={styles.noOtherLikes}>Others have not liked this yet.</p>
+                    )
+                }
+                
                 <Segment className={styles.likes} attached='top'>
                     Likes
                     <Icon onClick={this.handleClose.bind(this)} name='close' size='big' className={styles.closeIcon}></Icon>

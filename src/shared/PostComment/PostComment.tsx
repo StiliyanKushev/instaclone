@@ -9,7 +9,7 @@ import styles from './PostComment.module.css';
  // IMPORT REDUX RELETED
  import { connect } from 'react-redux';
  import { AppActions } from '../../actions/types/actions';
- import { LIKE_COMMENT } from '../../actions/postActions';
+ import { LIKE_COMMENT, SET_REPLYING_COMMENT } from '../../actions/postActions';
  import { ThunkDispatch } from 'redux-thunk';
  import { bindActionCreators } from 'redux';
  import { AppState, ReduxProps } from '../../reducers/index';
@@ -29,7 +29,7 @@ interface ParentProps {
 
 type IProps = ParentProps & ReduxProps & ReactCookieProps & DispatchProps;
 
-interface IState { /*empty*/ }
+interface IState {}
 
 class PostComment extends React.PureComponent<IProps, IState>{
     private handleCommentLike(){
@@ -43,6 +43,16 @@ class PostComment extends React.PureComponent<IProps, IState>{
         this.props.toggleUserLikes((startIndex:number,stopIndex:number) => {
             return getUserLikesFromComment(startIndex,stopIndex,this.props.auth?.userId as string, this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].id as string,this.props.auth?.token as string);
         });
+    }
+
+    private handleReply(){
+        // if user wants to cancel reset it to -1 (no comment)
+        if(this.props.post?.currentReplyingComment === this.props.commentIndex && this.props.post.currentReplyingSubComment === -1){
+            this.props.replyingComment(-1,-1);
+            return;
+        }
+
+        this.props.replyingComment(this.props.commentIndex,-1);
     }
 
     public render() {
@@ -70,8 +80,10 @@ class PostComment extends React.PureComponent<IProps, IState>{
                                     <Header onClick={this.handleLikesClick.bind(this)} className={styles.likesBtn} disabled>{this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].likesCount} likes</Header>
                                     {
                                         this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].creator?.username && (
-                                            <Header disabled className={styles.commentItemReply}>
-                                                Reply
+                                            <Header id={`${this.props.post?.currentReplyingComment === this.props.commentIndex && this.props.post.currentReplyingSubComment === -1 ? styles.cancelHeader : ''}`} onClick={this.handleReply.bind(this)} disabled className={styles.commentItemReply}>
+                                                {
+                                                    this.props.post?.currentReplyingComment === this.props.commentIndex && this.props.post.currentReplyingSubComment === -1 ? 'Cancel' : 'Reply'
+                                                }
                                             </Header>
                                         )
                                     }
@@ -113,13 +125,15 @@ const mapStateToProps = (state: AppState): ReduxProps => ({
 });
 
 interface DispatchProps {
+    replyingComment: (commentIndex:number,subCommentIndex:number) => void,
     likeComment: (commentIndex:number,commentId:string,userId:string,token:string) => void,
-    toggleUserLikes: (fetchFunction:(startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:[ICreator]}>) => void,
+    toggleUserLikes: (fetchFunction:(startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:Array<ICreator>}>) => void,
 }
 
 const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
     likeComment:bindActionCreators(LIKE_COMMENT,dispatch),
-    toggleUserLikes:bindActionCreators(TOGGLE_USERS_LIST,dispatch)
+    toggleUserLikes:bindActionCreators(TOGGLE_USERS_LIST,dispatch),
+    replyingComment:bindActionCreators(SET_REPLYING_COMMENT,dispatch)
 })
 
 export default withCookies(connect(mapStateToProps,mapDispatchToProps)(PostComment as ComponentType<IProps>));

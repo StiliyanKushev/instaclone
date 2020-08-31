@@ -154,8 +154,6 @@ router.post('/register', (req, res, next) => {
       })
     }
 
-    console.log(userData);
-
     return res.status(200).json({
       success: true,
       messege: 'You have successfully signed up!',

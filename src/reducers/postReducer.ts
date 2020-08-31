@@ -13,6 +13,8 @@ export interface IPostState {
     fullViewToggled:boolean,
     fullViewPostData:IFullViewPostData,
     fullViewPostIndex:number,
+    currentReplyingComment:number,
+    currentReplyingSubComment:number,
 }
 
 // doing this so there are no run time errors on inital render (before setting the data in the componentDidMount in some cases)
@@ -44,6 +46,8 @@ const postState:IPostState = {
     fullViewToggled:false,
     fullViewPostData: emptyFullViewPostData,
     fullViewPostIndex: -1,
+    currentReplyingComment: -1,
+    currentReplyingSubComment: -1,
 }
 
 const postReducer = (state = postState, action:postActionTypes) => {
@@ -85,6 +89,7 @@ const postReducer = (state = postState, action:postActionTypes) => {
 
         case 'SET_POST_COMMENT_SUCCESS':{
             // add comment to ownComments
+            action.payload.comment.moreToggled = false;
             state.homePosts[action.payload.postIndex].ownComments.push(action.payload.comment);
             
             return {
@@ -105,17 +110,34 @@ const postReducer = (state = postState, action:postActionTypes) => {
         }
 
         case 'SET_COMMENT_LIKE_SUCCESS':{
-            if(!state.fullViewPostData.commentsList[action.payload.commentIndex].isLiked){
-                // change the value of specific index to increment
-                state.fullViewPostData.commentsList[action.payload.commentIndex].likesCount++;
+            // if it's a regular comment and not a sub comment
+            if(action.payload.subCommentIndex === undefined){
+                if(!state.fullViewPostData.commentsList[action.payload.commentIndex].isLiked){
+                    // change the value of specific index to increment
+                    state.fullViewPostData.commentsList[action.payload.commentIndex].likesCount++;
+                }
+                else{
+                    // change the value of specific index to decrement
+                    state.fullViewPostData.commentsList[action.payload.commentIndex].likesCount--;
+                }
+    
+                // update the isliked value of the comment
+                state.fullViewPostData.commentsList[action.payload.commentIndex].isLiked = !state.fullViewPostData.commentsList[action.payload.commentIndex].isLiked;
             }
+            // else if it's a sub comment
             else{
-                // change the value of specific index to decrement
-                state.fullViewPostData.commentsList[action.payload.commentIndex].likesCount--;
+                if(!((state.fullViewPostData.commentsList[action.payload.commentIndex].subComments)as any)[action.payload.subCommentIndex].isLiked){
+                    // change the value of specific index to increment
+                    ((state.fullViewPostData.commentsList[action.payload.commentIndex].subComments)as any)[action.payload.subCommentIndex].likesCount++;
+                }
+                else{
+                    // change the value of specific index to decrement
+                    ((state.fullViewPostData.commentsList[action.payload.commentIndex].subComments)as any)[action.payload.subCommentIndex].likesCount--;
+                }
+    
+                // update the isliked value of the comment
+                ((state.fullViewPostData.commentsList[action.payload.commentIndex].subComments)as any)[action.payload.subCommentIndex].isLiked = !((state.fullViewPostData.commentsList[action.payload.commentIndex].subComments)as any)[action.payload.subCommentIndex].isLiked;
             }
-
-            // update the isliked value of the post
-            state.fullViewPostData.commentsList[action.payload.commentIndex].isLiked = !state.fullViewPostData.commentsList[action.payload.commentIndex].isLiked;
 
             return {
                 ...state,
@@ -168,6 +190,10 @@ const postReducer = (state = postState, action:postActionTypes) => {
         }
 
         case 'ADD_COMMENTS_POST':{
+            for(let c of action.payload.comments){
+                c.moreToggled = false;
+            }
+
             state.fullViewPostData.commentsList = [...state.fullViewPostData.commentsList,...action.payload.comments]
 
             return {
@@ -176,6 +202,17 @@ const postReducer = (state = postState, action:postActionTypes) => {
         }
 
         case 'SET_TOGGLE_FULL_POST_VIEW':{
+            if(state.fullViewToggled){
+                state.currentReplyingComment = -1;
+
+                // close expanded replies from sub comments
+                for(let parentComment of state.fullViewPostData.commentsList){
+                    parentComment.childCommentsNumber = parentComment.maxChildCommentsNumber;
+                    parentComment.moreToggled = false;
+                    parentComment.subComments = [] as any;
+                }
+            }
+
             return {
                 ...state,
                 fullViewToggled: !state.fullViewToggled,
@@ -184,6 +221,9 @@ const postReducer = (state = postState, action:postActionTypes) => {
         }
 
         case 'SET_FULL_POST_DATA_VIEW':{
+            for(let c of action.payload.postData.ownComments) c.moreToggled = false;
+            for(let c of action.payload.postData.comments) c.moreToggled = false;
+
             let list:IFullViewPostCommentList = [
                 {
                     isDescription: true,
@@ -232,8 +272,18 @@ const postReducer = (state = postState, action:postActionTypes) => {
         }
 
         case 'SET_FULL_POST_COMMENT_SUCCESS':{
-            // add comment to the start of the list (after the description)
-            state.fullViewPostData.commentsList.splice(1, 0,action.payload.comment);
+            action.payload.comment.moreToggled = false;
+            // add comment to the start of the list (after the description) if its not a relpy
+            if(state.currentReplyingComment === -1)
+                state.fullViewPostData.commentsList.splice(1, 0,action.payload.comment);
+            else {
+                // increment the parent comment replies counter
+                state.fullViewPostData.commentsList[state.currentReplyingComment].maxChildCommentsNumber++;
+                state.fullViewPostData.commentsList[state.currentReplyingComment].childCommentsNumber++;
+
+                // at the end reset this after replying
+                state.currentReplyingComment = -1;
+            }
 
             return {
                 ...state,
@@ -255,6 +305,43 @@ const postReducer = (state = postState, action:postActionTypes) => {
         case 'SET_FIX_POST_AFTER_UPDATE':{
             for(let item of action.payload.arr){
                 state.homePosts[item.index] = item.post;
+            }
+
+            return {
+                ...state,
+            } as IPostState
+        }
+
+        case 'SET_REPLYING_COMMENT':{
+            return {
+                ...state,
+                currentReplyingComment: action.payload.commentIndex,
+                currentReplyingSubComment: action.payload.subCommentIndex
+            } as IPostState
+        }
+
+        case 'SET_TOGGLE_MORE_COMMENT':{
+            if(!state.fullViewPostData.commentsList[action.payload.commentIndex].moreToggled || (state.fullViewPostData.commentsList[action.payload.commentIndex].moreToggled && action.payload.comments !== undefined)){
+                state.fullViewPostData.commentsList[action.payload.commentIndex].moreToggled = true;
+                
+                state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber -= 5;
+                if(state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber < 0){
+                    state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber = 0;
+                }
+    
+                state.fullViewPostData.commentsList[action.payload.commentIndex].subComments = action.payload.comments;
+            }
+            else{
+                state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber -= 5;
+                if(state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber < 0){
+                    state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber = 0;
+                }
+
+                if(state.fullViewPostData.commentsList[action.payload.commentIndex].moreToggled && state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber === 0 && action.payload.comments === undefined){
+                    state.fullViewPostData.commentsList[action.payload.commentIndex].moreToggled = false;
+                    state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber = state.fullViewPostData.commentsList[action.payload.commentIndex].maxChildCommentsNumber;
+                    state.fullViewPostData.commentsList[action.payload.commentIndex].subComments = [] as any;
+                }
             }
 
             return {

@@ -3,6 +3,7 @@ import styles from "./PostArticle.module.css";
 
 // IMPORT REACT RELETED
 import React from "react";
+import { toast } from 'react-toastify';
 import { ComponentType } from 'react';
 import { ReactCookieProps, withCookies } from 'react-cookie';
 import { Grid, Image, Segment, Header, Menu, Item, Icon, Form, Button } from 'semantic-ui-react';
@@ -10,25 +11,28 @@ import { List, AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, Infin
 
 // IMPORT REDUX RELETED
 import { connect } from "react-redux";
+import { bindActionCreators } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 import { AppState, ReduxProps } from "../../reducers";
+import { TOGGLE_USERS_LIST } from '../../actions/userActions';
+import { ADD_COMMENTS_POST, TOGGLE_MORE_COMMENT } from '../../actions/postActions';
 
 // IMPORT ROUTER RELETED
 import { Link } from "react-router-dom";
 
+// IMPORT TYPES
+import { ICreator } from '../../types/auth';
+import { ICommentsChunkResponse } from '../../types/response';
+import { AppActions } from '../../actions/types/actions';
+import IGenericResponse from '../../types/response';
+
+
 // IMPORT OTHER
 import { settings } from "../../settings";
 import { getNewCommentsChunk, getUserLikesFromPost } from '../../handlers/post';
-import { ICommentsChunkResponse } from '../../types/response';
-import { ADD_COMMENTS_POST } from '../../actions/postActions';
 import { IPostComment } from '../PostsPartial/PostsPartial';
 import PostComment from "../PostComment/PostComment";
-import { toast } from 'react-toastify';
-import IGenericResponse from '../../types/response';
-import { ICreator } from '../../types/auth';
-import { ThunkDispatch } from 'redux-thunk';
-import { AppActions } from '../../actions/types/actions';
-import { bindActionCreators } from 'redux';
-import { TOGGLE_USERS_LIST } from '../../actions/userActions';
+import SubComments from '../SubComments/SubComments';
 
 interface IState {
     comment: string;
@@ -37,7 +41,7 @@ interface IState {
 
 interface IParentProps {
     handleLike: () => void;
-    handleComment: (comment: string) => void;
+    handleComment: (comment: string,replyCommentId?: string) => void;
 }
 
 type IProps = IParentProps & ReduxProps & ReactCookieProps & DispatchProps;
@@ -60,6 +64,41 @@ class PostArticle extends React.PureComponent<IProps, IState> {
         });
     }
 
+    public componentDidUpdate(prevProps:IProps){
+        const currentIndex = this.props.post?.currentReplyingComment as number;
+        const currentSubIndex = this.props.post?.currentReplyingSubComment as number;
+
+        if(prevProps.post?.currentReplyingComment !== currentIndex || prevProps.post?.currentReplyingSubComment !== currentSubIndex){
+            // if user clicked cancel
+            if(currentIndex === -1){
+                this.setState({comment:''});
+                return;
+            }
+
+            if(currentSubIndex === -1){
+                // clear comment and set it to '@username of comment creator'
+                this.setState({comment:`@${this.props.post?.fullViewPostData.commentsList[currentIndex].creator?.username as string} `});
+            }
+            else{
+                // clear comment and set it to '@username of comment creator'
+                this.setState({comment:`@${((this.props.post?.fullViewPostData.commentsList[currentIndex].subComments)as any)[currentSubIndex].creator?.username as string} `});
+            }
+        }
+    }
+
+    private handleMoreClick(commentIndex:number){
+        const maxEver = this.props.post?.fullViewPostData.commentsList[commentIndex].maxChildCommentsNumber as number;
+        const currentCount = this.props.post?.fullViewPostData.commentsList[commentIndex].childCommentsNumber as number;
+        const numPerPage = 5;
+
+        const multiplier = (maxEver - currentCount) / numPerPage;
+
+        let startIndex = multiplier * numPerPage;
+        let stopIndex = startIndex + numPerPage;
+
+        this.props.toggleMoreComment(startIndex,stopIndex,this.props.post?.fullViewPostData.commentsList[commentIndex].id as string,commentIndex,this.props.auth?.userId as string,this.props.auth?.token as string);
+    }
+
     private handleLikesClick(){
         this.props.toggleUserLikes((startIndex:number,stopIndex:number) => {
             return getUserLikesFromPost(startIndex,stopIndex,this.props.auth?.userId as string, this.props.post?.fullViewPostData._id as string,this.props.auth?.token as string);
@@ -67,8 +106,14 @@ class PostArticle extends React.PureComponent<IProps, IState> {
     }
 
     private handleComment(){
-        if(this.state.comment.trim().length >= 5){
-            this.props.handleComment(this.state.comment);
+        // if the actual comment (without the @anyusername - if it exists) is >= 5
+        let reference = /^@\w+/gm.exec(this.state.comment);
+        let refLength = reference != null ? reference[0].length : 0;
+
+        let subComment = this.props.post?.fullViewPostData.commentsList[this.props.post.currentReplyingComment];
+
+        if(this.state.comment.trim().length - refLength >= 5){
+            this.props.handleComment(this.state.comment,subComment ? subComment.id : undefined);
             this.setState({ comment: "" });
         }
         else{
@@ -107,12 +152,30 @@ class PostArticle extends React.PureComponent<IProps, IState> {
                 rowIndex={index}
             >
                 {({ measure, registerChild }: any) => (
-                    <div className="row" ref={registerChild} style={style}>
+                    <div className={`row ${styles.rowContainer}`} ref={registerChild} style={style}>
                         <PostComment
                             commentIndex={index}
                             isLoaded={this.isRowLoaded({index})}
                             measure={measure}
                         />
+                        {
+                            index > 0 && this.props.post?.fullViewPostData.commentsList[index] && this.props.post?.fullViewPostData.commentsList[index].maxChildCommentsNumber as number > 0 && (
+                                <React.Fragment>
+                                    {
+                                        this.props.post.fullViewPostData.commentsList[index].childCommentsNumber === 0 ? (
+                                            <span onClick={(e) => this.handleMoreClick.bind(this)(index)} className={styles.showMore}>close</span>
+                                        ) : (
+                                            <span onClick={(e) => this.handleMoreClick.bind(this)(index)} className={styles.showMore}>more ({this.props.post?.fullViewPostData.commentsList[index].childCommentsNumber})</span>
+                                        )
+                                    }
+                                    {
+                                        this.props.post.fullViewPostData.commentsList[index].moreToggled && (
+                                            <SubComments index={index} measure={measure} />
+                                        )
+                                    }
+                                </React.Fragment>
+                            )
+                        }
                     </div>
                 )}
             </CellMeasurer>
@@ -246,12 +309,14 @@ const mapStateToProps = (state: AppState): ReduxProps => ({
 
 interface DispatchProps {
     ADD_COMMENTS_POST: (comments: Array<IPostComment>) => void,
+    toggleMoreComment: (startIndex:number,stopIndex:number,commentId:string,commentIndex:number,userId:string,token:string) => void,
     toggleUserLikes: (fetchFunction:(startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:Array<ICreator>}>) => void,
 }
 
 const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
     toggleUserLikes:bindActionCreators(TOGGLE_USERS_LIST,dispatch),
-    ADD_COMMENTS_POST:bindActionCreators(ADD_COMMENTS_POST,dispatch)
+    ADD_COMMENTS_POST:bindActionCreators(ADD_COMMENTS_POST,dispatch),
+    toggleMoreComment:bindActionCreators(TOGGLE_MORE_COMMENT,dispatch)
 })
 
 
