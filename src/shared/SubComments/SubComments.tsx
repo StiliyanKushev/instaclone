@@ -35,7 +35,12 @@ class SubComments extends React.PureComponent<IProps,IState>{
     public componentWillUnmount(){
         // doing this will set the measure at the end of the runtime queue after it will be removed
         setTimeout(() => {
-            this.props.measure();
+            try {
+                this.props.measure();
+            } catch (error) {
+                // the user has closed the whole view
+            }
+            
         },1)
     }
 
