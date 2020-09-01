@@ -187,3 +187,8 @@
     flex-direction: column;
     align-items: baseline;
 }
+
+.linkWithNoColor{
+    opacity: 0.9 !important;
+    color: rgba(0,0,0,.87) !important;
+}

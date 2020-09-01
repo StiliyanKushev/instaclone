@@ -8,7 +8,7 @@
     margin-left: 50px !important;
     padding: 1rem 0rem !important;
     display: flex !important;
-    width: 100% !important;
+    width: calc(100% - 50px) !important;
 }
 
 .commentItemContainer > div{
@@ -68,7 +68,7 @@
 }
 
 .commentItemLeftSide{
-    width:77% !important;
+    width:88.5% !important;
 }
 
 .likeBtn{

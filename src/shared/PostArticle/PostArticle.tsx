@@ -86,7 +86,12 @@ class PostArticle extends React.PureComponent<IProps, IState> {
         }
     }
 
-    private handleMoreClick(commentIndex:number){
+    private handleResize(){
+        // clear the cache and update it (this is the solution with best performance)
+        this.cache.clearAll();
+    }
+
+    private handleMoreClick(commentIndex:number,measure:() => void){        
         const maxEver = this.props.post?.fullViewPostData.commentsList[commentIndex].maxChildCommentsNumber as number;
         const currentCount = this.props.post?.fullViewPostData.commentsList[commentIndex].childCommentsNumber as number;
         const numPerPage = 5;
@@ -97,6 +102,11 @@ class PostArticle extends React.PureComponent<IProps, IState> {
         let stopIndex = startIndex + numPerPage;
 
         this.props.toggleMoreComment(startIndex,stopIndex,this.props.post?.fullViewPostData.commentsList[commentIndex].id as string,commentIndex,this.props.auth?.userId as string,this.props.auth?.token as string);
+        
+        // recalculate the height
+        setTimeout(() => {
+            measure();
+        },10)
     }
 
     private handleLikesClick(){
@@ -163,9 +173,9 @@ class PostArticle extends React.PureComponent<IProps, IState> {
                                 <React.Fragment>
                                     {
                                         this.props.post.fullViewPostData.commentsList[index].childCommentsNumber === 0 ? (
-                                            <span onClick={(e) => this.handleMoreClick.bind(this)(index)} className={styles.showMore}>close</span>
+                                            <span onClick={(e) => this.handleMoreClick.bind(this)(index,measure)} className={styles.showMore}>close</span>
                                         ) : (
-                                            <span onClick={(e) => this.handleMoreClick.bind(this)(index)} className={styles.showMore}>more ({this.props.post?.fullViewPostData.commentsList[index].childCommentsNumber})</span>
+                                            <span onClick={(e) => this.handleMoreClick.bind(this)(index,measure)} className={styles.showMore}>more ({this.props.post?.fullViewPostData.commentsList[index].childCommentsNumber})</span>
                                         )
                                     }
                                     {
@@ -216,7 +226,7 @@ class PostArticle extends React.PureComponent<IProps, IState> {
                                     minimumBatchSize={10}
                                     threshold={15}>
                                     {({ onRowsRendered,registerChild }: InfiniteLoaderChildProps) => (
-                                            <AutoSizer className={styles.AutoSizer}>
+                                            <AutoSizer className={styles.AutoSizer} onResize={this.handleResize.bind(this)}>
                                                 {({ width, height }) => {
                                                     return (
                                                         <List
@@ -246,11 +256,14 @@ class PostArticle extends React.PureComponent<IProps, IState> {
                                             className={`${styles.likeBtn} ${styles.iconBtn} heart ${this.props.post?.fullViewPostData.isLiked ? "": "outline"}`}
                                             size="big"
                                         ></Icon>
-                                        <Icon
-                                            className={styles.iconBtn}
-                                            size="big"
-                                            name="comment outline"
-                                        ></Icon>
+                                        <Link className={styles.linkWithNoColor} to={`/post/${this.props.post?.fullViewPostData._id}`}>
+                                            <Icon
+                                                className={styles.iconBtn}
+                                                size="big"
+                                                name="comment outline"
+                                            ></Icon>
+                                        </Link>
+                                        
                                         <Icon
                                             className={styles.iconBtn}
                                             size="big"

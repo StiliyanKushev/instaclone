@@ -1,19 +1,28 @@
-import React, { ComponentType } from 'react';
-import { AppState, ReduxProps } from '../../reducers';
-import { ThunkDispatch } from 'redux-thunk';
-import { AppActions } from '../../actions/types/actions';
-import { connect } from 'react-redux';
-import {bindActionCreators} from 'redux';
-import { IPostComment } from '../PostsPartial/PostsPartial';
+// IMPORT STYLES
 import styles from './SubComments.module.css';
+
+// IMPORT REACT RELETED
 import { Image, Header, Icon } from 'semantic-ui-react';
-import { settings } from '../../settings';
+import React, { ComponentType } from 'react';
 import { withCookies, ReactCookieProps } from 'react-cookie';
-import { getUserLikesFromComment } from '../../handlers/post';
+
+// IMPORT REDUX RELETED
+import { connect } from 'react-redux';
+import { AppActions } from '../../actions/types/actions';
+import { ThunkDispatch } from 'redux-thunk';
+import {bindActionCreators} from 'redux';
 import { TOGGLE_USERS_LIST } from '../../actions/userActions';
-import IGenericResponse from '../../types/response';
-import { ICreator } from '../../types/auth';
+import { AppState, ReduxProps } from '../../reducers';
 import { LIKE_COMMENT, SET_REPLYING_COMMENT } from '../../actions/postActions';
+
+// IMPORT TYPES
+import { ICreator } from '../../types/auth';
+import IGenericResponse from '../../types/response';
+
+// IMPORT OTHERS
+import { settings } from '../../settings';
+import { IPostComment } from '../PostsPartial/PostsPartial';
+import { getUserLikesFromComment } from '../../handlers/post';
 
 interface IParentProps {
     measure: () => void,

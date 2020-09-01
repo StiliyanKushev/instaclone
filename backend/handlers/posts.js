@@ -198,8 +198,6 @@ async function getCommentsFromComment(req,res,next){
     let startIndex = Number(req.params.startIndex);
     let stopIndex = Number(req.params.stopIndex);
 
-    console.log(startIndex,stopIndex)
-
     let parentId = req.params.id;
 
     let limit = stopIndex - startIndex;

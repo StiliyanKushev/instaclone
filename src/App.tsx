@@ -20,12 +20,12 @@ import NavMenu from './shared/NavMenu/NavMenu';
 import Error404 from './shared/Error404';
 import ForgotPassword from './components/ForgotPassword/ForgotPassword';
 
-
 // IMPORT ALL VIEWS
 const HomeView = React.lazy(() => import('./components/HomeView/HomeView'));
 const LoginView = React.lazy(() => import('./components/LoginView/LoginView'));
 const RegisterView = React.lazy(() => import('./components/RegisterView/RegisterView'));
 const UserView = React.lazy(() => import('./components/UserView/UserView'));
+const PostPageView = React.lazy(() => import('./components/PostPageView/PostPageView'));
 
 type IProps = ReduxProps & OtherReduxProps;
 
@@ -77,6 +77,7 @@ class App extends React.Component<IProps,any> {
                 <CustomRoute exact path='/register' component={RegisterView} {...this.publicOnly}/>
 
                 <CustomRoute exact path='/profile/:name' component={UserView} {...this.privateOnly}/>
+                <CustomRoute exact path='/post/:id' component={PostPageView} {...this.privateOnly}/>
 
                 <Route exact path='*' component={Error404}/>
               </Switch>

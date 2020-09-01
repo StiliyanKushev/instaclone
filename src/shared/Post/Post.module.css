@@ -169,3 +169,8 @@
 .commentForm{
     margin-top: 1rem;
 }
+
+.linkWithNoColor{
+    opacity: 0.9 !important;
+    color: rgba(0,0,0,.87) !important;
+}

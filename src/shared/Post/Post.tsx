@@ -135,7 +135,9 @@ class Post extends React.PureComponent<IProps,IState> {
                     <Menu className={styles.postMenu}>
                         <Item className='left'>
                             <Icon onClick={this.handleLike.bind(this)} id={!this.props.post.homePosts[this.props.postIndex].isLiked ? `${styles.likeOutline}` : ''} className={`${styles.likeBtn} ${styles.iconBtn} heart ${this.props.post.homePosts[this.props.postIndex].isLiked ? '' : 'outline'}`} size='big'></Icon>                                
-                            <Icon className={styles.iconBtn} size='big' name='comment outline'></Icon>
+                            <Link className={styles.linkWithNoColor} to={`/post/${this.props.post.homePosts[this.props.postIndex]._id}`}>
+                                <Icon className={styles.iconBtn} size='big' name='comment outline'></Icon>
+                            </Link>
                             <Icon className={styles.iconBtn} size='big' name='paper plane outline'></Icon>
                         </Item>
                         <Item className='right'>
