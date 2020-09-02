@@ -2,20 +2,28 @@
 import styles from './NavMenu.module.css';
 
 // IMPORT REACT RELATED
-import React, { createRef } from 'react';
+import React, { createRef, ComponentType } from 'react';
 import { ReactCookieProps, withCookies } from 'react-cookie';
 import { Menu, Container, Item, Search, Icon, Ref } from 'semantic-ui-react';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 
 // IMPORT OTHER
 import $ from 'jquery';
+import { connect } from 'react-redux';
+import { AppState, ReduxProps } from '../../reducers/index';
+import { ThunkDispatch } from 'redux-thunk';
+import { AppActions } from '../../actions/types/actions';
+import { TOGGLE_FULL_POST_VIEW } from '../../actions/postActions';
+import { bindActionCreators } from 'redux';
 
-class NavMenu extends React.Component<RouteComponentProps & ReactCookieProps>{
+type IProps = RouteComponentProps & ReactCookieProps & ReduxProps & DispatchProps;
+
+class NavMenu extends React.Component<IProps>{
     state = {isVisible:true}
 
     private mobileSearchBar = createRef<HTMLDivElement>();
 
-    constructor(props: RouteComponentProps) {
+    constructor(props: IProps) {
         super(props);
 
         //bind local functions
@@ -53,6 +61,10 @@ class NavMenu extends React.Component<RouteComponentProps & ReactCookieProps>{
     }
 
     private onRouteChanged() {
+        if(this.props.post?.fullViewToggled && this.props.location.pathname !== '/'){
+            this.props.toggleFullView()
+        }
+
         this.handleVisibility()
     }
 
@@ -107,4 +119,16 @@ class NavMenu extends React.Component<RouteComponentProps & ReactCookieProps>{
     }
 }
 
-export default React.memo(withRouter(withCookies(NavMenu)));
+const mapStateToProps = (state: AppState): ReduxProps => ({
+    post: state.post,
+})
+
+interface DispatchProps {
+    toggleFullView:() => void,
+}
+
+const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
+    toggleFullView:bindActionCreators(TOGGLE_FULL_POST_VIEW,dispatch),
+})
+
+export default React.memo(withRouter(withCookies(connect(mapStateToProps, mapDispatchToProps)(NavMenu as ComponentType<IProps>)) as any));

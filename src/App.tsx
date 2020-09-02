@@ -57,7 +57,7 @@ class App extends React.Component<IProps,any> {
       return false;
     }
   }
-
+  
   render(){
     return (
       <Suspense fallback={<LoadingView/>}>

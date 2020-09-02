@@ -2,6 +2,7 @@
     position: fixed !important;
     top:0;
     left:0;
+    display: flex !important;
 }
 
 #closeIcon{
@@ -24,20 +25,51 @@
 
 .innerContainer{
     margin: 2.5rem;
+    flex-wrap: nowrap !important;
 }
+
+.container::-webkit-scrollbar {
+    width: 0px;
+  }
 
 @media screen and (max-height:660px){
     .container{
         display:block;
+        width: fit-content !important;
     }
 
     .innerContainer{
         margin-left: 2.8rem;
         margin-top: 4rem;
-    }
+    } 
 
     #closeIcon{
         right: 10px !important;
         top: 10px !important;
+    }
+}
+
+@media screen and (max-width:620px){
+    .container{
+        display: block !important;
+        padding-top: 15rem !important;
+        /* margin-left: 133px; */
+        /* margin-right: 133px; */
+        padding: 15rem 3rem !important;
+    }
+
+    .dimmer{
+        display: flex !important;
+    }
+}
+
+@media screen and (max-width:450px){
+    .container{
+        padding: 13rem 0rem !important;
+        padding-left: 10px !important;
+    }
+    
+    #closeIcon{
+        z-index: 999999999 !important;
     }
 }

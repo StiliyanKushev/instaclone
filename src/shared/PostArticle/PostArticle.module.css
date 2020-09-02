@@ -1,6 +1,7 @@
 .article{
     height: 40rem !important;
     background: white !important;
+    flex-wrap: nowrap !important;
 }
 
 .grid{
@@ -12,6 +13,7 @@
     padding: 0rem !important;
     display: flex !important;
     justify-content: space-around !important;
+    flex-wrap: nowrap !important;
 }
 
 .leftCol{
@@ -20,18 +22,24 @@
     display: flex !important;
     align-items: center !important;
     background: black !important;
-    width:60%;
+    /* width:60%; */
+    max-width: 100% !important;
+    min-width: 0px !important;
 }
 
 .rightCol{
-    width: 40%;
+    width: 40% !important;
     padding: 0rem !important;
-    box-sizing: border-box;
+    box-sizing: border-box !important;
+    min-width: 330px !important;
+    max-width: 400px !important;
 }
 
 .postImage{
     max-height: 40rem !important;
+    width: auto !important;
     object-fit: cover !important;
+    width: 450px !important;
 }
 
 .profileSegmentInternal{
@@ -191,4 +199,59 @@
 .linkWithNoColor{
     opacity: 0.9 !important;
     color: rgba(0,0,0,.87) !important;
+}
+
+@media screen and (max-width:620px){
+    .article{
+        height: fit-content !important;
+        background: none !important;
+    }
+
+    .grid{
+        background: none !important;
+    }
+
+    .row{
+        flex-direction: column !important;
+    flex-flow: column !important;
+    flex-basis: auto !important;
+    flex-grow: unset !important;
+    flex: auto !important;
+    background: none !important;
+    }
+
+    .leftCol{
+        width: calc(100% - 14px) !important;
+        justify-content: center !important;
+    }
+
+    .rightCol{
+        max-width: unset !important;
+        width: 100% !important;
+        min-width: unset !important;
+        padding-bottom: 9rem !important;
+        position: relative !important;
+        top: -15px !important;
+    }
+
+    .profileSegmentInternal{
+        right: -0.3px !important;
+        left: 1px !important;
+        width: calc(100% - 14px) !important;
+        border-top-right-radius: unset !important;
+        border-top-left-radius: unset !important;
+    }
+
+    .commentsContainer{
+        right: -1px !important;
+    }
+
+    .actionSegment{
+        right: -1px !important;
+    }
+
+    .commentSegment{
+        left: 1px !important;
+         width: calc(100% - 14px) !important;
+    }
 }

@@ -195,7 +195,7 @@ class PostArticle extends React.PureComponent<IProps, IState> {
     render() {
         return (
             <article className={styles.article}>
-                <Grid centered className={styles.grid}>
+                <Grid doubling={false} centered className={styles.grid}>
                     <Grid.Row className={styles.row}>
                         <div className={styles.leftCol}>
                             <Image
@@ -204,6 +204,7 @@ class PostArticle extends React.PureComponent<IProps, IState> {
                                 src={`data:${this.props.post?.fullViewPostData.source.contentType};base64,${Buffer.from(this.props.post?.fullViewPostData.source.data).toString("base64")}`}
                             />
                         </div>
+                        <br/>
                         <div className={styles.rightCol}>
                             <Segment className={styles.profileSegmentInternal} attached="top">
                                 <Image
