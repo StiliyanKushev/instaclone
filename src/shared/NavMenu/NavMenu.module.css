@@ -58,13 +58,21 @@
 }
 
 @media screen and (max-width:620px){
-    .searchItem > div{
-        display: none;
+    .searchItem,.searchItem > div{
+        display: none !important;
     }
     
     .searchBtn{
         display: block !important;
     }   
+
+    .logo{
+        bottom: -3px !important;
+    }
+
+    .LinkContainerLogo{
+        width: 80px !important;
+    }
 }
 
 @media screen and (max-width:440px){
