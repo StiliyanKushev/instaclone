@@ -77,6 +77,11 @@ class PostsPartial extends React.PureComponent<IProps>{
         });
 
         this.renderRow = this.renderRow.bind(this);
+        this.handleListResize = this.handleListResize.bind(this);
+    }
+
+    private handleListResize(){
+        this.cache.clearAll();
     }
 
     private fetchPosts = ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => {
@@ -137,7 +142,7 @@ class PostsPartial extends React.PureComponent<IProps>{
                             scrollingResetTimeInterval={10}
                         >
                             {({ height, isScrolling, onChildScroll, scrollTop }) => (
-                                <AutoSizer disableHeight>
+                                <AutoSizer disableHeight onResize={this.handleListResize}>
                                     {
                                         ({ width }: any) => (
                                             <List
