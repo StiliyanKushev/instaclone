@@ -11,6 +11,7 @@ export interface IPostState {
     isPostUploaded:boolean,
     homePosts:Array<IPost>,
     fullViewToggled:boolean,
+    isOtherPostDataLoading:boolean,
     fullViewPostData:IFullViewPostData,
     fullViewPostIndex:number,
     currentReplyingComment:number,
@@ -44,6 +45,7 @@ const postState:IPostState = {
     isPostUploaded:false,
     homePosts:[],
     fullViewToggled:false,
+    isOtherPostDataLoading:false,
     fullViewPostData: emptyFullViewPostData,
     fullViewPostIndex: -1,
     currentReplyingComment: -1,
@@ -244,6 +246,20 @@ const postReducer = (state = postState, action:postActionTypes) => {
         }
 
         case 'SET_FULL_POST_LIKE_SUCCESS':{
+            if(action.payload.didFetch === true){
+                if(!state.fullViewPostData.isLiked){
+                    // change the value of specific index to increment
+                    state.fullViewPostData.likesCount++;
+                }
+                else{
+                    // change the value of specific index to decrement
+                    state.fullViewPostData.likesCount--;
+                }
+    
+                // update the isliked value of the post
+                state.fullViewPostData.isLiked = !state.fullViewPostData.isLiked;
+            }
+
             return {
                 ...state,
                 error:false,
@@ -252,18 +268,6 @@ const postReducer = (state = postState, action:postActionTypes) => {
         }
 
         case 'SET_FULL_POST_LIKE_FAILURE':{
-            if(!state.fullViewPostData.isLiked){
-                // change the value of specific index to increment
-                state.fullViewPostData.likesCount++;
-            }
-            else{
-                // change the value of specific index to decrement
-                state.fullViewPostData.likesCount--;
-            }
-
-            // update the isliked value of the post
-            state.fullViewPostData.isLiked = !state.fullViewPostData.isLiked;
-
             return {
                 ...state,
                 error:true,
@@ -346,6 +350,20 @@ const postReducer = (state = postState, action:postActionTypes) => {
 
             return {
                 ...state,
+            } as IPostState
+        }
+
+        case 'SET_OTHER_POST_DATA_LOADING':{
+            return {
+                ...state,
+                isOtherPostDataLoading:true
+            } as IPostState
+        }
+
+        case 'SET_OTHER_POST_DATA_LOADING_DONE':{
+            return {
+                ...state,
+                isOtherPostDataLoading:false
             } as IPostState
         }
 

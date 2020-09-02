@@ -1,0 +1,11 @@
+.postArticleContainer{
+    width:fit-content !important;
+}
+
+.centerContent{
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+
+    display: flex;
+    justify-content: center;
+}

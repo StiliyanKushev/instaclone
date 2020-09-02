@@ -36,6 +36,10 @@ export function commentPost(postId:string,comment:string,userId:string,token:str
     return post<typeof data,IGenericResponse>(data,`/feed/posts/${postId}/comment`,token).then((res:any) => res.data);
 }
 
+export function getPostData(postId:string,userId:string,token:string){
+    return get<IGenericResponse>(`/feed/posts/${postId}/get/as/${userId}`,token).then((res:any) => res.data);
+}
+
 export function getSubComments(startIndex:number,stopIndex:number,commentId:string,userId:string,token:string){
     return get<IGenericResponse>(`/feed/comments/${commentId}/subcomments/${startIndex}/${stopIndex}/as/${userId}`,token).then((res: any) => res.data);
 }

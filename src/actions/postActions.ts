@@ -2,7 +2,7 @@ import { IPost } from './../shared/PostsPartial/PostsPartial';
 import { AppActions } from "./types/actions";
 import { Dispatch } from "react";
 import IGenericResponse from "../types/response";
-import { uploadPost, commentPost, likePost, likeComment, getSubComments } from '../handlers/post';
+import { uploadPost, commentPost, likePost, likeComment, getSubComments, getPostData } from '../handlers/post';
 import { IPostComment } from '../shared/PostsPartial/PostsPartial';
 import { IPostCommentResponse, ICommentsChunkResponse } from '../types/response';
 
@@ -115,10 +115,11 @@ export const CALL_FULL_POST_LIKE_FAILURE = (messege:string):AppActions => ({
     }
 });
 
-export const CALL_FULL_POST_LIKE_SUCCESS = (messege:string):AppActions => ({
+export const CALL_FULL_POST_LIKE_SUCCESS = (messege:string,didFetch?:boolean):AppActions => ({
     type: 'SET_FULL_POST_LIKE_SUCCESS',
     payload:{
         messege,
+        didFetch,
     }
 });
 
@@ -156,6 +157,14 @@ export const SET_FIX_POST_AFTER_UPDATE = (arr:[{index:number,post:IPost}]):AppAc
     }
 })
 
+export const CALL_OTHER_POST_DATA_LOADING = ():AppActions => ({
+    type: 'SET_OTHER_POST_DATA_LOADING',
+})
+
+export const CALL_OTHER_POST_DATA_LOADING_DONE = ():AppActions => ({
+    type: 'SET_OTHER_POST_DATA_LOADING_DONE',
+})
+
 export const CALL_FIX_POST_AFTER_UPDATE = (arr:[{index:number,post:IPost}]) => (dispatch:Dispatch<AppActions>) => {
     dispatch(SET_FIX_POST_AFTER_UPDATE(arr));
 }
@@ -164,13 +173,22 @@ export const CALL_POST_DATA_CLEAR = () => (dispatch:Dispatch<AppActions>) => {
     dispatch(SET_POST_DATA_CLEAR());
 }
 
-
 export const CALL_FULL_POST_DATA_VIEW = (postData:IPost) => (dispatch:Dispatch<AppActions>) => {
     dispatch(SET_FULL_POST_DATA_VIEW(postData));
 }
 
 export const TOGGLE_FULL_POST_VIEW = (postIndex?:number) => (dispatch:Dispatch<AppActions>) => {
     dispatch(CALL_TOGGLE_FULL_POST_VIEW(postIndex));
+}
+
+export const FETCH_FULL_POST_VIEW_AND_SAVE = (postId:string,userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
+    dispatch(CALL_OTHER_POST_DATA_LOADING());
+    getPostData(postId,userId,token).then((res:IGenericResponse & {post:IPost}) => {
+        if(res.success){
+            dispatch(SET_FULL_POST_DATA_VIEW(res.post));
+            dispatch(CALL_OTHER_POST_DATA_LOADING_DONE());
+        }
+    })
 }
 
 export const TOGGLE_MORE_COMMENT = (startIndex:number,stopIndex:number,commentId:string,commentIndex:number,userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
@@ -198,13 +216,15 @@ export const UPLOAD_POST = (form:FormData,username:string,token:string) => (disp
     });
 }
 
-export const COMMENT_FULL_POST = (comment:IPostComment,postId?:string,token?:string) => (dispatch:Dispatch<AppActions>) => {
+export const COMMENT_FULL_POST = (comment:IPostComment,postId?:string,token?:string,userId?:string,replyCommentId?:string) => (dispatch:Dispatch<AppActions>) => {
     if(!postId || !token){
         dispatch(CALL_FULL_POST_COMMENT_SUCCESS(comment,'Full post commented.'));
     }
     else{
         dispatch(CALL_POST_LOADING());
-        commentPost(postId,comment.content,comment.creator?.id as string,token).then((res:IPostCommentResponse) => {
+
+        let promise:Promise<IPostCommentResponse> = commentPost(postId,comment.content,userId as string,token,replyCommentId);
+        promise.then((res:IPostCommentResponse) => {
             if(res.success){
                 dispatch(CALL_FULL_POST_COMMENT_SUCCESS(res.comment,res.messege));
             }
@@ -255,15 +275,15 @@ export const LIKE_POST = (postIndex:number,postId:string,userId:string,token:str
     });
 }
 
-export const LIKE_FULL_POST = (postId?:string,username?:string,token?:string) => (dispatch:Dispatch<AppActions>) => {
-    if(!postId || !username || !token){
+export const LIKE_FULL_POST = (postId?:string,userId?:string,token?:string) => (dispatch:Dispatch<AppActions>) => {
+    if(!postId || !userId || !token){
         dispatch(CALL_FULL_POST_LIKE_SUCCESS('Full post liked.'));
     }
     else {
-        let promise:Promise<IGenericResponse> = likePost(postId,username,token);
+        let promise:Promise<IGenericResponse> = likePost(postId,userId,token);
         promise.then((res:IGenericResponse) => {
             if(res.success){
-                dispatch(CALL_FULL_POST_LIKE_SUCCESS(res.messege));
+                dispatch(CALL_FULL_POST_LIKE_SUCCESS(res.messege,true));
             }
             else{
                 dispatch(CALL_FULL_POST_LIKE_FAILURE(res.messege));

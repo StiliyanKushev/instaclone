@@ -298,6 +298,84 @@ async function getCommentsFromPost(req,res,next){
     })
 }
 
+async function getPost(req,res,next){
+    Post.findById(req.params.id).then(async (post,err) => {
+        if(err){
+            console.log(err);
+            return res.status(200).json({
+                success:false,
+                post:[]
+            })
+        }
+
+        let givenUser = await User.findById(req.params.userId);
+        let allComments = await Comment.find({post:req.params.id,parentComment:undefined}).limit(3).exec();
+            
+        // sort the comments 
+        let comments = [];
+        let ownComments = [];
+        for(let comment of allComments){
+            // append creator username to every comment
+            let commentCreator = await User.findById(comment.creator);
+
+            let isLikedQ = await UserLike.find({item_id:comment._id,user:givenUser});
+            let isCommentLiked = isLikedQ[0] === undefined ? false : true;
+
+            let childCommentsNumber = await (await Comment.find({parentComment:comment.id})).length;
+
+            let newComment = {
+                post:    comment.post,
+                id:      comment.id,
+                content: comment.content,
+                isLiked: isCommentLiked,
+                likesCount: comment.likesCount,
+                parentComment: comment.parentComment,
+                maxChildCommentsNumber:childCommentsNumber,
+                childCommentsNumber:childCommentsNumber,
+                creator: {
+                    id: comment.creator,
+                    username: commentCreator.username,
+                },
+            }
+
+            if(comment.creator.toString() === req.params.userId){
+                ownComments.push(newComment);
+            }
+            else{
+                comments.push(newComment);
+            }
+        }
+
+        let isLikedQ = await UserLike.find({item_id:req.params.id,user:givenUser});
+        let isLiked = isLikedQ[0] === undefined ? false : true;
+        let postCreator = await User.findById(post.creator);
+
+        let newPost = {
+            _id:post._id,
+            creator: {id:postCreator.id,username:postCreator.username},
+            source: post.source,
+            description: post.description,
+            likesCount: post.likesCount,
+            comments: comments,
+            ownComments:ownComments,
+            isLiked: isLiked
+        }
+
+        return res.status(200).json({
+            success:true,
+            post:newPost
+        })
+    }).catch(err => {
+        if(err){
+            console.log(err);
+            return res.status(200).json({
+                success:false,
+                post:[]
+            })
+        }
+    })
+}
+
 async function getPopularFromAllPost(req,res,next){
     let startIndex = Number(req.params.startIndex);
     let stopIndex = Number(req.params.stopIndex);
@@ -600,6 +678,7 @@ module.exports = {
     getCommentsFromPost,
     commentPost,
     likePost,
+    getPost,
     likeComment,
     getLikesFromPost,
     getLikesFromComment,

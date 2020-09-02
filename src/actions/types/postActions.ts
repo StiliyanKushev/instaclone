@@ -22,6 +22,16 @@ const ADD_COMMENTS_POST = 'ADD_COMMENTS_POST';
 const SET_POST_LOADING = 'SET_POST_LOADING';
 const ADD_POSTS_HOME = 'ADD_POSTS_HOME';
 const SET_POST_CLEAR = 'SET_POST_CLEAR';
+const SET_OTHER_POST_DATA_LOADING = 'SET_OTHER_POST_DATA_LOADING';
+const SET_OTHER_POST_DATA_LOADING_DONE = 'SET_OTHER_POST_DATA_LOADING_DONE';
+
+export interface setOtherPostDataLoading {
+    type: typeof SET_OTHER_POST_DATA_LOADING,
+}
+
+export interface setOtherPostDataLoadingDone {
+    type: typeof SET_OTHER_POST_DATA_LOADING_DONE,
+}
 
 export interface setToggleMoreComment {
     type: typeof SET_TOGGLE_MORE_COMMENT,
@@ -134,6 +144,7 @@ export interface setFullPostLikeSuccess {
     type: typeof SET_FULL_POST_LIKE_SUCCESS,
     payload:{
         messege:string,
+        didFetch?:boolean,
     }
 }
 
@@ -173,8 +184,10 @@ export interface setFullPostDataView{
 }
 
 export type postActionTypes = 
+setOtherPostDataLoadingDone |
 setFullPostCommentFailure | 
 setFullPostCommentSuccess | 
+setOtherPostDataLoading |
 setFullPostLikeSuccess |
 setFullPostLikeFailure |
 setToggleFullPostView |
@@ -185,7 +198,7 @@ setCommentLikeSuccess |
 setCommentLikeFailure |
 setToggleMoreComment |
 setPostUploadFailure | 
-setPostUploadSuccess | 
+setPostUploadSuccess |
 setFullPostDataView |
 setReplyingComment |
 setPostLikeFailure |

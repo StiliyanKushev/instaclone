@@ -55,7 +55,6 @@ class FullViewPost extends React.PureComponent<IProps>{
                 this.props.commentFullView(res.comment);
             });
         }
-        this.setState({comment:''});
     }
     
     public render(){

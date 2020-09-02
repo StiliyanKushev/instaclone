@@ -255,3 +255,10 @@
          width: calc(100% - 14px) !important;
     }
 }
+
+.imagePlaceholder{
+    width: 450px !important;
+    max-width: 100% !important;
+    height: 560px !important;
+    max-height: 900px !important;
+}

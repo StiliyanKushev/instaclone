@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const authCheck = require('../config/auth-check');
-const {getCommentsFromComment,createPost,getPopularFromAllPost,commentPost,likePost,likeComment,getCommentsFromPost,getLikesFromPost,getLikesFromComment} = require('../handlers/posts');
+const {getPost,getCommentsFromComment,createPost,getPopularFromAllPost,commentPost,likePost,likeComment,getCommentsFromPost,getLikesFromPost,getLikesFromComment} = require('../handlers/posts');
 const {sendAvatar,getSuggestedUsers} = require('../handlers/user');
 const multer = require('multer'); 
 const User = require('../models/User');
@@ -48,7 +48,7 @@ router.get('/photo/post/:id',(req,res,next) => {
 // router.get('/posts/get/user/recent/:index/:length',authCheck,getRecentFromUserPost)
 // router.get('/posts/get/user/popular/:index/:length',authCheck,getPopularFromUserPost)
 router.get('/posts/get/all/popular/:startIndex/:stopIndex/as/:userId',authCheck,getPopularFromAllPost)
-// router.get('/posts/:id/get',authCheck,getPost)
+router.get('/posts/:id/get/as/:userId',authCheck,getPost)
 router.post('/posts/create',authCheck,upload.single('image'),createPost)
 // router.delete('/posts/:id/delete',authCheck,deletePost)
 router.get('/posts/:id/comments/:startIndex/:stopIndex/as/:userId',authCheck,getCommentsFromPost)

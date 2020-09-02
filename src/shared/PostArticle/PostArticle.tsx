@@ -6,7 +6,7 @@ import React from "react";
 import { toast } from 'react-toastify';
 import { ComponentType } from 'react';
 import { ReactCookieProps, withCookies } from 'react-cookie';
-import { Grid, Image, Segment, Header, Menu, Item, Icon, Form, Button } from 'semantic-ui-react';
+import { Grid, Image, Segment, Header, Menu, Item, Icon, Form, Button, Placeholder, PlaceholderImage } from 'semantic-ui-react';
 import { List, AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, InfiniteLoaderChildProps } from "react-virtualized";
 
 // IMPORT REDUX RELETED
@@ -193,6 +193,7 @@ class PostArticle extends React.PureComponent<IProps, IState> {
     }
 
     render() {
+        if(this.props.post?.isOtherPostDataLoading === false)
         return (
             <article className={styles.article}>
                 <Grid doubling={false} centered className={styles.grid}>
@@ -313,6 +314,94 @@ class PostArticle extends React.PureComponent<IProps, IState> {
                 </Grid>
             </article>
         );
+        else{
+            return (
+                <article className={styles.article}>
+                <Grid doubling={false} centered className={styles.grid}>
+                    <Grid.Row className={styles.row}>
+                        <div className={styles.leftCol}>
+                            {/* <Image
+                                className={styles.postImage}
+                                size="huge"
+                            /> */}
+                            <Placeholder className={styles.imagePlaceholder}>
+                                <PlaceholderImage></PlaceholderImage>
+                            </Placeholder>
+                        </div>
+                        <br/>
+                        <div className={styles.rightCol}>
+                            <Segment className={styles.profileSegmentInternal} attached="top">
+                                <Image
+                                    className={styles.verySmallImg}
+                                    circular
+                                    size="tiny"></Image>
+                                <Link to="#">
+                                    <Header size="small" className={styles.headerName} as="span">
+                                        loading
+                                    </Header>
+                                </Link>
+                            </Segment>
+                            <Segment attached className={styles.commentsContainer}>
+                            </Segment>
+                            <Segment attached className={styles.actionSegment}>
+                                <Menu className={styles.postMenu}>
+                                    <Item className="left">
+                                        <Icon
+                                            name='heart outline'
+                                            size="big"
+                                        ></Icon>
+                                        <Link className={styles.linkWithNoColor} to="#">
+                                            <Icon
+                                                className={styles.iconBtn}
+                                                size="big"
+                                                name="comment outline"
+                                            ></Icon>
+                                        </Link>
+                                        
+                                        <Icon
+                                            className={styles.iconBtn}
+                                            size="big"
+                                            name="paper plane outline"
+                                        ></Icon>
+                                    </Item>
+                                    <Item className="right">
+                                        <Icon
+                                            className={styles.iconBtn}
+                                            size="big"
+                                            name="bookmark outline"
+                                        ></Icon>
+                                    </Item>
+                                </Menu>
+                                <Header className={styles.likes} size="tiny">
+                                    loading
+                                </Header>
+                            </Segment>
+                            <Segment
+                                className={styles.commentSegment}
+                                attached="bottom">
+                                <Form className={styles.commentForm}>
+                                    <Form.Field className={styles.commentField}>
+                                        <Form.Input
+                                            className={styles.commentInput}
+                                            placeholder="Adding comment ..."
+                                            value={this.state.comment}
+                                        ></Form.Input>
+                                        <Button
+                                            loading={true}
+                                            className={styles.commentSubmit}
+                                            size="medium"
+                                            primary>
+                                            Comment
+                                        </Button>
+                                    </Form.Field>
+                                </Form>
+                            </Segment>
+                        </div>
+                    </Grid.Row>
+                </Grid>
+            </article>
+            )
+        }
     }
 }
 
