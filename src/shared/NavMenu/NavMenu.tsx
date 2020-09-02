@@ -19,7 +19,7 @@ import { bindActionCreators } from 'redux';
 type IProps = RouteComponentProps & ReactCookieProps & ReduxProps & DispatchProps;
 
 class NavMenu extends React.Component<IProps>{
-    state = {isVisible:true}
+    state = { isVisible: true }
 
     private mobileSearchBar = createRef<HTMLDivElement>();
 
@@ -33,35 +33,35 @@ class NavMenu extends React.Component<IProps>{
     }
 
     //this function acts as a switch for the mobile version of the nav search
-    private handleMobileSearchClick(){
-        if(this.mobileSearchBar.current){
-            if($(this.mobileSearchBar.current).is(':visible'))
+    private handleMobileSearchClick() {
+        if (this.mobileSearchBar.current) {
+            if ($(this.mobileSearchBar.current).is(':visible'))
                 $(this.mobileSearchBar.current).fadeOut(200);
             else
                 $(this.mobileSearchBar.current).fadeIn(200);
         }
     }
 
-    private handleVisibility(){
-        const hideMobileBar = function(this:any) {
-            if(this.mobileSearchBar.current)
-            $(this.mobileSearchBar.current).hide();
+    private handleVisibility() {
+        const hideMobileBar = function (this: any) {
+            if (this.mobileSearchBar.current)
+                $(this.mobileSearchBar.current).hide();
         }.bind(this);
 
-        if(this.props.location.pathname === '/login' || this.props.location.pathname === '/register'){
-            this.setState({isVisible:false},hideMobileBar)
+        if (this.props.location.pathname === '/login' || this.props.location.pathname === '/register') {
+            this.setState({ isVisible: false }, hideMobileBar)
         }
-        else{
-            this.setState({isVisible:true},hideMobileBar)
+        else {
+            this.setState({ isVisible: true }, hideMobileBar)
         }
     }
 
-    public componentDidMount(){
+    public componentDidMount() {
         this.handleVisibility();
     }
 
     private onRouteChanged() {
-        if(this.props.post?.fullViewToggled && this.props.location.pathname !== '/'){
+        if (this.props.post?.fullViewToggled && this.props.location.pathname !== '/') {
             this.props.toggleFullView()
         }
 
@@ -80,13 +80,15 @@ class NavMenu extends React.Component<IProps>{
     }
 
     public render() {
-        if(!this.state.isVisible) return ''
+        if (!this.state.isVisible) return ''
         return (
             <Menu size='small' fixed='top'>
                 <Container className={styles.itemContainer}>
-                    <Item className={`logo-text ${styles.logo}`} as='span'>
-                        Instaclone
-                    </Item>
+                    <Link className={styles.LinkContainerLogo} to={`/`}>
+                        <Item className={`logo-text ${styles.logo}`} as='span'>
+                            Instaclone
+                        </Item>
+                    </Link>
                     <Item className={`right ${styles.searchItem}`}>
                         <Search placeholder='Search' />
                     </Item>
@@ -124,11 +126,11 @@ const mapStateToProps = (state: AppState): ReduxProps => ({
 })
 
 interface DispatchProps {
-    toggleFullView:() => void,
+    toggleFullView: () => void,
 }
 
-const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
-    toggleFullView:bindActionCreators(TOGGLE_FULL_POST_VIEW,dispatch),
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): DispatchProps => ({
+    toggleFullView: bindActionCreators(TOGGLE_FULL_POST_VIEW, dispatch),
 })
 
 export default React.memo(withRouter(withCookies(connect(mapStateToProps, mapDispatchToProps)(NavMenu as ComponentType<IProps>)) as any));

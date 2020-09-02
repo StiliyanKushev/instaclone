@@ -7,11 +7,17 @@
     color: rgb(55,55,55);
 }
 
+.LinkContainerLogo ::before{
+    content: none !important;
+    display: none !important;
+}
+
 .logo{
+    cursor: pointer;
     font-size:2.5rem;
     padding: .5rem 2rem !important;
     position: relative;
-    bottom: -3px;
+    bottom: -8px;
     border-left: none !important;
 }
 
