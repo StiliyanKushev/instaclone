@@ -32,6 +32,15 @@ type IProps = ParentProps & ReduxProps & ReactCookieProps & DispatchProps;
 interface IState {}
 
 class PostComment extends React.PureComponent<IProps, IState>{
+    private handleMeasure(){
+        console.log(this.props.commentIndex + ' got measured!');
+        this.props.measure()
+    }
+
+    // public componentDidMount(){
+    //     this.handleMeasure();
+    // }
+
     private handleCommentLike(){
         let commentData = this.props.post?.fullViewPostData.commentsList[this.props.commentIndex];
 
@@ -65,7 +74,7 @@ class PostComment extends React.PureComponent<IProps, IState>{
                             circular
                             size="tiny"
                             src={`${settings.BASE_URL}/feed/photo/user/${this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].creator?.username || this.props.auth?.username || this.props.cookies?.get('username')}`}
-                            onLoad={() => this.props.measure()}
+                            onLoad={() => this.handleMeasure.bind(this)()}
                         ></Image>
                         <div>
                             <Header className={styles.commentItemHeader}>

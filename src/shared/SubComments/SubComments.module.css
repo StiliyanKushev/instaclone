@@ -68,6 +68,8 @@
 }
 
 .commentItemLeftSide{
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
     width:88.5% !important;
 }
 

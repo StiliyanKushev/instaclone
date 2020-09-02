@@ -90,10 +90,15 @@ const postReducer = (state = postState, action:postActionTypes) => {
         }
 
         case 'SET_POST_COMMENT_SUCCESS':{
-            // add comment to ownComments
+            console.log(action.payload);
+
             action.payload.comment.moreToggled = false;
-            state.homePosts[action.payload.postIndex].ownComments.push(action.payload.comment);
             
+            // add comment to ownComments
+            if(action.payload.comment.parentComment && action.payload.comment.parentComment.length === 0){
+                state.homePosts[action.payload.postIndex].ownComments.push(action.payload.comment);
+            }
+
             return {
                 ...state,
                 error:false,
@@ -277,9 +282,9 @@ const postReducer = (state = postState, action:postActionTypes) => {
 
         case 'SET_FULL_POST_COMMENT_SUCCESS':{
             action.payload.comment.moreToggled = false;
-            // add comment to the start of the list (after the description) if its not a relpy
+            // add comment to the end of the list if its not a relpy
             if(state.currentReplyingComment === -1)
-                state.fullViewPostData.commentsList.splice(1, 0,action.payload.comment);
+                state.fullViewPostData.commentsList.splice(state.fullViewPostData.commentsList.length, 0,action.payload.comment);
             else {
                 // increment the parent comment replies counter
                 state.fullViewPostData.commentsList[state.currentReplyingComment].maxChildCommentsNumber++;

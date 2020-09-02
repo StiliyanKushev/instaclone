@@ -57,9 +57,6 @@ export const UPDATE_AVATAR_USER = (form:FormData,username:string,token:string) =
 }
 
 export const GET_SUGGESTED_USERS = (userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
-    // maybe remove this later?
-    dispatch(CALL_USER_LOADING());
-
     getSuggestedUsers(userId,token).then((res: {users:Array<ICreator>} & IGenericResponse) => {
         if(res.success){
             dispatch(CALL_GET_SUGGESTED_USERS_SUCCESS(res.users,res.messege));
