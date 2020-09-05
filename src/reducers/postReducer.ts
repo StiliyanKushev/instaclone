@@ -16,6 +16,7 @@ export interface IPostState {
     fullViewPostIndex:number,
     currentReplyingComment:number,
     currentReplyingSubComment:number,
+    didJustReplyToComment:boolean,
 }
 
 // doing this so there are no run time errors on inital render (before setting the data in the componentDidMount in some cases)
@@ -50,6 +51,7 @@ const postState:IPostState = {
     fullViewPostIndex: -1,
     currentReplyingComment: -1,
     currentReplyingSubComment: -1,
+    didJustReplyToComment: false,
 }
 
 const postReducer = (state = postState, action:postActionTypes) => {
@@ -90,12 +92,10 @@ const postReducer = (state = postState, action:postActionTypes) => {
         }
 
         case 'SET_POST_COMMENT_SUCCESS':{
-            console.log(action.payload);
-
             action.payload.comment.moreToggled = false;
             
             // add comment to ownComments
-            if(action.payload.comment.parentComment && action.payload.comment.parentComment.length === 0){
+            if((action.payload.comment.parentComment === undefined) || (action.payload.comment.parentComment && action.payload.comment.parentComment.length === 0)){
                 state.homePosts[action.payload.postIndex].ownComments.push(action.payload.comment);
             }
 
@@ -286,9 +286,16 @@ const postReducer = (state = postState, action:postActionTypes) => {
             if(state.currentReplyingComment === -1)
                 state.fullViewPostData.commentsList.splice(state.fullViewPostData.commentsList.length, 0,action.payload.comment);
             else {
+                state.didJustReplyToComment = true;
+
                 // increment the parent comment replies counter
                 state.fullViewPostData.commentsList[state.currentReplyingComment].maxChildCommentsNumber++;
-                state.fullViewPostData.commentsList[state.currentReplyingComment].childCommentsNumber++;
+
+                if(state.fullViewPostData.commentsList[state.currentReplyingComment].subComments)
+                state.fullViewPostData.commentsList[state.currentReplyingComment].subComments?.push(action.payload.comment);
+                else state.fullViewPostData.commentsList[state.currentReplyingComment].subComments = [action.payload.comment];
+
+                state.fullViewPostData.commentsList[state.currentReplyingComment].moreToggled = true;
 
                 // at the end reset this after replying
                 state.currentReplyingComment = -1;
@@ -330,6 +337,8 @@ const postReducer = (state = postState, action:postActionTypes) => {
         }
 
         case 'SET_TOGGLE_MORE_COMMENT':{
+            if(state.didJustReplyToComment) state.didJustReplyToComment = false;
+
             if(!state.fullViewPostData.commentsList[action.payload.commentIndex].moreToggled || (state.fullViewPostData.commentsList[action.payload.commentIndex].moreToggled && action.payload.comments !== undefined)){
                 state.fullViewPostData.commentsList[action.payload.commentIndex].moreToggled = true;
                 
@@ -355,6 +364,7 @@ const postReducer = (state = postState, action:postActionTypes) => {
 
             return {
                 ...state,
+                messege: "Toggled more for comment"
             } as IPostState
         }
 

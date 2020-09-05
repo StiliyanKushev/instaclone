@@ -251,6 +251,13 @@ async function getCommentsFromPost(req,res,next){
 
     let postId = req.params.id;
 
+    if(stopIndex === -1 && startIndex === -1){
+        return res.status(200).json({
+            success:true,
+            comments:[]
+        })
+    }
+
     let limit = stopIndex - startIndex;
     if(limit === 0) limit = 1;
 

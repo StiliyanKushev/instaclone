@@ -15,7 +15,7 @@ import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AppState, ReduxProps } from "../../reducers";
 import { TOGGLE_USERS_LIST } from '../../actions/userActions';
-import { ADD_COMMENTS_POST, TOGGLE_MORE_COMMENT } from '../../actions/postActions';
+import { ADD_COMMENTS_POST, TOGGLE_MORE_COMMENT, TOGGLE_MORE_COMMENT_NO_FETCH } from '../../actions/postActions';
 
 // IMPORT ROUTER RELETED
 import { Link } from "react-router-dom";
@@ -92,9 +92,19 @@ class PostArticle extends React.PureComponent<IProps, IState> {
     }
 
     private handleMoreClick(commentIndex:number,measure:() => void){        
-        const maxEver = this.props.post?.fullViewPostData.commentsList[commentIndex].maxChildCommentsNumber as number;
-        const currentCount = this.props.post?.fullViewPostData.commentsList[commentIndex].childCommentsNumber as number;
-        const numPerPage = 5;
+        let maxEver = this.props.post?.fullViewPostData.commentsList[commentIndex].maxChildCommentsNumber as number;
+        let currentCount = this.props.post?.fullViewPostData.commentsList[commentIndex].childCommentsNumber as number;
+        let numPerPage = 5;
+
+        // if user just commented and its the only comment, just close without making a fetch request 
+        if(this.props.post?.fullViewPostData.commentsList[commentIndex].childCommentsNumber === 0 && this.props.post.didJustReplyToComment){
+            this.props.toggleMoreCommentNoFetch(commentIndex);
+            return;
+        }
+
+        if(this.props.post?.didJustReplyToComment){
+            maxEver--;
+        }
 
         const multiplier = (maxEver - currentCount) / numPerPage;
 
@@ -414,12 +424,14 @@ interface DispatchProps {
     ADD_COMMENTS_POST: (comments: Array<IPostComment>) => void,
     toggleMoreComment: (startIndex:number,stopIndex:number,commentId:string,commentIndex:number,userId:string,token:string) => void,
     toggleUserLikes: (fetchFunction:(startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:Array<ICreator>}>) => void,
+    toggleMoreCommentNoFetch: (commentIndex:number) => void
 }
 
 const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
     toggleUserLikes:bindActionCreators(TOGGLE_USERS_LIST,dispatch),
     ADD_COMMENTS_POST:bindActionCreators(ADD_COMMENTS_POST,dispatch),
-    toggleMoreComment:bindActionCreators(TOGGLE_MORE_COMMENT,dispatch)
+    toggleMoreComment:bindActionCreators(TOGGLE_MORE_COMMENT,dispatch),
+    toggleMoreCommentNoFetch:bindActionCreators(TOGGLE_MORE_COMMENT_NO_FETCH,dispatch)
 })
 
 

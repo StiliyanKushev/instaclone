@@ -191,6 +191,10 @@ export const FETCH_FULL_POST_VIEW_AND_SAVE = (postId:string,userId:string,token:
     })
 }
 
+export const TOGGLE_MORE_COMMENT_NO_FETCH  = (commentIndex:number) => (dispatch:Dispatch<AppActions>) => {
+    dispatch(CALL_TOGGLE_MORE_COMMENT(commentIndex));
+}
+
 export const TOGGLE_MORE_COMMENT = (startIndex:number,stopIndex:number,commentId:string,commentIndex:number,userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
     let promise:Promise<ICommentsChunkResponse> = getSubComments(startIndex,stopIndex,commentId,userId,token);
     promise.then((res:ICommentsChunkResponse) => {

@@ -33,13 +33,8 @@ interface IState {}
 
 class PostComment extends React.PureComponent<IProps, IState>{
     private handleMeasure(){
-        console.log(this.props.commentIndex + ' got measured!');
         this.props.measure()
     }
-
-    // public componentDidMount(){
-    //     this.handleMeasure();
-    // }
 
     private handleCommentLike(){
         let commentData = this.props.post?.fullViewPostData.commentsList[this.props.commentIndex];
