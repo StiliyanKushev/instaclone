@@ -14,15 +14,17 @@ import { AppActions } from '../../actions/types/actions';
 import { COMMENT_POST,LIKE_POST,TOGGLE_FULL_POST_VIEW } from '../../actions/postActions';
 import { ThunkDispatch } from 'redux-thunk';
 import {bindActionCreators} from 'redux';
+import { TOGGLE_USERS_LIST } from '../../actions/userActions';
+
+// IMPORT TYPES
+import { ICreator } from '../../types/auth';
+import IGenericResponse from '../../types/response';
 
 // IMPORT OTHER
+import { toast } from 'react-toastify';
 import { settings } from '../../settings';
 import defaultUserImage from '../../assets/avatar.jpg';
-import { toast } from 'react-toastify';
-import { TOGGLE_USERS_LIST } from '../../actions/userActions';
 import { getUserLikesFromPost } from '../../handlers/post';
-import IGenericResponse from '../../types/response';
-import { ICreator } from '../../types/auth';
 
 interface IParentProps {
     postIndex:number,

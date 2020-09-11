@@ -1,3 +1,10 @@
+.containerAnimation{
+    transition-duration: 100ms !important;
+    position: fixed !important;
+    z-index: 9999 !important;    
+    opacity: 0;
+}
+
 .container{
     position: fixed !important;
     z-index: 9999 !important;

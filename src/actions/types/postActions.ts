@@ -24,9 +24,40 @@ const ADD_POSTS_HOME = 'ADD_POSTS_HOME';
 const SET_POST_CLEAR = 'SET_POST_CLEAR';
 const SET_OTHER_POST_DATA_LOADING = 'SET_OTHER_POST_DATA_LOADING';
 const SET_OTHER_POST_DATA_LOADING_DONE = 'SET_OTHER_POST_DATA_LOADING_DONE';
+const SET_SAVE_OTHER_POSTS = 'SET_SAVE_OTHER_POSTS';
+const SET_RENEW_OTHER_POSTS = 'SET_RENEW_OTHER_POSTS';
 
 export interface setOtherPostDataLoading {
     type: typeof SET_OTHER_POST_DATA_LOADING,
+}
+
+export interface setRenewOtherPost {
+    type: typeof SET_RENEW_OTHER_POSTS,
+    payload: {
+        index:number,
+        post:{
+            likesCount:number,
+            source:{
+                data:any,
+                contentType:string,
+            },
+            _id:string,
+        }
+    }
+}
+
+export interface setSaveOtherPosts {
+    type: typeof SET_SAVE_OTHER_POSTS,
+    payload: {
+        posts: [{
+            likesCount:number,
+            source:{
+                data:any,
+                contentType:string,
+            },
+            _id:string,
+        }],
+    }
 }
 
 export interface setOtherPostDataLoadingDone {
@@ -203,6 +234,8 @@ setFullPostDataView |
 setReplyingComment |
 setPostLikeFailure |
 setPostLikeSuccess | 
+setRenewOtherPost |
+setSaveOtherPosts |
 addCommentsPost |
 setPostLoading | 
 addPostsHome |

@@ -2,7 +2,7 @@ import { IPost } from './../shared/PostsPartial/PostsPartial';
 import { AppActions } from "./types/actions";
 import { Dispatch } from "react";
 import IGenericResponse from "../types/response";
-import { uploadPost, commentPost, likePost, likeComment, getSubComments, getPostData } from '../handlers/post';
+import { uploadPost, commentPost, likePost, likeComment, getSubComments, getPostData, getOtherPosts, renewOtherPost } from '../handlers/post';
 import { IPostComment } from '../shared/PostsPartial/PostsPartial';
 import { IPostCommentResponse, ICommentsChunkResponse } from '../types/response';
 
@@ -181,6 +181,47 @@ export const TOGGLE_FULL_POST_VIEW = (postIndex?:number) => (dispatch:Dispatch<A
     dispatch(CALL_TOGGLE_FULL_POST_VIEW(postIndex));
 }
 
+export const TOGGLE_MORE_COMMENT_NO_FETCH  = (commentIndex:number) => (dispatch:Dispatch<AppActions>) => {
+    dispatch(CALL_TOGGLE_MORE_COMMENT(commentIndex));
+}
+
+export const CALL_RENEW_OTHER_POSTS = (index:number,post:{
+    likesCount: number;
+    source: {
+        data: any;
+        contentType: string;
+    };
+    _id: string;
+}):AppActions => ({
+    type: 'SET_RENEW_OTHER_POSTS',
+    payload: {
+        index:index,
+        post:post
+    }
+})
+
+export const RENEW_OTHER_POSTS = (id:string,index:number,others:[{
+    likesCount: number;
+    source: {
+        data: any;
+        contentType: string;
+    };
+    _id: string;
+}],userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
+    renewOtherPost(id,others,userId,token).then((res:IGenericResponse & {post:{
+        likesCount: number;
+        source: {
+            data: any;
+            contentType: string;
+        };
+        _id: string;
+    }}) => {
+        if(res.success){
+            dispatch(CALL_RENEW_OTHER_POSTS(index,res.post));
+        }
+    })
+}
+
 export const FETCH_FULL_POST_VIEW_AND_SAVE = (postId:string,userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
     dispatch(CALL_OTHER_POST_DATA_LOADING());
     getPostData(postId,userId,token).then((res:IGenericResponse & {post:IPost}) => {
@@ -191,8 +232,33 @@ export const FETCH_FULL_POST_VIEW_AND_SAVE = (postId:string,userId:string,token:
     })
 }
 
-export const TOGGLE_MORE_COMMENT_NO_FETCH  = (commentIndex:number) => (dispatch:Dispatch<AppActions>) => {
-    dispatch(CALL_TOGGLE_MORE_COMMENT(commentIndex));
+export const CALL_SAVE_OTHER_POSTS = (posts:[{
+    likesCount:number,
+    source:{
+        data:any,
+        contentType:string,
+    },
+    _id:string,
+}]):AppActions => ({
+    type: 'SET_SAVE_OTHER_POSTS',
+    payload: {
+        posts: posts
+    }
+})
+
+export const FETCH_OTHER_POSTS = (otherId:string,userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
+    getOtherPosts(otherId,userId,token).then((res:IGenericResponse & {posts:[{
+        likesCount:number,
+        source:{
+            data:any,
+            contentType:string,
+        },
+        _id:string,
+    }]}) => {
+        if(res.success){
+            dispatch(CALL_SAVE_OTHER_POSTS(res.posts));
+        }
+    })
 }
 
 export const TOGGLE_MORE_COMMENT = (startIndex:number,stopIndex:number,commentId:string,commentIndex:number,userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {

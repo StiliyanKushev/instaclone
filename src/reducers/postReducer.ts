@@ -17,6 +17,15 @@ export interface IPostState {
     currentReplyingComment:number,
     currentReplyingSubComment:number,
     didJustReplyToComment:boolean,
+    fullViewOtherPosts: [{
+        likesCount:number,
+        source:{
+            data:any,
+            contentType:string,
+        },
+        _id:string,
+    }],
+
 }
 
 // doing this so there are no run time errors on inital render (before setting the data in the componentDidMount in some cases)
@@ -52,6 +61,7 @@ const postState:IPostState = {
     currentReplyingComment: -1,
     currentReplyingSubComment: -1,
     didJustReplyToComment: false,
+    fullViewOtherPosts: [] as any
 }
 
 const postReducer = (state = postState, action:postActionTypes) => {
@@ -339,22 +349,16 @@ const postReducer = (state = postState, action:postActionTypes) => {
         case 'SET_TOGGLE_MORE_COMMENT':{
             if(state.didJustReplyToComment) state.didJustReplyToComment = false;
 
+            state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber -= 5;
+            if(state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber < 0){
+                state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber = 0;
+            }
+
             if(!state.fullViewPostData.commentsList[action.payload.commentIndex].moreToggled || (state.fullViewPostData.commentsList[action.payload.commentIndex].moreToggled && action.payload.comments !== undefined)){
                 state.fullViewPostData.commentsList[action.payload.commentIndex].moreToggled = true;
-                
-                state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber -= 5;
-                if(state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber < 0){
-                    state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber = 0;
-                }
-    
                 state.fullViewPostData.commentsList[action.payload.commentIndex].subComments = action.payload.comments;
             }
             else{
-                state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber -= 5;
-                if(state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber < 0){
-                    state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber = 0;
-                }
-
                 if(state.fullViewPostData.commentsList[action.payload.commentIndex].moreToggled && state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber === 0 && action.payload.comments === undefined){
                     state.fullViewPostData.commentsList[action.payload.commentIndex].moreToggled = false;
                     state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber = state.fullViewPostData.commentsList[action.payload.commentIndex].maxChildCommentsNumber;
@@ -379,6 +383,25 @@ const postReducer = (state = postState, action:postActionTypes) => {
             return {
                 ...state,
                 isOtherPostDataLoading:false
+            } as IPostState
+        }
+
+        case 'SET_SAVE_OTHER_POSTS':{
+            return {
+                ...state,
+                fullViewOtherPosts:action.payload.posts
+            } as IPostState
+        }
+
+        case 'SET_RENEW_OTHER_POSTS':{
+            if(action.payload.post)
+            state.fullViewOtherPosts[action.payload.index] = action.payload.post;
+            else{
+                state.fullViewOtherPosts.splice(action.payload.index,1);
+            }
+
+            return {
+                ...state,
             } as IPostState
         }
 

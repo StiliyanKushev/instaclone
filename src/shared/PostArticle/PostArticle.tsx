@@ -4,9 +4,10 @@ import styles from "./PostArticle.module.css";
 // IMPORT REACT RELETED
 import React from "react";
 import { toast } from 'react-toastify';
+import {createRef} from 'react';
 import { ComponentType } from 'react';
 import { ReactCookieProps, withCookies } from 'react-cookie';
-import { Grid, Image, Segment, Header, Menu, Item, Icon, Form, Button, Placeholder, PlaceholderImage } from 'semantic-ui-react';
+import { Grid, Image, Segment, Header, Menu, Item, Icon, Form, Button, Placeholder, PlaceholderImage, Ref } from 'semantic-ui-react';
 import { List, AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, InfiniteLoaderChildProps } from "react-virtualized";
 
 // IMPORT REDUX RELETED
@@ -33,6 +34,7 @@ import { getNewCommentsChunk, getUserLikesFromPost } from '../../handlers/post';
 import { IPostComment } from '../PostsPartial/PostsPartial';
 import PostComment from "../PostComment/PostComment";
 import SubComments from '../SubComments/SubComments';
+import $ from 'jquery';
 
 interface IState {
     comment: string;
@@ -49,6 +51,8 @@ type IProps = IParentProps & ReduxProps & ReactCookieProps & DispatchProps;
 class PostArticle extends React.PureComponent<IProps, IState> {
     public state: IState = { comment: "", hasMoreComments: true };
     private cache: CellMeasurerCache;
+
+    private commentInputElRef = createRef<HTMLInputElement>();
 
     private get rowCount(): number {
         let comments: any = this.props.post?.fullViewPostData.commentsList;
@@ -83,6 +87,10 @@ class PostArticle extends React.PureComponent<IProps, IState> {
                 // clear comment and set it to '@username of comment creator'
                 this.setState({comment:`@${((this.props.post?.fullViewPostData.commentsList[currentIndex].subComments)as any)[currentSubIndex].creator?.username as string} `});
             }
+
+            // focus the input field
+            let input:HTMLInputElement = this.commentInputElRef.current?.children[0].children[0] as HTMLInputElement;
+            $(input).focus();
         }
     }
 
@@ -91,7 +99,7 @@ class PostArticle extends React.PureComponent<IProps, IState> {
         this.cache.clearAll();
     }
 
-    private handleMoreClick(commentIndex:number,measure:() => void){        
+    private handleMoreClick(commentIndex:number,measure:() => void){
         let maxEver = this.props.post?.fullViewPostData.commentsList[commentIndex].maxChildCommentsNumber as number;
         let currentCount = this.props.post?.fullViewPostData.commentsList[commentIndex].childCommentsNumber as number;
         let numPerPage = 5;
@@ -102,6 +110,7 @@ class PostArticle extends React.PureComponent<IProps, IState> {
             return;
         }
 
+        // remove one from the fetching params if it was added already
         if(this.props.post?.didJustReplyToComment){
             maxEver--;
         }
@@ -113,10 +122,8 @@ class PostArticle extends React.PureComponent<IProps, IState> {
 
         this.props.toggleMoreComment(startIndex,stopIndex,this.props.post?.fullViewPostData.commentsList[commentIndex].id as string,commentIndex,this.props.auth?.userId as string,this.props.auth?.token as string);
         
-        // recalculate the height
-        setTimeout(() => {
-            measure();
-        },10)
+        // todo not working
+        measure()
     }
 
     private handleLikesClick(){
@@ -302,12 +309,14 @@ class PostArticle extends React.PureComponent<IProps, IState> {
                                 attached="bottom">
                                 <Form className={styles.commentForm}>
                                     <Form.Field className={styles.commentField}>
-                                        <Form.Input
-                                            className={styles.commentInput}
-                                            placeholder="Adding comment ..."
-                                            value={this.state.comment}
-                                            onChange={(e) => this.setState({comment: e.target.value})}
-                                        ></Form.Input>
+                                        <Ref innerRef={this.commentInputElRef}>
+                                            <Form.Input
+                                                className={styles.commentInput}
+                                                placeholder="Adding comment ..."
+                                                value={this.state.comment}
+                                                onChange={(e) => this.setState({comment: e.target.value})}
+                                            ></Form.Input>
+                                        </Ref>
                                         <Button
                                             loading={this.props.post?.isPostLoading}
                                             onClick={this.handleComment.bind(this)}

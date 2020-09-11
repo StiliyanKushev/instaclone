@@ -1,12 +1,18 @@
+// IMPORT STYLES
+import styles from './UserRow.module.css';
+
+// IMPORT REACT RELETED
 import React, { ComponentType } from 'react';
 import { Segment, Header, Button, Image, Dimmer, Loader } from 'semantic-ui-react';
-import { settings } from '../../settings';
 
-import styles from './UserRow.module.css';
+// IMPORT REDUX RELETED
+import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AppActions } from '../../actions/types/actions';
 import { ReduxProps, AppState } from '../../reducers/index';
-import { connect } from 'react-redux';
+
+// IMPORT OTHER
+import { settings } from '../../settings';
 
 interface IParentProps {
     username?: string,

@@ -24,7 +24,7 @@ import { getUserLikesFromComment } from '../../handlers/post';
 interface ParentProps {
     commentIndex: number,
     isLoaded: boolean,
-    measure: () => void
+    measure: () => void,
 }
 
 type IProps = ParentProps & ReduxProps & ReactCookieProps & DispatchProps;
@@ -38,7 +38,7 @@ class PostComment extends React.PureComponent<IProps, IState>{
 
     private handleCommentLike(){
         let commentData = this.props.post?.fullViewPostData.commentsList[this.props.commentIndex];
-
+        this.handleMeasure()
         if(this.props.auth && commentData?.id) // just so es-lint shuts up
         this.props.likeComment(this.props.commentIndex,commentData.id ,this.props.auth?.userId,this.props.auth?.token);
     }
@@ -56,6 +56,7 @@ class PostComment extends React.PureComponent<IProps, IState>{
             return;
         }
 
+        // fetch comment and update redux
         this.props.replyingComment(this.props.commentIndex,-1);
     }
 

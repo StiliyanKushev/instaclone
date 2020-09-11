@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const authCheck = require('../config/auth-check');
-const {getPost,getCommentsFromComment,createPost,getPopularFromAllPost,commentPost,likePost,likeComment,getCommentsFromPost,getLikesFromPost,getLikesFromComment} = require('../handlers/posts');
+const {renewOtherPosts,getOtherPosts,getPost,getCommentsFromComment,createPost,getPopularFromAllPost,commentPost,likePost,likeComment,getCommentsFromPost,getLikesFromPost,getLikesFromComment} = require('../handlers/posts');
 const {sendAvatar,getSuggestedUsers} = require('../handlers/user');
 const multer = require('multer'); 
 const User = require('../models/User');
@@ -55,6 +55,8 @@ router.get('/posts/:id/comments/:startIndex/:stopIndex/as/:userId',authCheck,get
 router.get('/posts/:id/likes/:startIndex/:stopIndex/as/:userId',authCheck,getLikesFromPost)
 router.post('/posts/:id/comment',authCheck,commentPost)
 // router.post('/posts/:id/edit',authCheck,editPost)
+router.post('/posts/other/renew/:id',authCheck,renewOtherPosts)
+router.get('/posts/other/:otherId/get/as/:userId',authCheck,getOtherPosts)
 router.post('/comments/:id/like',authCheck,likeComment)
 router.get('/comments/:id/likes/:startIndex/:stopIndex/as/:userId',authCheck,getLikesFromComment)
 router.get('/comments/:id/subcomments/:startIndex/:stopIndex/as/:userId',authCheck,getCommentsFromComment)

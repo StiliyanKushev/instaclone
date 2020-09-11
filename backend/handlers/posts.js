@@ -383,6 +383,102 @@ async function getPost(req,res,next){
     })
 }
 
+async function renewOtherPosts(req,res,next){
+    if(req.params.id === undefined){
+        return res.status(200).json({
+            success:false,
+            post:undefined,
+        })
+    }
+
+    let user = await User.findById(req.body.userId);
+
+    if(!user){
+        return res.status(200).json({
+            success:false,
+            post:undefined,
+        })
+    }
+
+    let idsArray = [req.params.id];
+    for(let p of req.body.others){
+        if(p._id)
+        idsArray.push(p._id)
+    }
+
+    Post.findOne({creator:req.body.userId,_id:{$nin: idsArray}}).then(async post => {
+        if(!post){
+            let samePost = await Post.findById(req.params.id)
+            return res.status(200).json({
+                success:true,
+                post:{
+                    _id:samePost._id,
+                    likesCount:samePost.likesCount,
+                    source:samePost.source
+                }
+            })
+        }
+
+        return res.status(200).json({
+            success:true,
+            post:{
+                _id:post._id,
+                likesCount:post.likesCount,
+                source:post.source
+            },
+        })
+
+    }).catch(err => {
+        return res.status(200).json({
+            success:false,
+            post:undefined,
+        })
+    })
+}
+
+async function getOtherPosts(req,res,next){
+    if(req.params.otherId === undefined){
+        return res.status(200).json({
+            success:false,
+            posts:[],
+        })
+    }
+
+    let user = await User.findById(req.params.otherId);
+
+    if(!user){
+        return res.status(200).json({
+            success:false,
+            posts:[],
+        })
+    }
+
+    Post.find({creator:req.params.otherId}).sort({'likesCount':'desc'}).limit(6).exec(async (err,posts) => {
+        if(err){
+            console.log(err);
+            return res.status(200).json({
+                success:false,
+                posts:[]
+            })
+        }
+
+        let newPosts = [];
+
+        for(let post of posts){
+            newPosts.push({
+                _id:post.id,
+                likesCount:post.likesCount,
+                source:post.source,
+            })
+        }
+
+        return res.status(200).json({
+            success:true,
+            posts:newPosts,
+        })
+    })
+}
+
 async function getPopularFromAllPost(req,res,next){
     let startIndex = Number(req.params.startIndex);
     let stopIndex = Number(req.params.stopIndex);
@@ -689,5 +785,7 @@ module.exports = {
     likeComment,
     getLikesFromPost,
     getLikesFromComment,
-    getCommentsFromComment
+    getCommentsFromComment,
+    getOtherPosts,
+    renewOtherPosts
 }

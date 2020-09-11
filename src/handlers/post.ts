@@ -36,6 +36,34 @@ export function commentPost(postId:string,comment:string,userId:string,token:str
     return post<typeof data,IGenericResponse>(data,`/feed/posts/${postId}/comment`,token).then((res:any) => res.data);
 }
 
+export function renewOtherPost(id:string,others:[{
+    likesCount: number;
+    source: {
+        data: any;
+        contentType: string;
+    };
+    _id: string;
+}],userId:string,token:string){
+
+    let othersArr = [];
+
+    for(let p of others){
+        othersArr.push({_id:p._id})
+    }
+
+
+    let data = {
+        userId,
+        others:othersArr
+    }
+
+    return post<typeof data,IGenericResponse>(data,`/feed/posts/other/renew/${id}`,token).then((res:any) => res.data);
+}
+
+export function getOtherPosts(otherId:string,userId:string,token:string){
+    return get<IGenericResponse>(`/feed/posts/other/${otherId}/get/as/${userId}`,token).then((res:any) => res.data);
+}
+
 export function getPostData(postId:string,userId:string,token:string){
     return get<IGenericResponse>(`/feed/posts/${postId}/get/as/${userId}`,token).then((res:any) => res.data);
 }

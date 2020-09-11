@@ -1,8 +1,4 @@
-// IMPORT STYLES
-import styles from './SubComments.module.css';
-
 // IMPORT REACT RELETED
-import { Image, Header, Icon } from 'semantic-ui-react';
 import React, { ComponentType } from 'react';
 import { withCookies, ReactCookieProps } from 'react-cookie';
 
@@ -20,9 +16,9 @@ import { ICreator } from '../../types/auth';
 import IGenericResponse from '../../types/response';
 
 // IMPORT OTHERS
-import { settings } from '../../settings';
 import { IPostComment } from '../PostsPartial/PostsPartial';
 import { getUserLikesFromComment } from '../../handlers/post';
+import SubComment from '../SubComment/SubComment';
 
 interface IParentProps {
     measure: () => void,
@@ -50,7 +46,7 @@ class SubComments extends React.PureComponent<IProps,IState>{
                 // the user has closed the whole view
             }
             
-        },1)
+        },10)
     }
 
     private handleCommentLike(i:number,e:React.MouseEvent<HTMLSpanElement, MouseEvent>){
@@ -91,49 +87,14 @@ class SubComments extends React.PureComponent<IProps,IState>{
     public render(){
         return (
             this.props.post?.fullViewPostData.commentsList[this.props.index].subComments?.map((comment:IPostComment,i:number) => (
-                <div key={i} className={styles.commentItemContainer}>
-                    <div className={styles.commentItemLeftSide}>
-                        <Image
-                            className={styles.verySmallImg}
-                            circular
-                            size="tiny"
-                            src={`${settings.BASE_URL}/feed/photo/user/${((this.props.post?.fullViewPostData.commentsList[this.props.index].subComments) as any)[i].creator?.username || this.props.auth?.username || this.props.cookies?.get('username')}`}
-                            onLoad={() => this.props.measure()}
-                        ></Image>
-                        <div>
-                            <Header className={styles.commentItemHeader}>
-                                <span>
-                                    {((this.props.post?.fullViewPostData.commentsList[this.props.index].subComments) as any)[i].creator?.username || this.props.auth?.username || this.props.cookies?.get('username')}
-                                </span>{" "}
-                                {((this.props.post?.fullViewPostData.commentsList[this.props.index].subComments) as any)[i].content}
-                            </Header>
-                            
-                            <div className={styles.commentItemBtns}>
-                                    <Header onClick={(e:React.MouseEvent<HTMLSpanElement, MouseEvent>) => this.handleLikesClick.bind(this)(i,e)} className={styles.likesBtn} disabled>{((this.props.post?.fullViewPostData.commentsList[this.props.index].subComments) as any)[i].likesCount} likes</Header>
-                                    {
-                                        ((this.props.post?.fullViewPostData.commentsList[this.props.index].subComments) as any)[i].creator?.username && (
-                                            <Header id={`${this.props.post?.currentReplyingComment === this.props.index && this.props.post?.currentReplyingSubComment === i ? styles.cancelHeader : ''}`} onClick={(e:React.MouseEvent<HTMLSpanElement, MouseEvent>) => this.handleReply.bind(this)(i,e)} disabled className={styles.commentItemReply}>
-                                                {
-                                                    this.props.post?.currentReplyingComment === this.props.index && this.props.post?.currentReplyingSubComment === i ? 'Cancel' : 'Reply'
-                                                }
-                                            </Header>
-                                        )
-                                    }
-                                </div>
-                        </div>
-                    </div>
-                    
-                    {!(!((this.props.post?.fullViewPostData.commentsList[this.props.index].subComments) as any)[i].creator?.username as any || ((this.props.post?.fullViewPostData.commentsList[this.props.index].subComments) as any)[i].creator?.username === (this.props.auth?.username || this.props.cookies?.get('username'))) && (
-                        <Icon
-                            //name="heart outline"
-                            size="small"
-                            color="black"
-                            onClick={(e:React.MouseEvent<HTMLSpanElement, MouseEvent>) => this.handleCommentLike.bind(this)(i,e)}
-                            id={!((this.props.post?.fullViewPostData.commentsList[this.props.index].subComments) as any)[i].isLiked ? `${styles.likeOutline}` : `${styles.likeBtnId}`}
-                            className={`${styles.likeBtn} heart ${((this.props.post?.fullViewPostData.commentsList[this.props.index].subComments) as any)[i].isLiked ? '' : 'outline'}`}
-                        ></Icon>
-                    )}
-                </div>
+                <SubComment key={i} 
+                    i={i} 
+                    index={this.props.index} 
+                    measure={this.props.measure}
+                    handleCommentLike={this.handleCommentLike.bind(this)}
+                    handleLikesClick={this.handleLikesClick.bind(this)} 
+                    handleReply={this.handleReply.bind(this)} 
+                />
             ))
         );
     }

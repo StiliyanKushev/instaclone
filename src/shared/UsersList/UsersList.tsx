@@ -1,19 +1,27 @@
-import React from 'react';
-import { Dimmer, Menu, Segment, Icon } from 'semantic-ui-react';
-import $ from 'jquery';
-
+// IMPORT STYLES
 import styles from './UsersList.module.css';
-import UserRow from '../UserRow/UserRow';
+
+// IMPORT REACT RELETED
+import React, { createRef } from 'react';
+import { ComponentType } from 'react';
+import { Dimmer, Menu, Segment, Icon, Ref } from 'semantic-ui-react';
+import { InfiniteLoader, InfiniteLoaderChildProps, AutoSizer, List, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
+
+// IMPORT REDUX RELETED
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AppActions } from '../../actions/types/actions';
-import { ComponentType } from 'react';
-import { bindActionCreators } from 'redux';
 import { TOGGLE_USERS_LIST, ADD_USER_LIST_ENTRIES } from '../../actions/userActions';
-import IGenericResponse from '../../types/response';
-import { ICreator } from '../../types/auth';
-import { InfiniteLoader, InfiniteLoaderChildProps, AutoSizer, List, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
+import { bindActionCreators } from 'redux';
 import { AppState, ReduxProps } from '../../reducers/index';
+
+// IMPORT TYPES
+import { ICreator } from '../../types/auth';
+import IGenericResponse from '../../types/response';
+
+// IMPORT OTHER
+import $ from 'jquery';
+import UserRow from '../UserRow/UserRow';
 
 interface IParentProps {
     lowerDim?: boolean,
@@ -29,6 +37,8 @@ interface IState {
 class UsersList extends React.PureComponent<IProps, IState>{
     public state: IState = { hasMoreLikes: true };
     private cache: CellMeasurerCache;
+    
+    private self = createRef<HTMLElement>();
 
     private get rowCount(): number {
         let likes: any = this.props.user?.usersList;
@@ -45,8 +55,12 @@ class UsersList extends React.PureComponent<IProps, IState>{
     }
 
     public componentDidMount() {
+        // activate the popup animation
+        $(this.self.current as HTMLElement).addClass("component-load");
+
         // doing this will execute the function at the end of the queue after css is applied
         setTimeout(() => { $('body').css('overflow', 'hidden') },0)
+
     }
 
     public componentWillUnmount() {
@@ -104,49 +118,53 @@ class UsersList extends React.PureComponent<IProps, IState>{
 
     public render() {
         return (
-            <Dimmer id={this.props.lowerDim ? `${styles.lowerDim}` : ''} className={styles.container} active>
-                {
-                    this.props.user?.usersList.length === 0 && (
-                        <p className={styles.noOtherLikes}>Others have not liked this yet.</p>
-                    )
-                }
-                
-                <Segment className={styles.likes} attached='top'>
-                    Likes
-                    <Icon onClick={this.handleClose.bind(this)} name='close' size='big' className={styles.closeIcon}></Icon>
-                </Segment>
-                <Segment attached='bottom'>
-                    <Menu className={styles.menu} size='massive' vertical>
-                        <InfiniteLoader
-                                    isRowLoaded={this.isRowLoaded}
-                                    loadMoreRows={this.fetchLikes.bind(this)}
-                                    rowCount={this.rowCount}
-                                    minimumBatchSize={10}
-                                    threshold={15}>
-                                    {({ onRowsRendered,registerChild }: InfiniteLoaderChildProps) => (
-                                            <AutoSizer className={styles.AutoSizer}>
-                                                {({ width, height }) => {
-                                                    return (
-                                                        <List
-                                                            ref={registerChild}
-                                                            onRowsRendered={onRowsRendered}
-                                                            className={styles.likesList}
-                                                            width={width}
-                                                            height={height}
-                                                            deferredMeasurementCache={this.cache}
-                                                            rowHeight={this.cache.rowHeight}
-                                                            rowRenderer={this.renderRow.bind(this)}
-                                                            rowCount={this.rowCount}
-                                                            overscanRowCount={3}
-                                                        />
-                                                    );
-                                                }}
-                                            </AutoSizer>
-                                        )}
-                                </InfiniteLoader>
-                    </Menu>
-                </Segment>
-            </Dimmer>
+            <Ref innerRef={this.self}>
+                <div className={styles.containerAnimation}>
+                <Dimmer id={this.props.lowerDim ? `${styles.lowerDim}` : ''} className={styles.container} active>
+                    {
+                        this.props.user?.usersList.length === 0 && (
+                            <p className={styles.noOtherLikes}>Others have not liked this yet.</p>
+                        )
+                    }
+                    
+                    <Segment className={styles.likes} attached='top'>
+                        Likes
+                        <Icon onClick={this.handleClose.bind(this)} name='close' size='big' className={styles.closeIcon}></Icon>
+                    </Segment>
+                    <Segment attached='bottom'>
+                        <Menu className={styles.menu} size='massive' vertical>
+                            <InfiniteLoader
+                                        isRowLoaded={this.isRowLoaded}
+                                        loadMoreRows={this.fetchLikes.bind(this)}
+                                        rowCount={this.rowCount}
+                                        minimumBatchSize={10}
+                                        threshold={15}>
+                                        {({ onRowsRendered,registerChild }: InfiniteLoaderChildProps) => (
+                                                <AutoSizer className={styles.AutoSizer}>
+                                                    {({ width, height }) => {
+                                                        return (
+                                                            <List
+                                                                ref={registerChild}
+                                                                onRowsRendered={onRowsRendered}
+                                                                className={styles.likesList}
+                                                                width={width}
+                                                                height={height}
+                                                                deferredMeasurementCache={this.cache}
+                                                                rowHeight={this.cache.rowHeight}
+                                                                rowRenderer={this.renderRow.bind(this)}
+                                                                rowCount={this.rowCount}
+                                                                overscanRowCount={3}
+                                                            />
+                                                        );
+                                                    }}
+                                                </AutoSizer>
+                                            )}
+                                    </InfiniteLoader>
+                        </Menu>
+                    </Segment>
+                </Dimmer>
+                </div>
+            </Ref>
         );
     }
 }
