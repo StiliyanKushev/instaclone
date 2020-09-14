@@ -18,6 +18,7 @@ import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 
 // IMPORT TYPES
 import { IPostComment } from '../../shared/PostsPartial/PostsPartial';
+import { IPostsListGrid } from '../../reducers/postReducer';
 
 // IMPORT OTHER
 import PostArticle from '../../shared/PostArticle/PostArticle';
@@ -113,25 +114,25 @@ class PostPageView extends React.PureComponent<IProps>{
                 </div>
                 <Divider horizontal>Other posts from {this.props.post?.fullViewPostData.creator.username}</Divider>
                 <div className={styles.centerContent}>
-                <Grid centered columns='3' className={styles.imagesGrid} doubling stackable>
-                    
-                    {
-                        this.props.post?.fullViewOtherPosts.map((post:{ likesCount: number, source: { data: any; contentType: string; }, _id: string },i:number) => {
-                            return (
-                                <Link key={i} onClick={() => this.handleClick(post._id,i)} to={`/post/${post._id}`}>
-                                    <Grid.Column>
-                                        <Segment id={styles.otherImageSegment}>
-                                            <img alt='#' className={styles.imageOther} src={`data:${post.source.contentType};base64,${Buffer.from(post.source.data).toString('base64')}`}></img>
-                                            <div className={styles.dimmer}>
-                                                <Header className={styles.dimmerHeader} icon='heart' content={`${post.likesCount} likes`} />
-                                            </div>
-                                        </Segment>                    
-                                    </Grid.Column>
-                                </Link>
-                            )
-                        })
-                    }
-                </Grid>
+                    <Grid centered columns='3' className={styles.imagesGrid} doubling stackable>
+                        
+                        {
+                            this.props.post?.fullViewOtherPosts.map((post:{ likesCount: number, source: { data: any; contentType: string; }, _id: string },i:number) => {
+                                return (
+                                    <Link key={i} onClick={() => this.handleClick(post._id,i)} to={`/post/${post._id}`}>
+                                        <Grid.Column>
+                                            <Segment id={styles.otherImageSegment}>
+                                                <img alt='#' className={styles.imageOther} src={`data:${post.source.contentType};base64,${Buffer.from(post.source.data).toString('base64')}`}></img>
+                                                <div className={styles.dimmer}>
+                                                    <Header className={styles.dimmerHeader} icon='heart' content={`${post.likesCount} likes`} />
+                                                </div>
+                                            </Segment>                    
+                                        </Grid.Column>
+                                    </Link>
+                                )
+                            })
+                        }
+                    </Grid>
                 </div>
             </div>
         );
@@ -150,14 +151,7 @@ interface DispatchProps {
     like: (postId:string,userId:string,token:string) => void,
     fetchOtherPosts: (otherId:string,userId:string,token:string) => void,
     CALL_OTHER_POST_DATA_LOADING_DONE: () => void,
-    renewOtherPost:(id:string,index:number,others:[{
-        likesCount: number;
-        source: {
-            data: any;
-            contentType: string;
-        };
-        _id: string;
-    }],userId:string,token:string) => void,
+    renewOtherPost:(id:string,index:number,others:IPostsListGrid,userId:string,token:string) => void,
 
 };
 

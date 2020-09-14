@@ -13,3 +13,15 @@ export function sendUserAvatar(form: FormData,username:string,token:string) {
 export function getSuggestedUsers(userId:string,token:string){
     return get<IGenericResponse>(`/feed/user/suggested/${userId}`,token).then((res: any) => res.data);
 }
+
+export function getUserPostsRecent(startIndex:number,stopIndex:number,userId:string,token:string){
+    return get<IGenericResponse>(`/feed/user/posts/recent/${startIndex}/${stopIndex}/as/${userId}`,token).then((res: any) => res.data);
+}
+
+export function getUserPostsPopular(startIndex:number,stopIndex:number,userId:string,token:string){
+    return get<IGenericResponse>(`/feed/user/posts/popular/${startIndex}/${stopIndex}/as/${userId}`,token).then((res: any) => res.data);
+}
+
+export function getUserPostsSaved(startIndex:number,stopIndex:number,userId:string,token:string){
+    return get<IGenericResponse>(`/feed/user/posts/saved/${startIndex}/${stopIndex}/as/${userId}`,token).then((res: any) => res.data);
+}

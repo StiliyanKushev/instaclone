@@ -1,6 +1,7 @@
 import { userActionTypes } from "../actions/types/userActions";
 import { ICreator } from '../types/auth';
 import IGenericResponse from '../types/response';
+import { IPostsListGrid } from './postReducer';
 
 export interface IUserState {
     error:boolean,
@@ -10,7 +11,9 @@ export interface IUserState {
     suggestedUsers:Array<ICreator>,
     usersList:Array<ICreator>,
     usersListToggled:boolean,
+    currentPostSelectionFunction: (startIndex:number,stopIndex:number) => Promise<IGenericResponse & {posts:IPostsListGrid}>
     currentUsersFetchFunction: (startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:Array<ICreator>}>
+    currentPostSelectionList: Array<IPostsListGrid>
 }
 
 const userState:IUserState = {
@@ -21,7 +24,9 @@ const userState:IUserState = {
     suggestedUsers:[] as any,
     usersList:[] as any,
     usersListToggled: false,
-    currentUsersFetchFunction: (startIndex:number,stopIndex:number) => (1 as any)
+    currentUsersFetchFunction: (startIndex:number,stopIndex:number) => (1 as any),
+    currentPostSelectionFunction: (startIndex:number,stopIndex:number) => (1 as any),
+    currentPostSelectionList: [] as any
 }
 
 const userReducer = (state = userState, action:userActionTypes) => {
@@ -72,7 +77,7 @@ const userReducer = (state = userState, action:userActionTypes) => {
         }
 
         case 'SET_TOGGLE_USERS_LIST':{
-            if(!state.usersListToggled === false)
+            if(state.usersListToggled)
             state.usersList = []
 
             return {
@@ -82,9 +87,23 @@ const userReducer = (state = userState, action:userActionTypes) => {
             } as IUserState
         }
 
+        case 'SET_TOGGLE_USER_POSTS_LIST':{
+            return {
+                ...state,
+                currentPostSelectionFunction: action.payload.fetchFunction
+            } as IUserState
+        }
+
         case 'ADD_USER_LIST_ENTRIES':{
             state.usersList = [...state.usersList,...action.payload.entries]
 
+            return {
+                ...state,
+            } as IUserState
+        }
+
+        case 'ADD_USER_POSTS_ROW_LIST':{
+            state.currentPostSelectionList.push([...action.payload.posts] as any)
             return {
                 ...state,
             } as IUserState

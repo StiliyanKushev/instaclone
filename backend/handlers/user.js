@@ -1,6 +1,8 @@
 const User = require("../models/User");
 const fs = require('fs');
 const path = require('path');
+const Post = require("../models/Post");
+const { start } = require("repl");
 
 async function getSuggestedUsers(req,res,next){
     User.count().exec(async function (err, count) {
@@ -102,7 +104,82 @@ function sendAvatar(req, res, next) {
     });
 }
 
+
+async function getUserPostsRecent(req,res,next){
+    let startIndex = Number(req.params.startIndex);
+    let stopIndex = Number(req.params.stopIndex);
+
+    let givenUser = await User.findById(req.params.userId);
+
+    Post.find({creator:givenUser}).skip(startIndex).limit(stopIndex - startIndex).sort("-date").exec(async (err,posts) => {
+        if(err){
+            console.log(err);
+            return res.status(200).json({
+                success:false,
+                posts:[]
+            })
+        }
+
+        let newPosts = [];
+
+        for(let post of posts){
+            newPosts.push({
+                _id:post.id,
+                likesCount:post.likesCount,
+                source:post.source,
+            })
+        }
+
+        return res.status(200).json({
+            success:true,
+            posts:newPosts,
+        })
+    })
+}
+
+async function getUserPostsPopular(req,res,next){
+    let startIndex = Number(req.params.startIndex);
+    let stopIndex = Number(req.params.stopIndex);
+    
+    let limit = stopIndex - startIndex;
+    if(limit === 0) limit = 1;
+
+    let givenUser = await User.findById(req.params.userId);
+
+    Post.find({creator:givenUser}).skip(startIndex).limit(limit).sort({likesCount:'desc'}).exec(async (err,posts) => {
+        if(err){
+            console.log(err);
+            return res.status(200).json({
+                success:false,
+                posts:[]
+            })
+        }
+
+        let newPosts = [];
+
+        for(let post of posts){
+            newPosts.push({
+                _id:post.id,
+                likesCount:post.likesCount,
+                source:post.source,
+            })
+        }
+
+        return res.status(200).json({
+            success:true,
+            posts:newPosts,
+        })
+    })
+}
+
+function getUserPostsSaved(req,res,next){
+    // todo
+}
+
 module.exports = {
     sendAvatar,
-    getSuggestedUsers
+    getSuggestedUsers,
+    getUserPostsRecent,
+    getUserPostsPopular,
+    getUserPostsSaved
 }

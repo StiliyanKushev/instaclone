@@ -1,0 +1,88 @@
+.containerRow{
+    height: 400px;
+    background: red;
+}
+
+.imagePlaceHolder{
+    height: 300px !important;
+}
+
+#dimmer{
+    left: 0px !important;
+}
+
+.postArticleContainer{
+    width:fit-content !important;
+}
+
+.centerContent{
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+
+    display: flex;
+    justify-content: center;
+}
+
+.imagesGrid{
+    margin: -1.5rem 5rem !important;
+    max-width: 1000px !important;
+}
+
+.imagesGrid > *{
+    min-width: 300px !important;
+    max-width: 300px !important;
+    min-height: 300px !important;
+    max-height: 300px !important;
+    width: 300px !important;
+    height: 300px !important;
+}
+
+#otherImageSegment{
+    transition-duration: 100ms;
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    padding: 0rem !important;
+    overflow: hidden !important;
+    height: 300px !important;
+}
+
+
+#otherImageSegment:hover .dimmer{
+    opacity: 1;
+}
+
+.imageOther{
+    padding: 10px;
+    width:300px !important;
+    height:300px !important;
+    max-width: 100%;
+    width: 500000000px;
+    -o-object-fit: cover;
+       object-fit: cover;
+    max-height: 800px;
+}
+
+.dimmer{
+    transition-duration: 100ms;
+    opacity: 0;
+    width: 280px;
+    height: 280px;
+
+    background:rgb(51,51,51,0.45);
+
+    position: relative;
+    top: -294px;
+    margin-left: 10px !important;
+
+    overflow: hidden !important;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dimmerHeader{
+    color: white !important;
+    text-align: center !important;
+}

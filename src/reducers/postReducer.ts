@@ -3,6 +3,14 @@ import { postActionTypes } from "../actions/types/postActions";
 
 export type IFullViewPostCommentList = Array<IPostComment & {isDescription?:boolean}>;
 export type IFullViewPostData = IPost & {commentsList:IFullViewPostCommentList};
+export type IPostsListGrid = [{
+    likesCount:number,
+    source:{
+        data:any,
+        contentType:string,
+    },
+    _id:string,
+}]
 
 export interface IPostState {
     error:boolean,
@@ -17,14 +25,7 @@ export interface IPostState {
     currentReplyingComment:number,
     currentReplyingSubComment:number,
     didJustReplyToComment:boolean,
-    fullViewOtherPosts: [{
-        likesCount:number,
-        source:{
-            data:any,
-            contentType:string,
-        },
-        _id:string,
-    }],
+    fullViewOtherPosts: IPostsListGrid,
 
 }
 

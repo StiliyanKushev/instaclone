@@ -1,12 +1,16 @@
 import { ICreator } from '../../types/auth';
 import IGenericResponse from '../../types/response';
+import { IPostsListGrid } from '../../reducers/postReducer';
+import { IPost } from '../../shared/PostsPartial/PostsPartial';
 
 const SET_USER_UPDATE_AVATER_SUCCESS = 'SET_USER_UPDATE_AVATER_SUCCESS';
 const SET_USER_UPDATE_AVATER_FAILURE = 'SET_USER_UPDATE_AVATER_FAILURE';
 const GET_SUGGESTED_USERS_SUCCESS = 'GET_SUGGESTED_USERS_SUCCESS';
 const GET_SUGGESTED_USERS_FAILURE = 'GET_SUGGESTED_USERS_FAILURE';
 const SET_TOGGLE_USERS_LIST = 'SET_TOGGLE_USERS_LIST';
+const SET_TOGGLE_USER_POSTS_LIST = 'SET_TOGGLE_USER_POSTS_LIST';
 const ADD_USER_LIST_ENTRIES = 'ADD_USER_LIST_ENTRIES';
+const ADD_USER_POSTS_ROW_LIST = 'ADD_USER_POSTS_ROW_LIST';
 const SET_USER_LOADING = 'SET_USER_LOADING';
 
 export  interface setUserLoading{
@@ -49,10 +53,25 @@ export interface setToggleUsersList {
     }
 }
 
+export interface setToggleUserPostsList {
+    type: typeof SET_TOGGLE_USER_POSTS_LIST,
+    payload: {
+        fetchFunction?:(startIndex:number,stopIndex:number) => Promise<IGenericResponse & {posts:IPostsListGrid}>
+    }
+}
+
+
 export interface addUserListEntries {
     type: typeof ADD_USER_LIST_ENTRIES,
     payload: {
         entries: Array<ICreator>
+    }
+}
+
+export interface addUserPostsRowList {
+    type: typeof ADD_USER_POSTS_ROW_LIST,
+    payload: {
+        posts: Array<IPost>
     }
 }
 
@@ -61,6 +80,8 @@ setUserUpdateAvatarSuccess |
 setUserUpdateAvatarFailure |
 getSuggestedUsersSuccess |
 getSuggestedUsersFauilre |
+setToggleUserPostsList |
+addUserPostsRowList |
 setToggleUsersList |
 addUserListEntries |
 setUserLoading;

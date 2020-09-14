@@ -60,7 +60,6 @@ class UsersList extends React.PureComponent<IProps, IState>{
 
         // doing this will execute the function at the end of the queue after css is applied
         setTimeout(() => { $('body').css('overflow', 'hidden') },0)
-
     }
 
     public componentWillUnmount() {

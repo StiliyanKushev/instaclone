@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const authCheck = require('../config/auth-check');
 const {renewOtherPosts,getOtherPosts,getPost,getCommentsFromComment,createPost,getPopularFromAllPost,commentPost,likePost,likeComment,getCommentsFromPost,getLikesFromPost,getLikesFromComment} = require('../handlers/posts');
-const {sendAvatar,getSuggestedUsers} = require('../handlers/user');
+const {getUserPostsRecent,getUserPostsPopular,getUserPostsSaved,sendAvatar,getSuggestedUsers} = require('../handlers/user');
 const multer = require('multer'); 
 const User = require('../models/User');
 const Post = require('../models/Post');
@@ -45,8 +45,6 @@ router.get('/photo/post/:id',(req,res,next) => {
 })
 
 //posts
-// router.get('/posts/get/user/recent/:index/:length',authCheck,getRecentFromUserPost)
-// router.get('/posts/get/user/popular/:index/:length',authCheck,getPopularFromUserPost)
 router.get('/posts/get/all/popular/:startIndex/:stopIndex/as/:userId',authCheck,getPopularFromAllPost)
 router.get('/posts/:id/get/as/:userId',authCheck,getPost)
 router.post('/posts/create',authCheck,upload.single('image'),createPost)
@@ -65,6 +63,9 @@ router.post('/posts/:id/like',authCheck,likePost)
 //users
 router.get('/user/suggested/:userId',authCheck,getSuggestedUsers)
 router.post('/user/send/avatar',authCheck,upload.single('image'),sendAvatar)
+router.get('/user/posts/recent/:startIndex/:stopIndex/as/:userId',authCheck,getUserPostsRecent)
+router.get('/user/posts/popular/:startIndex/:stopIndex/as/:userId',authCheck,getUserPostsPopular)
+router.get('/user/posts/saved/:startIndex/:stopIndex/as/:userId',authCheck,getUserPostsSaved)
 // router.post('/user/save-post/:id',authCheck,userSavePost)
 // router.post('/user/follow/:username',authCheck,userFollowUserPost)
 // router.post('/user/unfollow/:username',authCheck,userUnfollowUserPost)
