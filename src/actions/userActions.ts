@@ -59,6 +59,10 @@ export const ADD_USER_POSTS_ROW_LIST = (posts:Array<IPost>):AppActions => ({
     }
 })
 
+export const SET_USER_DATA_CLEAR = ():AppActions => ({
+    type: 'SET_USER_CLEAR',
+})
+
 export const UPDATE_AVATAR_USER = (form:FormData,username:string,token:string) => (dispatch:Dispatch<AppActions>) => {
     dispatch(CALL_USER_LOADING());
 
@@ -71,6 +75,10 @@ export const UPDATE_AVATAR_USER = (form:FormData,username:string,token:string) =
         }
     });
 }
+
+export const RESET_POST_UPLOADED = ():AppActions => ({
+    type: 'RESET_POST_UPLOADED',
+})
 
 export const GET_SUGGESTED_USERS = (userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
     getSuggestedUsers(userId,token).then((res: {users:Array<ICreator>} & IGenericResponse) => {

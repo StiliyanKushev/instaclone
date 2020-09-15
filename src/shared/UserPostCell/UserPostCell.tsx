@@ -13,7 +13,7 @@ type IProps = IParentProps;
 
 class UserPostCell extends React.PureComponent<IProps>{
     public render() {
-        if (this.props.post)
+        if (this.props.post && this.props.post._id !== '#')
             return (
                 <Link key={this.props.post._id} to={`/post/${this.props.post._id}`}>
                     <Grid.Column>
@@ -26,6 +26,16 @@ class UserPostCell extends React.PureComponent<IProps>{
                     </Grid.Column>
                 </Link>
             )
+        
+        else if(this.props.post && this.props.post._id === '#'){
+            return (
+                <Grid.Column>
+                        <Segment id={styles.otherImageSegment}>
+                            <img hidden={true} alt='#' className={styles.imageOther}></img>
+                        </Segment>
+                    </Grid.Column>
+            )
+        }
 
         return (
             <Placeholder>

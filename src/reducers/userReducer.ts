@@ -90,6 +90,7 @@ const userReducer = (state = userState, action:userActionTypes) => {
         case 'SET_TOGGLE_USER_POSTS_LIST':{
             return {
                 ...state,
+                currentPostSelectionList: [],
                 currentPostSelectionFunction: action.payload.fetchFunction
             } as IUserState
         }
@@ -106,6 +107,13 @@ const userReducer = (state = userState, action:userActionTypes) => {
             state.currentPostSelectionList.push([...action.payload.posts] as any)
             return {
                 ...state,
+            } as IUserState
+        }
+
+        case 'SET_USER_CLEAR':{
+            return {
+                ...state,
+                currentPostSelectionList: [],
             } as IUserState
         }
 

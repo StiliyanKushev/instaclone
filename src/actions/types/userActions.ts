@@ -12,6 +12,7 @@ const SET_TOGGLE_USER_POSTS_LIST = 'SET_TOGGLE_USER_POSTS_LIST';
 const ADD_USER_LIST_ENTRIES = 'ADD_USER_LIST_ENTRIES';
 const ADD_USER_POSTS_ROW_LIST = 'ADD_USER_POSTS_ROW_LIST';
 const SET_USER_LOADING = 'SET_USER_LOADING';
+const SET_USER_CLEAR = 'SET_USER_CLEAR';
 
 export  interface setUserLoading{
     type: typeof SET_USER_LOADING,
@@ -75,6 +76,10 @@ export interface addUserPostsRowList {
     }
 }
 
+export interface setUserClear{
+    type: typeof SET_USER_CLEAR,
+}
+
 export type userActionTypes = 
 setUserUpdateAvatarSuccess |
 setUserUpdateAvatarFailure |
@@ -84,4 +89,5 @@ setToggleUserPostsList |
 addUserPostsRowList |
 setToggleUsersList |
 addUserListEntries |
-setUserLoading;
+setUserLoading |
+setUserClear;

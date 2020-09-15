@@ -13,7 +13,7 @@ import { AppActions } from '../../actions/types/actions';
 import { UPLOAD_POST } from '../../actions/postActions';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
-import { GET_SUGGESTED_USERS } from '../../actions/userActions';
+import { GET_SUGGESTED_USERS, RESET_POST_UPLOADED } from '../../actions/userActions';
 import { AppState, ReduxProps } from '../../reducers';
 
 // IMPORT VALIDATION
@@ -67,6 +67,8 @@ class HomeView extends React.Component<IProps, IHomeState>{
                 //if it was successfull
                 if (this.props.post?.isPostUploaded) {
                     toast.success(this.props.post?.messege);
+                    // reset isUploaded
+                    this.props.resetPostUploaded()
                 }
             }
             //display backend error
@@ -179,12 +181,14 @@ const mapStateToProps = (state: AppState): ReduxProps => ({
 
 interface DispatchProps {
     uploadPost: (form:FormData,username:string,token:string) => void,
-    getSuggestedUsers: (userId:string,token:string) => void
+    getSuggestedUsers: (userId:string,token:string) => void,
+    resetPostUploaded: () => void,
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): DispatchProps => ({
     uploadPost: bindActionCreators(UPLOAD_POST, dispatch),
-    getSuggestedUsers: bindActionCreators(GET_SUGGESTED_USERS,dispatch)
+    getSuggestedUsers: bindActionCreators(GET_SUGGESTED_USERS,dispatch),
+    resetPostUploaded: bindActionCreators(RESET_POST_UPLOADED,dispatch)
 })
 
 export default withCookies(connect(mapStateToProps, mapDispatchToProps)(HomeView as ComponentType<IProps>));

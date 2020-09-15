@@ -406,6 +406,13 @@ const postReducer = (state = postState, action:postActionTypes) => {
             } as IPostState
         }
 
+        case 'RESET_POST_UPLOADED':{
+            return {
+                ...state,
+                isPostUploaded: false
+            } as IPostState
+        }
+
         default: {
             return {...state};
         }

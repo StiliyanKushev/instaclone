@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { AppActions } from '../../actions/types/actions';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
-import { UPDATE_AVATAR_USER, TOGGLE_USER_POSTS_LIST, ADD_USER_POSTS_ROW_LIST } from '../../actions/userActions';
+import { UPDATE_AVATAR_USER, TOGGLE_USER_POSTS_LIST, ADD_USER_POSTS_ROW_LIST, SET_USER_DATA_CLEAR } from '../../actions/userActions';
 import { AppState, ReduxProps } from '../../reducers';
 
 // IMPORT OTHER
@@ -73,6 +73,7 @@ class UserView extends React.Component<IProps, IState> {
     public componentDidMount() {
         this.setupAvatarHandlerUpload()
         this.setFetchFunction(getUserPostsRecent)
+        this.props.clearUserData();
     }
 
     public componentWillUnmount() {
@@ -91,8 +92,9 @@ class UserView extends React.Component<IProps, IState> {
                     $(this.userImageRef.current as HTMLImageElement).attr("src", `${settings.BASE_URL}/feed/photo/user/${user}?` + date.getTime());
                 }
             }
+
             //display backend error
-            else {
+            else if(this.props.user?.error){
                 toast.error(this.props.user?.messege);
             }
         }
@@ -102,7 +104,7 @@ class UserView extends React.Component<IProps, IState> {
         // toggle the posts to the first option (recent)
         this.props.togglePostsSection((startIndex: number, stopIndex: number) => {
             return func(startIndex, stopIndex, this.props.auth?.userId as string, this.props.auth?.token as string);
-        })
+        });
     }
 
     private setupAvatarHandlerUpload() {
@@ -216,6 +218,20 @@ class UserView extends React.Component<IProps, IState> {
                     this.setState({ hasMorePosts: false })
                 }
                 else {
+                    if(res.posts.length < 3){
+                        let n = 3 - res.posts.length;
+                        for(let i = 0; i < n;i++){
+                            res.posts.push({
+                                source:{
+                                    data: '',
+                                    contentType: 'png',
+                                },
+                                likesCount: 0,
+                                _id: '#'
+                            })
+                        }
+                    }
+
                     this.props.addUserPostRowToList(res.posts as [IPost]);
                 }
             }
@@ -308,45 +324,45 @@ class UserView extends React.Component<IProps, IState> {
                                 </Item>
                             </Segment>
                         </Grid.Row>
-                        <Segment className={styles.vgridContainer}>
+                            <Segment className={styles.vgridContainer}>
+                                <InfiniteLoader
+                                    isRowLoaded={this.isRowLoaded.bind(this)}
+                                    loadMoreRows={this.fetchPosts.bind(this)}
+                                    rowCount={this.rowCount}
+                                >
+                                    {({ onRowsRendered, registerChild }: InfiniteLoaderChildProps) => (
+                                        <WindowScroller
+                                            scrollingResetTimeInterval={10}
+                                        >
+                                            {({ height, scrollTop }) => (
+                                                <AutoSizer>
+                                                    {({ width }) => {
+                                                        return (
+                                                            <VGrid
+                                                                autoHeight
+                                                                scrollTop={scrollTop}
+                                                                className={styles.vgrid}
+                                                                ref={registerChild}
+                                                                onSectionRendered={this._createOnSectionRendered(onRowsRendered)}
+                                                                cellRenderer={this.cellRenderer.bind(this)}
+                                                                rowCount={this.rowCount}
+                                                                columnCount={3}
+                                                                rowHeight={300}
+                                                                columnWidth={300}
+                                                                overscanRowCount={3}
+                                                                height={height}
+                                                                width={width}
+                                                            />
+                                                        );
+                                                    }}
+                                                </AutoSizer>
+                                            )}
+                                        </WindowScroller>
+                                    )}
+                                </InfiniteLoader>
 
-                            <InfiniteLoader
-                                isRowLoaded={this.isRowLoaded.bind(this)}
-                                loadMoreRows={this.fetchPosts.bind(this)}
-                                rowCount={this.rowCount}
-                            >
-                                {({ onRowsRendered, registerChild }: InfiniteLoaderChildProps) => (
-                                    <WindowScroller
-                                        scrollingResetTimeInterval={10}
-                                    >
-                                        {({ height, scrollTop }) => (
-                                            <AutoSizer>
-                                                {({ width }) => {
-                                                    return (
-                                                        <VGrid
-                                                            autoHeight
-                                                            scrollTop={scrollTop}
-                                                            className={styles.vgrid}
-                                                            ref={registerChild}
-                                                            onSectionRendered={this._createOnSectionRendered(onRowsRendered)}
-                                                            cellRenderer={this.cellRenderer.bind(this)}
-                                                            rowCount={this.rowCount}
-                                                            columnCount={3}
-                                                            rowHeight={300}
-                                                            columnWidth={300}
-                                                            overscanRowCount={3}
-                                                            height={height}
-                                                            width={width}
-                                                        />
-                                                    );
-                                                }}
-                                            </AutoSizer>
-                                        )}
-                                    </WindowScroller>
-                                )}
-                            </InfiniteLoader>
-
-                        </Segment>
+                            </Segment>
+                      
 
                     </Grid>
                 </Container>
@@ -366,13 +382,15 @@ const mapStateToProps = (state: AppState): ReduxProps => ({
 interface DispatchProps {
     updateAvatar: (formData: FormData, username: string, token: string) => void,
     togglePostsSection: (fetchFunction: (startIndex: number, stopIndex: number) => Promise<IGenericResponse & { posts: IPostsListGrid }>) => void
-    addUserPostRowToList: (posts: Array<IPost>) => void
+    addUserPostRowToList: (posts: Array<IPost>) => void,
+    clearUserData: () => void,
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): DispatchProps => ({
     updateAvatar: bindActionCreators(UPDATE_AVATAR_USER, dispatch),
     togglePostsSection: bindActionCreators(TOGGLE_USER_POSTS_LIST, dispatch),
-    addUserPostRowToList: bindActionCreators(ADD_USER_POSTS_ROW_LIST, dispatch)
+    addUserPostRowToList: bindActionCreators(ADD_USER_POSTS_ROW_LIST, dispatch),
+    clearUserData: bindActionCreators(SET_USER_DATA_CLEAR,dispatch)
 })
 
 export default withCookies(connect(mapStateToProps, mapDispatchToProps)(UserView as ComponentType<IProps>));

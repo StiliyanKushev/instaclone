@@ -26,6 +26,11 @@ const SET_OTHER_POST_DATA_LOADING = 'SET_OTHER_POST_DATA_LOADING';
 const SET_OTHER_POST_DATA_LOADING_DONE = 'SET_OTHER_POST_DATA_LOADING_DONE';
 const SET_SAVE_OTHER_POSTS = 'SET_SAVE_OTHER_POSTS';
 const SET_RENEW_OTHER_POSTS = 'SET_RENEW_OTHER_POSTS';
+const RESET_POST_UPLOADED = 'RESET_POST_UPLOADED';
+
+export interface resetPostUploaded{
+    type: typeof RESET_POST_UPLOADED,
+}
 
 export interface setOtherPostDataLoading {
     type: typeof SET_OTHER_POST_DATA_LOADING,
@@ -234,6 +239,7 @@ setFullPostDataView |
 setReplyingComment |
 setPostLikeFailure |
 setPostLikeSuccess | 
+resetPostUploaded |
 setRenewOtherPost |
 setSaveOtherPosts |
 addCommentsPost |

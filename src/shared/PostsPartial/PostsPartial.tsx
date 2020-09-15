@@ -65,7 +65,7 @@ class PostsPartial extends React.PureComponent<IProps>{
 
     private get rowCount(): number {
         let homePosts: any = this.props.post?.homePosts;
-        return this.state.hasMorePosts ? homePosts.length + 1 : homePosts.length;
+        return this.state.hasMorePosts ? homePosts.length + 10 : homePosts.length;
     }
 
     constructor(props: IProps) {
@@ -158,7 +158,7 @@ class PostsPartial extends React.PureComponent<IProps>{
                                                 rowHeight={this.cache.rowHeight}
                                                 rowRenderer={this.renderRow}
                                                 rowCount={this.rowCount}
-                                                overscanRowCount={3}
+                                                overscanRowCount={1}
                                             />
                                         )
                                     }
