@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { AppActions } from '../../actions/types/actions';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
-import { UPDATE_AVATAR_USER, TOGGLE_USER_POSTS_LIST, ADD_USER_POSTS_ROW_LIST, SET_USER_DATA_CLEAR } from '../../actions/userActions';
+import { UPDATE_AVATAR_USER, TOGGLE_USER_POSTS_LIST, ADD_USER_POSTS_ROW_LIST } from '../../actions/userActions';
 import { AppState, ReduxProps } from '../../reducers';
 
 // IMPORT OTHER
@@ -26,11 +26,9 @@ import { settings } from '../../settings';
 import IGenericResponse from '../../types/response';
 import { IPostsListGrid } from '../../reducers/postReducer';
 import { getUserPostsRecent, getUserPostsPopular, getUserPostsSaved } from '../../handlers/user';
-import { CellMeasurerCache, CellMeasurer, AutoSizer, WindowScroller, InfiniteLoader, InfiniteLoaderChildProps } from 'react-virtualized';
-import { Grid as VGrid } from 'react-virtualized';
 import { IPost } from '../../shared/PostsPartial/PostsPartial';
-import UserPostCell from '../../shared/UserPostCell/UserPostCell';
 import {Helmet} from "react-helmet";
+import UserPostsGrid from '../UserPostsGrid/UserPostsGrid';
 
 type IProps = ReactCookieProps & ReduxProps & DispatchProps;
 
@@ -38,22 +36,14 @@ interface IState {
     selectionTab: string,
     settingsPopup: boolean,
     editProfilePopup: boolean,
-    hasMorePosts: boolean,
 }
 
 class UserView extends React.Component<IProps, IState> {
-    state: IState = { hasMorePosts: true, selectionTab: 'recent', settingsPopup: false, editProfilePopup: false }
+    state: IState = { selectionTab: 'recent', settingsPopup: false, editProfilePopup: false }
     private userImageRef = createRef<HTMLImageElement>();
-    private cache: CellMeasurerCache;
-    private startIndex: number = 0;
 
     constructor(props: IProps) {
         super(props);
-
-        this.cache = new CellMeasurerCache({
-            fixedWidth: true,
-            fixedHeight: true,
-        });
 
         this.handleItemClick = this.handleItemClick.bind(this);
         this.handleSettingClick = this.handleSettingClick.bind(this);
@@ -65,15 +55,10 @@ class UserView extends React.Component<IProps, IState> {
         this.setFetchFunction = this.setFetchFunction.bind(this);
     }
 
-    get rowCount(): number {
-        const rows = this.props.user?.currentPostSelectionList.length as number;
-        return this.state.hasMorePosts ? rows + 3 : rows;
-    }
 
     public componentDidMount() {
         this.setupAvatarHandlerUpload()
         this.setFetchFunction(getUserPostsRecent)
-        this.props.clearUserData();
     }
 
     public componentWillUnmount() {
@@ -172,86 +157,6 @@ class UserView extends React.Component<IProps, IState> {
         $('#global-file-input').trigger('click');
     }
 
-    private cellRenderer({
-        columnIndex, // Horizontal (column) index of cell
-        isScrolling, // The Grid is currently being scrolled
-        isVisible, // This cell is visible within the grid (eg it is not an overscanned cell)
-        key, // Unique key within array of cells
-        parent, // Reference to the parent Grid (instance)
-        rowIndex, // Vertical (row) index of cell
-        style, // Style object to be applied to cell (to position it);
-        // This must be passed through to the rendered cell element.
-    }: any) {
-        let post: IPost;
-        if (this.props.user?.currentPostSelectionList[rowIndex])
-            post = this.props.user?.currentPostSelectionList[rowIndex][columnIndex] as IPost
-
-        return (
-            <CellMeasurer
-                key={key}
-                cache={this.cache}
-                parent={parent}
-                columnIndex={columnIndex}
-                rowIndex={rowIndex}
-            >
-                {({ measure, registerChild }: any) => (
-                    <div ref={registerChild} style={style}>
-                        <UserPostCell measure={measure} post={post as IPost} />
-                    </div>
-                )}
-            </CellMeasurer>
-        );
-    }
-
-    private isRowLoaded = ({ index }: { index: number }) => {
-        return !!this.props.user?.currentPostSelectionList[index];
-    };
-
-    private fetchPosts = ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => {
-        startIndex = this.startIndex - 3;
-        stopIndex = this.startIndex;
-
-        return this.props.user?.currentPostSelectionFunction(startIndex, stopIndex).then((res: IGenericResponse & { posts: IPostsListGrid }) => {
-            if (res.success) {
-                if (!res.posts || ((res.posts) as Array<any>).length === 0) {
-                    // no more comments
-                    this.setState({ hasMorePosts: false })
-                }
-                else {
-                    if(res.posts.length < 3){
-                        let n = 3 - res.posts.length;
-                        for(let i = 0; i < n;i++){
-                            res.posts.push({
-                                source:{
-                                    data: '',
-                                    contentType: 'png',
-                                },
-                                likesCount: 0,
-                                _id: '#'
-                            })
-                        }
-                    }
-
-                    this.props.addUserPostRowToList(res.posts as [IPost]);
-                }
-            }
-            else {
-                // internal error
-            }
-        }) as Promise<IGenericResponse & { posts: IPostsListGrid }>
-    };
-
-    private _createOnSectionRendered(onRowsRendered: Function) {
-        return ({ columnStartIndex, columnStopIndex, rowStartIndex, rowStopIndex }: any) => {
-            const startIndex = this.startIndex;
-            const stopIndex = startIndex + 3;
-
-            if (this.state.hasMorePosts)
-                this.startIndex += 3;
-
-            return onRowsRendered({ startIndex, stopIndex })
-        }
-    }
 
     public render() {
         return (
@@ -324,46 +229,7 @@ class UserView extends React.Component<IProps, IState> {
                                 </Item>
                             </Segment>
                         </Grid.Row>
-                            <Segment className={styles.vgridContainer}>
-                                <InfiniteLoader
-                                    isRowLoaded={this.isRowLoaded.bind(this)}
-                                    loadMoreRows={this.fetchPosts.bind(this)}
-                                    rowCount={this.rowCount}
-                                >
-                                    {({ onRowsRendered, registerChild }: InfiniteLoaderChildProps) => (
-                                        <WindowScroller
-                                            scrollingResetTimeInterval={10}
-                                        >
-                                            {({ height, scrollTop }) => (
-                                                <AutoSizer>
-                                                    {({ width }) => {
-                                                        return (
-                                                            <VGrid
-                                                                autoHeight
-                                                                scrollTop={scrollTop}
-                                                                className={styles.vgrid}
-                                                                ref={registerChild}
-                                                                onSectionRendered={this._createOnSectionRendered(onRowsRendered)}
-                                                                cellRenderer={this.cellRenderer.bind(this)}
-                                                                rowCount={this.rowCount}
-                                                                columnCount={3}
-                                                                rowHeight={300}
-                                                                columnWidth={300}
-                                                                overscanRowCount={3}
-                                                                height={height}
-                                                                width={width}
-                                                            />
-                                                        );
-                                                    }}
-                                                </AutoSizer>
-                                            )}
-                                        </WindowScroller>
-                                    )}
-                                </InfiniteLoader>
-
-                            </Segment>
-                      
-
+                        <UserPostsGrid refreshProp={this.state.selectionTab} currentPostSelectionFunction={this.props.user?.currentPostSelectionFunction as any} />
                     </Grid>
                 </Container>
                 {this.state.editProfilePopup && <EditProfile handleClose={this.handleCloseEditProfile} />}
@@ -383,14 +249,12 @@ interface DispatchProps {
     updateAvatar: (formData: FormData, username: string, token: string) => void,
     togglePostsSection: (fetchFunction: (startIndex: number, stopIndex: number) => Promise<IGenericResponse & { posts: IPostsListGrid }>) => void
     addUserPostRowToList: (posts: Array<IPost>) => void,
-    clearUserData: () => void,
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): DispatchProps => ({
     updateAvatar: bindActionCreators(UPDATE_AVATAR_USER, dispatch),
     togglePostsSection: bindActionCreators(TOGGLE_USER_POSTS_LIST, dispatch),
     addUserPostRowToList: bindActionCreators(ADD_USER_POSTS_ROW_LIST, dispatch),
-    clearUserData: bindActionCreators(SET_USER_DATA_CLEAR,dispatch)
 })
 
 export default withCookies(connect(mapStateToProps, mapDispatchToProps)(UserView as ComponentType<IProps>));

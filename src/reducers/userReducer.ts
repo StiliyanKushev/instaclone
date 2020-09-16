@@ -25,7 +25,7 @@ const userState:IUserState = {
     usersList:[] as any,
     usersListToggled: false,
     currentUsersFetchFunction: (startIndex:number,stopIndex:number) => (1 as any),
-    currentPostSelectionFunction: (startIndex:number,stopIndex:number) => (1 as any),
+    currentPostSelectionFunction: (startIndex:number,stopIndex:number) => (new Promise<any>(() => {}) as any),
     currentPostSelectionList: [] as any
 }
 
@@ -90,7 +90,7 @@ const userReducer = (state = userState, action:userActionTypes) => {
         case 'SET_TOGGLE_USER_POSTS_LIST':{
             return {
                 ...state,
-                currentPostSelectionList: [],
+                //currentPostSelectionList: [],
                 currentPostSelectionFunction: action.payload.fetchFunction
             } as IUserState
         }
