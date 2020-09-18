@@ -52,6 +52,15 @@ export interface IPost {
     ownComments: Array<IPostComment>, //this doesnt need a creator prop
 }
 
+export interface IOtherPost {
+    _id:string,
+    likesCount:number,
+    source:{
+        data:any,
+        contentType:string,
+    },
+}
+
 export interface IPostsPartialState {
     hasMorePosts: boolean,
 }

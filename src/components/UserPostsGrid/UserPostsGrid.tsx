@@ -2,7 +2,7 @@ import React, { ComponentType } from 'react';
 import { Segment } from 'semantic-ui-react';
 import { InfiniteLoader, WindowScroller, AutoSizer, Grid, InfiniteLoaderChildProps, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import styles from '../UserView/UserView.module.css'
-import { IPost } from '../../shared/PostsPartial/PostsPartial';
+import { IPost, IOtherPost } from '../../shared/PostsPartial/PostsPartial';
 import UserPostCell from '../../shared/UserPostCell/UserPostCell';
 import IGenericResponse from '../../types/response';
 import { IPostsListGrid } from '../../reducers/postReducer';
@@ -22,12 +22,15 @@ type IProps = IParentProps & ReduxProps & DispatchProps;
 
 interface IState {
     hasMorePosts: boolean,
+    randomKey: number,
 }
 
 class UserPostsGrid extends React.PureComponent<IProps, IState>{
-    public state: IState = { hasMorePosts: true }
+    public state: IState = { hasMorePosts: true, randomKey:0}
     private cache: CellMeasurerCache;
+    private fetchIncremental:number = 9; // 3 rows
     private startIndex: number = 0;
+    private vgridRef:any;
 
     constructor(props: IProps) {
         super(props)
@@ -40,9 +43,15 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
 
     componentDidUpdate(oldProps:IProps){
         if(oldProps.refreshProp !== this.props.refreshProp){
-            this.props.clearUserData()
-            this.setState({hasMorePosts:true})
-            this.startIndex = 0;
+            this.setState(() => {
+                window.scrollTo({top:0})
+                //this.props.clearUserData()
+                this.cache.clearAll()
+                this.startIndex = 0;
+                try{ this.vgridRef.forceUpdateGrid();this.vgridRef.forceUpdate(); } catch {}
+                
+                return  {hasMorePosts:true,randomKey: Math.random()}
+            })
         }
     }
 
@@ -57,7 +66,7 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
         // This must be passed through to the rendered cell element.
     }: any) {
         let post: IPost;
-        if (this.props.user?.currentPostSelectionList[rowIndex])
+        if (this.props.user?.currentPostSelectionList[rowIndex] && this.props.user?.currentPostSelectionList[rowIndex][columnIndex])
             post = this.props.user?.currentPostSelectionList[rowIndex][columnIndex] as IPost
 
         return (
@@ -68,9 +77,9 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
                 columnIndex={columnIndex}
                 rowIndex={rowIndex}
             >
-                {({ measure, registerChild }: any) => (
+                {({ registerChild }: any) => (
                     <div ref={registerChild} style={style}>
-                        <UserPostCell measure={measure} post={post as IPost} />
+                        <UserPostCell post={post as IPost} />
                     </div>
                 )}
             </CellMeasurer>
@@ -82,20 +91,29 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
     };
 
     private fetchPosts = ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => {
-        startIndex = this.startIndex - 3;
+        startIndex = this.startIndex;
         stopIndex = this.startIndex;
 
-        return this.props.currentPostSelectionFunction(startIndex, stopIndex).then((res: IGenericResponse & { posts: IPostsListGrid }) => {
+        let cb = () => {
+            if (this.state.hasMorePosts)
+            this.startIndex += this.fetchIncremental;
+        }
+
+        return this.props.currentPostSelectionFunction(startIndex, stopIndex).then((res: IGenericResponse & { posts: Array<IOtherPost> }) => {
             if (res.success) {
-                if (!res.posts || ((res.posts) as Array<any>).length === 0) {
-                    // no more comments
-                    this.setState({ hasMorePosts: false })
+                if (!res.posts || res.posts.length === 0) {
+                    // no more posts
+                    this.setState(() => { cb(); return { hasMorePosts: false } })
                 }
                 else {
-                    if (res.posts.length < 3) {
-                        let n = 3 - res.posts.length;
+                    // make the res.posts list to grid
+                    let grid:any = (res.posts as any).reduce((rows:any, key:any, index:any) => (index % 3 === 0 ? rows.push([key] as any) : ((rows[rows.length-1])as any).push(key)) && rows, []) as any;
+
+                    // fill the last row
+                    if (grid[grid.length - 1].length < 3) {
+                        let n = 3 - grid[grid.length - 1].length;
                         for (let i = 0; i < n; i++) {
-                            res.posts.push({
+                            grid[grid.length - 1].push({
                                 source: {
                                     data: '',
                                     contentType: 'png',
@@ -104,24 +122,26 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
                                 _id: '#'
                             })
                         }
+
+                        this.setState(() => { cb(); return { hasMorePosts: false } })
                     }
 
-                    this.props.addUserPostRowToList(res.posts as [IPost]);
+                    this.props.addUserPostGridToGrid(grid as Array<Array<IOtherPost>>);
                 }
+                
             }
+
             else {
                 // internal error
             }
+
         }) as Promise<IGenericResponse & { posts: IPostsListGrid }>
     };
 
     private _createOnSectionRendered(onRowsRendered: Function) {
         return ({ columnStartIndex, columnStopIndex, rowStartIndex, rowStopIndex }: any) => {
             const startIndex = this.startIndex;
-            const stopIndex = startIndex + 3;
-
-            if (this.state.hasMorePosts)
-                this.startIndex += 3;
+            const stopIndex = startIndex + this.fetchIncremental;
 
             return onRowsRendered({ startIndex, stopIndex })
         }
@@ -130,7 +150,7 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
 
     get rowCount(): number {
         const rows = this.props.user?.currentPostSelectionList.length as number;
-        return this.state.hasMorePosts ? rows + 3 : rows;
+        return this.state.hasMorePosts ? rows + this.fetchIncremental : rows;
     }
 
     public render() {
@@ -141,7 +161,7 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
                     loadMoreRows={this.fetchPosts.bind(this)}
                     rowCount={this.rowCount}
                     // minimumBatchSize={30}
-                    // threshold={3}
+                    // threshold={10}
                 >
                     {({ onRowsRendered, registerChild }: InfiniteLoaderChildProps) => (
                         <WindowScroller
@@ -152,17 +172,19 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
                                     {({ width }) => {
                                         return (
                                             <Grid
+                                                key={this.state.randomKey}
+                                                ref={registerChild}
                                                 autoHeight
                                                 scrollTop={scrollTop}
                                                 className={styles.vgrid}
-                                                ref={registerChild}
+                                                // ref={registerChild}
                                                 onSectionRendered={this._createOnSectionRendered(onRowsRendered)}
                                                 cellRenderer={this.cellRenderer.bind(this)}
                                                 rowCount={this.rowCount}
                                                 columnCount={3}
                                                 rowHeight={300}
                                                 columnWidth={300}
-                                                overscanRowCount={5}
+                                                // overscanRowCount={}
                                                 height={height}
                                                 width={width}
                                             />
@@ -187,12 +209,12 @@ const mapStateToProps = (state: AppState): ReduxProps => ({
 })
 
 interface DispatchProps {
-    addUserPostRowToList: (posts: Array<IPost>) => void,
+    addUserPostGridToGrid: (posts: Array<Array<IOtherPost>>) => void,
     clearUserData: () => void,
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): DispatchProps => ({
-    addUserPostRowToList: bindActionCreators(ADD_USER_POSTS_ROW_LIST, dispatch),
+    addUserPostGridToGrid: bindActionCreators(ADD_USER_POSTS_ROW_LIST, dispatch),
     clearUserData: bindActionCreators(SET_USER_DATA_CLEAR,dispatch)
 })
 

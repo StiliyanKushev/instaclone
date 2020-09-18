@@ -1,7 +1,7 @@
 import { ICreator } from '../../types/auth';
 import IGenericResponse from '../../types/response';
 import { IPostsListGrid } from '../../reducers/postReducer';
-import { IPost } from '../../shared/PostsPartial/PostsPartial';
+import { IPost, IOtherPost } from '../../shared/PostsPartial/PostsPartial';
 
 const SET_USER_UPDATE_AVATER_SUCCESS = 'SET_USER_UPDATE_AVATER_SUCCESS';
 const SET_USER_UPDATE_AVATER_FAILURE = 'SET_USER_UPDATE_AVATER_FAILURE';
@@ -72,7 +72,7 @@ export interface addUserListEntries {
 export interface addUserPostsRowList {
     type: typeof ADD_USER_POSTS_ROW_LIST,
     payload: {
-        posts: Array<IPost>
+        posts: Array<Array<IOtherPost>>
     }
 }
 

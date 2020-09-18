@@ -5,7 +5,7 @@ import { IPost } from '../PostsPartial/PostsPartial';
 import styles from './UserPostCell.module.css';
 
 interface IParentProps {
-    measure: () => void,
+    measure?: () => void,
     post: IPost
 }
 

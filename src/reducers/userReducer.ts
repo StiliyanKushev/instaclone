@@ -2,6 +2,7 @@ import { userActionTypes } from "../actions/types/userActions";
 import { ICreator } from '../types/auth';
 import IGenericResponse from '../types/response';
 import { IPostsListGrid } from './postReducer';
+import { IOtherPost } from '../shared/PostsPartial/PostsPartial';
 
 export interface IUserState {
     error:boolean,
@@ -13,7 +14,7 @@ export interface IUserState {
     usersListToggled:boolean,
     currentPostSelectionFunction: (startIndex:number,stopIndex:number) => Promise<IGenericResponse & {posts:IPostsListGrid}>
     currentUsersFetchFunction: (startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:Array<ICreator>}>
-    currentPostSelectionList: Array<IPostsListGrid>
+    currentPostSelectionList: Array<Array<IOtherPost>>
 }
 
 const userState:IUserState = {
@@ -90,7 +91,7 @@ const userReducer = (state = userState, action:userActionTypes) => {
         case 'SET_TOGGLE_USER_POSTS_LIST':{
             return {
                 ...state,
-                //currentPostSelectionList: [],
+                currentPostSelectionList: [],
                 currentPostSelectionFunction: action.payload.fetchFunction
             } as IUserState
         }
@@ -104,7 +105,9 @@ const userReducer = (state = userState, action:userActionTypes) => {
         }
 
         case 'ADD_USER_POSTS_ROW_LIST':{
-            state.currentPostSelectionList.push([...action.payload.posts] as any)
+            for(let row of action.payload.posts){
+                state.currentPostSelectionList.push(row)
+            }
             return {
                 ...state,
             } as IUserState

@@ -4,7 +4,7 @@ import { sendUserAvatar, getSuggestedUsers } from '../handlers/user';
 import IGenericResponse from "../types/response";
 import { ICreator } from '../types/auth';
 import { IPostsListGrid } from '../reducers/postReducer';
-import { IPost } from '../shared/PostsPartial/PostsPartial';
+import { IOtherPost } from '../shared/PostsPartial/PostsPartial';
 
 export const CALL_USER_LOADING = ():AppActions => ({
     type: 'SET_USER_LOADING',
@@ -52,7 +52,7 @@ export const CALL_TOGGLE_USER_POSTS_LIST = (fetchFunction:(startIndex:number,sto
     }
 })
 
-export const ADD_USER_POSTS_ROW_LIST = (posts:Array<IPost>):AppActions => ({
+export const ADD_USER_POSTS_ROW_LIST = (posts: Array<Array<IOtherPost>>):AppActions => ({
     type: 'ADD_USER_POSTS_ROW_LIST',
     payload: {
         posts

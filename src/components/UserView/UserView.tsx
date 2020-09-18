@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { AppActions } from '../../actions/types/actions';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
-import { UPDATE_AVATAR_USER, TOGGLE_USER_POSTS_LIST, ADD_USER_POSTS_ROW_LIST } from '../../actions/userActions';
+import { UPDATE_AVATAR_USER, TOGGLE_USER_POSTS_LIST } from '../../actions/userActions';
 import { AppState, ReduxProps } from '../../reducers';
 
 // IMPORT OTHER
@@ -26,7 +26,6 @@ import { settings } from '../../settings';
 import IGenericResponse from '../../types/response';
 import { IPostsListGrid } from '../../reducers/postReducer';
 import { getUserPostsRecent, getUserPostsPopular, getUserPostsSaved } from '../../handlers/user';
-import { IPost } from '../../shared/PostsPartial/PostsPartial';
 import {Helmet} from "react-helmet";
 import UserPostsGrid from '../UserPostsGrid/UserPostsGrid';
 
@@ -248,13 +247,11 @@ const mapStateToProps = (state: AppState): ReduxProps => ({
 interface DispatchProps {
     updateAvatar: (formData: FormData, username: string, token: string) => void,
     togglePostsSection: (fetchFunction: (startIndex: number, stopIndex: number) => Promise<IGenericResponse & { posts: IPostsListGrid }>) => void
-    addUserPostRowToList: (posts: Array<IPost>) => void,
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): DispatchProps => ({
     updateAvatar: bindActionCreators(UPDATE_AVATAR_USER, dispatch),
     togglePostsSection: bindActionCreators(TOGGLE_USER_POSTS_LIST, dispatch),
-    addUserPostRowToList: bindActionCreators(ADD_USER_POSTS_ROW_LIST, dispatch),
 })
 
 export default withCookies(connect(mapStateToProps, mapDispatchToProps)(UserView as ComponentType<IProps>));
