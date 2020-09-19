@@ -140,7 +140,7 @@ async function getUserPostsRecent(req,res,next){
                 newPosts.push({
                     _id:post.id,
                     likesCount:post.likesCount,
-                    source:post.source,
+                    source:post.smallSource,
                 })
             }
 
@@ -173,7 +173,7 @@ async function getUserPostsPopular(req,res,next){
             newPosts.push({
                 _id:post.id,
                 likesCount:post.likesCount,
-                source:post.source,
+                source:post.smallSource,
             })
         }
 

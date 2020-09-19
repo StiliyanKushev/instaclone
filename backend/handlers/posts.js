@@ -52,7 +52,7 @@ async function createPost(req, res, next) {
             req.file.mimetype.indexOf('png') === -1)) {
         return res.status(200).json({
             success: false,
-            messege: 'Uploaded file type is not supported yet.'
+            messege: `Uploaded file type (${req.file.mimetype}) is not supported yet.`
         })
     }
 
@@ -74,11 +74,18 @@ async function createPost(req, res, next) {
         let imageName = req.file.filename;
         let originalImgPath = path.dirname(require.main.filename || process.mainModule.filename) + '/' + req.file.path;
         let resizedImgPath = path.dirname(require.main.filename || process.mainModule.filename) + '/resized/' + imageName;
+        let resizedSmallImgPath = path.dirname(require.main.filename || process.mainModule.filename) + '/resized/' + imageName + 'small';
 
         await sharp(originalImgPath)
         .resize(500)
         .toFile(
             path.resolve(path.dirname(require.main.filename || process.mainModule.filename),'resized',imageName)
+        )
+
+        await sharp(originalImgPath)
+        .resize(200)
+        .toFile(
+            path.resolve(path.dirname(require.main.filename || process.mainModule.filename),'resized',imageName + 'small')
         )
 
         //remove original image after resized is created
@@ -92,9 +99,17 @@ async function createPost(req, res, next) {
                 data: fs.readFileSync(resizedImgPath),
                 contentType: req.file.mimetype,
             },
+            smallSource: {
+                data: fs.readFileSync(resizedSmallImgPath),
+                contentType: req.file.mimetype,
+            },
             description:req.body.description,
             likesCount: 0
         }).save().then(post => {
+            // delete the files after post data is set
+            fs.unlinkSync(resizedImgPath);
+            fs.unlinkSync(resizedSmallImgPath);
+
             return res.status(200).json({
                 success:true,
                 messege:'Post uploaded successfully.'

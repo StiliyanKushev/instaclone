@@ -23,12 +23,13 @@ type IProps = IParentProps & ReduxProps & DispatchProps;
 interface IState {
     hasMorePosts: boolean,
     randomKey: number,
+    firstRowRendered:boolean,
 }
 
 class UserPostsGrid extends React.PureComponent<IProps, IState>{
-    public state: IState = { hasMorePosts: true, randomKey:0}
+    public state: IState = { hasMorePosts: true, randomKey:0,firstRowRendered:false}
     private cache: CellMeasurerCache;
-    private fetchIncremental:number = 3; // 3 rows
+    private fetchIncremental:number = 3; // 3 = 1 row
     private startIndex: number = 0;
     private vgridRef:any;
 
@@ -45,12 +46,11 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
         if(oldProps.refreshProp !== this.props.refreshProp){
             this.setState(() => {
                 window.scrollTo({top:0})
-                //this.props.clearUserData()
                 this.cache.clearAll()
                 this.startIndex = 0;
                 try{ this.vgridRef.forceUpdateGrid();this.vgridRef.forceUpdate(); } catch {}
                 
-                return  {hasMorePosts:true,randomKey: Math.random()}
+                return  {hasMorePosts:true,randomKey: Math.random(),firstRowRendered:false}
             })
         }
     }
@@ -91,6 +91,12 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
     };
 
     private fetchPosts = ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => {
+        if(startIndex === 0 && this.startIndex === 0 && !this.state.firstRowRendered){
+            this.setState({firstRowRendered:true},() => {
+                this.startIndex += this.fetchIncremental;
+            })
+        }
+
         if(!this.state.hasMorePosts) return new Promise<any>(() => {})
         if(this.emptyCells > 0) {
             this.setState({ hasMorePosts: false })
@@ -99,6 +105,7 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
 
         startIndex = this.startIndex;
         stopIndex = this.startIndex + this.fetchIncremental;
+
 
         let cb = () => {
             if (this.state.hasMorePosts)
