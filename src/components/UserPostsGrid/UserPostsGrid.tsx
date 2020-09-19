@@ -91,6 +91,7 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
     };
 
     private fetchPosts = ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => {
+        // I DONT KNOW HOW DOES THAT FIX THE FIRST ROW NOT REPEATING, NOR IF ITS BROWSER CONSISTENT
         if(startIndex === 0 && this.startIndex === 0 && !this.state.firstRowRendered){
             this.setState({firstRowRendered:true},() => {
                 this.startIndex += this.fetchIncremental;
@@ -106,7 +107,6 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
         startIndex = this.startIndex;
         stopIndex = this.startIndex + this.fetchIncremental;
 
-
         let cb = () => {
             if (this.state.hasMorePosts)
             this.startIndex += this.fetchIncremental;
@@ -114,11 +114,8 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
 
         return this.props.currentPostSelectionFunction(startIndex, stopIndex).then((res: IGenericResponse & { posts: Array<IOtherPost> }) => {
             if (res.success) {
-                console.log(`from ${startIndex} to ${stopIndex} is ${res.posts.length}`)
-
                 if (!res.posts || res.posts.length === 0) {
                     // no more posts
-                    if(startIndex === 30) console.log('no more posts')
                     this.setState({ hasMorePosts: false },cb)
                 }
                 else {
@@ -131,7 +128,6 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
 
                     // fill the last row
                     if (grid[grid.length - 1].length < 3) {
-                        if(startIndex === 27) console.log('here?')
                         let n = 3 - grid[grid.length - 1].length;
                         for (let i = 0; i < n; i++) {
                             grid[grid.length - 1].push({

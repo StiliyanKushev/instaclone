@@ -125,6 +125,8 @@ class UserView extends React.Component<IProps, IState> {
     }
 
     private handleItemClick(selectionTab: string) {
+        if(selectionTab === this.state.selectionTab) return;
+
         this.setState({ selectionTab })
 
         switch (selectionTab) {
