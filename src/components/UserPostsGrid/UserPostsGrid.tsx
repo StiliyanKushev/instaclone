@@ -28,7 +28,7 @@ interface IState {
 class UserPostsGrid extends React.PureComponent<IProps, IState>{
     public state: IState = { hasMorePosts: true, randomKey:0}
     private cache: CellMeasurerCache;
-    private fetchIncremental:number = 9; // 3 rows
+    private fetchIncremental:number = 3; // 3 rows
     private startIndex: number = 0;
     private vgridRef:any;
 
@@ -91,8 +91,14 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
     };
 
     private fetchPosts = ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => {
+        if(!this.state.hasMorePosts) return new Promise<any>(() => {})
+        if(this.emptyCells > 0) {
+            this.setState({ hasMorePosts: false })
+            return new Promise<any>(() => {})
+        }
+
         startIndex = this.startIndex;
-        stopIndex = this.startIndex;
+        stopIndex = this.startIndex + this.fetchIncremental;
 
         let cb = () => {
             if (this.state.hasMorePosts)
@@ -101,16 +107,24 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
 
         return this.props.currentPostSelectionFunction(startIndex, stopIndex).then((res: IGenericResponse & { posts: Array<IOtherPost> }) => {
             if (res.success) {
+                console.log(`from ${startIndex} to ${stopIndex} is ${res.posts.length}`)
+
                 if (!res.posts || res.posts.length === 0) {
                     // no more posts
-                    this.setState(() => { cb(); return { hasMorePosts: false } })
+                    if(startIndex === 30) console.log('no more posts')
+                    this.setState({ hasMorePosts: false },cb)
                 }
                 else {
                     // make the res.posts list to grid
-                    let grid:any = (res.posts as any).reduce((rows:any, key:any, index:any) => (index % 3 === 0 ? rows.push([key] as any) : ((rows[rows.length-1])as any).push(key)) && rows, []) as any;
+                    let grid:any = (res.posts as any)
+                    .reduce((rows:any, key:any, index:any) => 
+                        (index % 3 === 0 ?
+                        rows.push([key] as any) : 
+                        ((rows[rows.length-1])as any).push(key)) && rows, []) as any;
 
                     // fill the last row
                     if (grid[grid.length - 1].length < 3) {
+                        if(startIndex === 27) console.log('here?')
                         let n = 3 - grid[grid.length - 1].length;
                         for (let i = 0; i < n; i++) {
                             grid[grid.length - 1].push({
@@ -119,16 +133,17 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
                                     contentType: 'png',
                                 },
                                 likesCount: 0,
-                                _id: '#'
+                                _id: '#' // cell component checks if its # and renders nothing
                             })
                         }
 
-                        this.setState(() => { cb(); return { hasMorePosts: false } })
+                        this.setState({ hasMorePosts: false },cb)
                     }
 
                     this.props.addUserPostGridToGrid(grid as Array<Array<IOtherPost>>);
                 }
-                
+
+                this.startIndex += this.fetchIncremental;
             }
 
             else {
@@ -153,15 +168,34 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
         return this.state.hasMorePosts ? rows + this.fetchIncremental : rows;
     }
 
+    get cellCount(): number {
+        let cells =  this.rowCount * 3;
+        return cells - this.emptyCells;
+    }
+
+    get emptyCells():number {
+        let lastRow = this.props.user?.currentPostSelectionList[this.props.user?.currentPostSelectionList.length - 1];
+        let countOfEmpty = 0;
+
+        if(lastRow)
+        for(let i = 0; i < 3;i++){
+            if(lastRow[i]._id === '#'){ // if its # cell component makes it look empty
+                countOfEmpty++;
+            }
+        }
+
+        return countOfEmpty;
+    }
+
     public render() {
         return (
             <Segment className={styles.vgridContainer}>
                 <InfiniteLoader
                     isRowLoaded={this.isRowLoaded.bind(this)}
                     loadMoreRows={this.fetchPosts.bind(this)}
-                    rowCount={this.rowCount}
-                    // minimumBatchSize={30}
-                    // threshold={10}
+                    rowCount={this.cellCount}
+                    minimumBatchSize={30}
+                    threshold={10}
                 >
                     {({ onRowsRendered, registerChild }: InfiniteLoaderChildProps) => (
                         <WindowScroller
@@ -184,7 +218,7 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
                                                 columnCount={3}
                                                 rowHeight={300}
                                                 columnWidth={300}
-                                                // overscanRowCount={}
+                                                overscanRowCount={3}
                                                 height={height}
                                                 width={width}
                                             />

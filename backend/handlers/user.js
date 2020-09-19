@@ -111,28 +111,43 @@ async function getUserPostsRecent(req,res,next){
 
     let givenUser = await User.findById(req.params.userId);
 
-    Post.find({creator:givenUser}).skip(startIndex).limit(stopIndex - startIndex).sort({date: 'asc'}).exec(async (err,posts) => {
-        if(err){
-            console.log(err);
+    Post.count({creator:givenUser}).exec(async function (err, count) {
+        let limit = stopIndex - startIndex
+        
+        if(startIndex >= count){
             return res.status(200).json({
-                success:false,
+                success:true,
                 posts:[]
             })
         }
 
-        let newPosts = [];
-
-        for(let post of posts){
-            newPosts.push({
-                _id:post.id,
-                likesCount:post.likesCount,
-                source:post.source,
-            })
+        if(stopIndex >= count){
+            limit = count - startIndex
         }
 
-        return res.status(200).json({
-            success:true,
-            posts:newPosts,
+        Post.find({creator:givenUser}).skip(startIndex).limit(limit).sort({date: 'asc'}).exec(async (err,posts) => {
+            if(err){
+                console.log(err);
+                return res.status(200).json({
+                    success:false,
+                    posts:[]
+                })
+            }
+
+            let newPosts = [];
+
+            for(let post of posts){
+                newPosts.push({
+                    _id:post.id,
+                    likesCount:post.likesCount,
+                    source:post.source,
+                })
+            }
+
+            return res.status(200).json({
+                success:true,
+                posts:newPosts,
+            })
         })
     })
 }
