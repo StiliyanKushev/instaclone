@@ -26,7 +26,6 @@ export interface IPostState {
     currentReplyingSubComment:number,
     didJustReplyToComment:boolean,
     fullViewOtherPosts: IPostsListGrid,
-
 }
 
 // doing this so there are no run time errors on inital render (before setting the data in the componentDidMount in some cases)
@@ -39,6 +38,7 @@ const emptyFullViewPostData: IFullViewPostData = {
     description:'',
     _id:'',
     isLiked:false,
+    isSaved:false,
     likesCount:0,
     source:{
         contentType:'',
@@ -200,6 +200,25 @@ const postReducer = (state = postState, action:postActionTypes) => {
             } as IPostState
         }
 
+        case 'SET_POST_SAVE_SUCCESS':{
+            // update the isliked value of the post
+            state.homePosts[action.payload.postIndex].isSaved = !state.homePosts[action.payload.postIndex].isSaved;
+
+            return {
+                ...state,
+                error:false,
+                messege:action.payload.messege
+            } as IPostState
+        }
+
+        case 'SET_POST_SAVE_FAILURE':{
+            return {
+                ...state,
+                error:true,
+                messege:action.payload.messege
+            } as IPostState
+        }
+
         case 'ADD_POSTS_HOME':{
             return {
                 ...state,
@@ -284,6 +303,27 @@ const postReducer = (state = postState, action:postActionTypes) => {
         }
 
         case 'SET_FULL_POST_LIKE_FAILURE':{
+            return {
+                ...state,
+                error:true,
+                messege:action.payload.messege
+            } as IPostState
+        }
+
+        case 'SET_FULL_POST_SAVE_SUCCESS':{
+            if(action.payload.didFetch === true){    
+                // update the isliked value of the post
+                state.fullViewPostData.isSaved = !state.fullViewPostData.isSaved;
+            }
+
+            return {
+                ...state,
+                error:false,
+                messege:action.payload.messege
+            } as IPostState
+        }
+
+        case 'SET_FULL_POST_SAVE_FAILURE':{
             return {
                 ...state,
                 error:true,

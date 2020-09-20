@@ -43,6 +43,7 @@ export interface IPost {
     _id:string,
     description:string,
     isLiked:boolean,
+    isSaved:boolean,
     likesCount:number,
     source:{
         data:any,

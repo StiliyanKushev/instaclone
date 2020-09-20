@@ -5,6 +5,8 @@ const SET_FULL_POST_COMMENT_FAILURE = 'SET_FULL_POST_COMMENT_FAILURE';
 const SET_FULL_POST_COMMENT_SUCCESS = 'SET_FULL_POST_COMMENT_SUCCESS';
 const SET_FULL_POST_LIKE_SUCCESS = 'SET_FULL_POST_LIKE_SUCCESS';
 const SET_FULL_POST_LIKE_FAILURE = 'SET_FULL_POST_LIKE_FAILURE';
+const SET_FULL_POST_SAVE_SUCCESS = 'SET_FULL_POST_SAVE_SUCCESS';
+const SET_FULL_POST_SAVE_FAILURE = 'SET_FULL_POST_SAVE_FAILURE';
 const SET_TOGGLE_FULL_POST_VIEW = 'SET_TOGGLE_FULL_POST_VIEW';
 const SET_FIX_POST_AFTER_UPDATE = 'SET_FIX_POST_AFTER_UPDATE';
 const SET_POST_COMMENT_SUCCESS = 'SET_POST_COMMENT_SUCCESS';
@@ -17,6 +19,8 @@ const SET_FULL_POST_DATA_VIEW = 'SET_FULL_POST_DATA_VIEW';
 const SET_TOGGLE_MORE_COMMENT = 'SET_TOGGLE_MORE_COMMENT';
 const SET_POST_LIKE_SUCCESS = 'SET_POST_LIKE_SUCCESS';
 const SET_POST_LIKE_FAILURE = 'SET_POST_LIKE_FAILURE';
+const SET_POST_SAVE_SUCCESS = 'SET_POST_SAVE_SUCCESS';
+const SET_POST_SAVE_FAILURE = 'SET_POST_SAVE_FAILURE';
 const SET_REPLYING_COMMENT = 'SET_REPLYING_COMMENT';
 const ADD_COMMENTS_POST = 'ADD_COMMENTS_POST';
 const SET_POST_LOADING = 'SET_POST_LOADING';
@@ -160,6 +164,21 @@ export interface setPostLikeFailure {
     }
 }
 
+export interface setPostSaveSuccess {
+    type: typeof SET_POST_SAVE_SUCCESS,
+    payload:{
+        messege:string,
+        postIndex: number,
+    }
+}
+
+export interface setPostSaveFailure {
+    type: typeof SET_POST_SAVE_FAILURE,
+    payload:{
+        messege:string
+    }
+}
+
 export interface setCommentLikeSuccess {
     type: typeof SET_COMMENT_LIKE_SUCCESS,
     payload:{
@@ -186,6 +205,21 @@ export interface setFullPostLikeSuccess {
 
 export interface setFullPostLikeFailure {
     type: typeof SET_FULL_POST_LIKE_FAILURE,
+    payload:{
+        messege:string
+    }
+}
+
+export interface setFullPostSaveSuccess {
+    type: typeof SET_FULL_POST_SAVE_SUCCESS,
+    payload:{
+        messege:string,
+        didFetch?:boolean,
+    }
+}
+
+export interface setFullPostSaveFailure {
+    type: typeof SET_FULL_POST_SAVE_FAILURE,
     payload:{
         messege:string
     }
@@ -224,6 +258,8 @@ setOtherPostDataLoadingDone |
 setFullPostCommentFailure | 
 setFullPostCommentSuccess | 
 setOtherPostDataLoading |
+setFullPostSaveSuccess |
+setFullPostSaveFailure |
 setFullPostLikeSuccess |
 setFullPostLikeFailure |
 setToggleFullPostView |
@@ -232,10 +268,12 @@ setPostCommentSuccess |
 setFixPostAfterUpdate |
 setCommentLikeSuccess |
 setCommentLikeFailure |
-setToggleMoreComment |
 setPostUploadFailure | 
+setToggleMoreComment |
 setPostUploadSuccess |
 setFullPostDataView |
+setPostSaveSuccess |
+setPostSaveFailure |
 setReplyingComment |
 setPostLikeFailure |
 setPostLikeSuccess | 

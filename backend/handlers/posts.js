@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs'); 
 const path = require('path'); 
 const sharp = require('sharp');
+const UserSavePost = require("../models/UserSavePost");
 
 function validateCreateAndCommentPost(payload){
     const errors = {}
@@ -370,6 +371,10 @@ async function getPost(req,res,next){
 
         let isLikedQ = await UserLike.find({item_id:req.params.id,user:givenUser});
         let isLiked = isLikedQ[0] === undefined ? false : true;
+
+        let isSavedQ = await UserSavePost.find({post:post._id,user:givenUser});
+        let isSaved = isSavedQ[0] === undefined ? false : true;
+
         let postCreator = await User.findById(post.creator);
 
         let newPost = {
@@ -380,7 +385,8 @@ async function getPost(req,res,next){
             likesCount: post.likesCount,
             comments: comments,
             ownComments:ownComments,
-            isLiked: isLiked
+            isLiked: isLiked,
+            isSaved: isSaved
         }
 
         return res.status(200).json({
@@ -555,6 +561,9 @@ async function getPopularFromAllPost(req,res,next){
             let isLikedQ = await UserLike.find({item_id:post._id,user:givenUser});
             let isLiked = isLikedQ[0] === undefined ? false : true;
 
+            let isSavedQ = await UserSavePost.find({post:post._id,user:givenUser});
+            let isSaved = isSavedQ[0] === undefined ? false : true;
+
             let postCreator = await User.findById(post.creator);
 
             let newPost = {
@@ -565,7 +574,8 @@ async function getPopularFromAllPost(req,res,next){
                 likesCount: post.likesCount,
                 comments: comments,
                 ownComments:ownComments,
-                isLiked: isLiked
+                isLiked: isLiked,
+                isSaved: isSaved
             }
 
             resPosts.push(newPost);

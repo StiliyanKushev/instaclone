@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const authCheck = require('../config/auth-check');
 const {renewOtherPosts,getOtherPosts,getPost,getCommentsFromComment,createPost,getPopularFromAllPost,commentPost,likePost,likeComment,getCommentsFromPost,getLikesFromPost,getLikesFromComment} = require('../handlers/posts');
-const {getUserPostsRecent,getUserPostsPopular,getUserPostsSaved,sendAvatar,getSuggestedUsers} = require('../handlers/user');
+const {userSavePost,getUserPostsRecent,getUserPostsPopular,getUserPostsSaved,sendAvatar,getSuggestedUsers} = require('../handlers/user');
 const multer = require('multer'); 
 const User = require('../models/User');
 const Post = require('../models/Post');
@@ -66,7 +66,7 @@ router.post('/user/send/avatar',authCheck,upload.single('image'),sendAvatar)
 router.get('/user/posts/recent/:startIndex/:stopIndex/as/:userId',authCheck,getUserPostsRecent)
 router.get('/user/posts/popular/:startIndex/:stopIndex/as/:userId',authCheck,getUserPostsPopular)
 router.get('/user/posts/saved/:startIndex/:stopIndex/as/:userId',authCheck,getUserPostsSaved)
-// router.post('/user/save-post/:id',authCheck,userSavePost)
+router.post('/user/save-post/:id',authCheck,userSavePost)
 // router.post('/user/follow/:username',authCheck,userFollowUserPost)
 // router.post('/user/unfollow/:username',authCheck,userUnfollowUserPost)
 

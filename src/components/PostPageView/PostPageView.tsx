@@ -11,7 +11,7 @@ import { AppActions } from '../../actions/types/actions';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
 import { AppState, ReduxProps } from '../../reducers';
-import { FETCH_FULL_POST_VIEW_AND_SAVE, COMMENT_FULL_POST, LIKE_FULL_POST, FETCH_OTHER_POSTS, CALL_OTHER_POST_DATA_LOADING_DONE, RENEW_OTHER_POSTS } from '../../actions/postActions';
+import { FETCH_FULL_POST_VIEW_AND_SAVE, COMMENT_FULL_POST, LIKE_FULL_POST, FETCH_OTHER_POSTS, CALL_OTHER_POST_DATA_LOADING_DONE, RENEW_OTHER_POSTS, SAVE_FULL_POST } from '../../actions/postActions';
 
 // IMPORT ROUTER RELETED
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
@@ -95,6 +95,11 @@ class PostPageView extends React.PureComponent<IProps>{
         }
     }
 
+    private handleSave(){
+        if(this.props.auth && this.props.post) // just so es-lint shuts up
+        this.props.save(this.props.post.fullViewPostData._id,this.props.auth.userId,this.props.auth.token);
+    }
+
     private handleComment(comment:string,replyCommentId?:string){
         if(this.props.auth && this.props.post){ // just so es-lint shuts up
             this.props.comment({content:comment} as IPostComment,this.props.post.fullViewPostData._id,this.props.auth.token,this.props.auth.userId,replyCommentId);
@@ -109,7 +114,7 @@ class PostPageView extends React.PureComponent<IProps>{
                 }
                 <div className={styles.centerContent}>
                     <div className={styles.postArticleContainer}>
-                        <PostArticle handleLike={this.handleLike.bind(this)} handleComment={this.handleComment.bind(this)} />
+                        <PostArticle handleSave={this.handleSave.bind(this)} handleLike={this.handleLike.bind(this)} handleComment={this.handleComment.bind(this)} />
                     </div>
                 </div>
                 <Divider horizontal>Other posts from {this.props.post?.fullViewPostData.creator.username}</Divider>
@@ -149,6 +154,7 @@ interface DispatchProps {
     fetchPostDataAndSave:(postId:string,userId:string,token:string) => void,
     comment:(comment:IPostComment,postId?:string,token?:string,userId?:string,replyCommentId?:string) => void,
     like: (postId:string,userId:string,token:string) => void,
+    save: (postId:string,userId:string,token:string) => void,
     fetchOtherPosts: (otherId:string,userId:string,token:string) => void,
     CALL_OTHER_POST_DATA_LOADING_DONE: () => void,
     renewOtherPost:(id:string,index:number,others:IPostsListGrid,userId:string,token:string) => void,
@@ -159,6 +165,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): Disp
     fetchPostDataAndSave:bindActionCreators(FETCH_FULL_POST_VIEW_AND_SAVE,dispatch),
     comment:bindActionCreators(COMMENT_FULL_POST,dispatch),
     like:bindActionCreators(LIKE_FULL_POST,dispatch),
+    save:bindActionCreators(SAVE_FULL_POST,dispatch),
     fetchOtherPosts:bindActionCreators(FETCH_OTHER_POSTS,dispatch),
     CALL_OTHER_POST_DATA_LOADING_DONE:bindActionCreators(CALL_OTHER_POST_DATA_LOADING_DONE,dispatch),
     renewOtherPost:bindActionCreators(RENEW_OTHER_POSTS,dispatch)

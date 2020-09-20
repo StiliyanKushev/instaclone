@@ -2,7 +2,8 @@ const User = require("../models/User");
 const fs = require('fs');
 const path = require('path');
 const Post = require("../models/Post");
-const { start } = require("repl");
+const jwt = require('jsonwebtoken');
+const UserSavePost = require("../models/UserSavePost");
 
 async function getSuggestedUsers(req,res,next){
     User.count().exec(async function (err, count) {
@@ -104,7 +105,6 @@ function sendAvatar(req, res, next) {
     });
 }
 
-
 async function getUserPostsRecent(req,res,next){
     let startIndex = Number(req.params.startIndex);
     let stopIndex = Number(req.params.stopIndex);
@@ -188,10 +188,71 @@ function getUserPostsSaved(req,res,next){
     // todo
 }
 
+function userSavePost(req,res,next){
+    User.findById(req.body.userId).then(async (user) => {
+        if(!user){
+            return res.status(200).json({
+                success:false,
+                messege: 'The user trying to save a post is not valid.'
+            })
+        }
+
+        const tempToken = jwt.sign(user.id,'s0m3 r4nd0m str1ng')
+
+        //check if user is the one from the username's user id
+        if(tempToken !== req.headers.token){
+            return res.status(401).end('Cannot save a post from different account');
+        }
+
+        Post.findOne({_id:req.params.id}).then(async (post) => {
+            if(!post){
+                return res.status(200).json({
+                    success:false,
+                    messege: 'Cannot save a post that does not exist.'
+                })
+            }
+
+            let isAlreadySaved = await UserSavePost.findOne({post:post._id,user:user});
+            
+            // like it now
+            if(!isAlreadySaved){
+                new UserSavePost({post:post._id,user:user}).save().then(userLike => {
+                    return res.status(200).json({
+                        success:true,
+                        messege: 'Post saved.'
+                    })
+                }).catch(err => {
+                    console.log(err);
+                    return res.status(200).json({
+                        success:false,
+                        messege:'internal error. Could not add user to user saved posts.'
+                    })
+                })
+            }
+            //unlike it now
+            else{
+                UserSavePost.find({post:post._id,user:user}).remove().exec().then(() => {
+                    return res.status(200).json({
+                        success:true,
+                        messege: 'Post unsaved.'
+                    })
+                }).catch(err => {
+                    console.log(err);
+                    return res.status(200).json({
+                        success:false,
+                        messege:'internal error. Could not remove user from user post saves.'
+                    })
+                })
+            }
+        })
+    })
+}
+
 module.exports = {
     sendAvatar,
     getSuggestedUsers,
     getUserPostsRecent,
     getUserPostsPopular,
-    getUserPostsSaved
+    getUserPostsSaved,
+    userSavePost
 }

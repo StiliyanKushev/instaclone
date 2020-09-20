@@ -42,8 +42,9 @@ interface IState {
 }
 
 interface IParentProps {
-    handleLike: () => void;
-    handleComment: (comment: string,replyCommentId?: string) => void;
+    handleLike: () => void,
+    handleSave: () => void,
+    handleComment: (comment: string,replyCommentId?: string) => void,
 }
 
 type IProps = IParentProps & ReduxProps & ReactCookieProps & DispatchProps;
@@ -121,8 +122,6 @@ class PostArticle extends React.PureComponent<IProps, IState> {
         let stopIndex = startIndex + numPerPage;
 
         this.props.toggleMoreComment(startIndex,stopIndex,this.props.post?.fullViewPostData.commentsList[commentIndex].id as string,commentIndex,this.props.auth?.userId as string,this.props.auth?.token as string);
-        
-        // todo not working
         measure()
     }
 
@@ -291,10 +290,11 @@ class PostArticle extends React.PureComponent<IProps, IState> {
                                     </Item>
                                     <Item className="right">
                                         <Icon
-                                            className={styles.iconBtn}
-                                            size="big"
-                                            name="bookmark outline"
-                                        ></Icon>
+                                            onClick={this.props.handleSave}
+                                            id={!this.props.post?.fullViewPostData.isSaved ? `${styles.savedOutline}`: ""}
+                                            className={`${styles.saveBtn} ${styles.iconBtn} bookmark ${this.props.post?.fullViewPostData.isSaved ? "": "outline"}`}
+                                            size='big'>
+                                        </Icon>                                
                                     </Item>
                                 </Menu>
                                 <Header onClick={this.handleLikesClick.bind(this)} className={styles.likes} size="tiny">

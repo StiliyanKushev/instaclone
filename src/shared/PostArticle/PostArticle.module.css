@@ -163,6 +163,14 @@
     color: rgba(0,0,0,.87) !important;
 }
 
+.saveBtn{
+    color: black;
+}
+
+#savedOutline{
+    color: rgba(0,0,0,.87) !important;
+}
+
 .commentsList::-webkit-scrollbar{
     width: 0px;
 }

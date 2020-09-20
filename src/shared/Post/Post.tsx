@@ -11,7 +11,7 @@ import { Segment, Image, Header, Menu, Item, Icon, Form, Button, Placeholder, Pl
 import { AppState, ReduxProps } from '../../reducers';
 import { connect } from 'react-redux';
 import { AppActions } from '../../actions/types/actions';
-import { COMMENT_POST,LIKE_POST,TOGGLE_FULL_POST_VIEW } from '../../actions/postActions';
+import { COMMENT_POST, LIKE_POST, SAVE_POST, TOGGLE_FULL_POST_VIEW, CALL_FULL_POST_SAVE_SUCCESS, CALL_FULL_POST_LIKE_SUCCESS } from '../../actions/postActions';
 import { ThunkDispatch } from 'redux-thunk';
 import {bindActionCreators} from 'redux';
 import { TOGGLE_USERS_LIST } from '../../actions/userActions';
@@ -68,6 +68,13 @@ class Post extends React.PureComponent<IProps,IState> {
     private handleLike(){
         if(this.props.auth && this.props.post) // just so es-lint shuts up
         this.props.like(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.userId,this.props.auth?.token)
+        this.props.likeFullView('liked full post',true);
+    }
+
+    private handleSave(){
+        if(this.props.auth && this.props.post) // just so es-lint shuts up
+        this.props.save(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.userId,this.props.auth?.token)
+        this.props.saveFullView('saved full post',true);
     }
 
     public render(){
@@ -143,7 +150,7 @@ class Post extends React.PureComponent<IProps,IState> {
                             <Icon className={styles.iconBtn} size='big' name='paper plane outline'></Icon>
                         </Item>
                         <Item className='right'>
-                            <Icon className={styles.iconBtn} size='big' name='bookmark outline'></Icon>
+                            <Icon onClick={this.handleSave.bind(this)} id={!this.props.post.homePosts[this.props.postIndex].isSaved ? `${styles.savedOutline}` : ''} className={`${styles.saveBtn} ${styles.iconBtn} bookmark ${this.props.post.homePosts[this.props.postIndex].isSaved ? '' : 'outline'}`} size='big'></Icon>                                
                         </Item>
                     </Menu>
                     <Header onClick={this.handleLikesClick.bind(this)} className={styles.likes} size='tiny'>{this.props.post.homePosts[this.props.postIndex].likesCount} likes</Header>
@@ -194,15 +201,21 @@ const mapStateToProps = (state:AppState):ReduxProps => ({
 })
 
 interface DispatchProps {
-    like:(postIndex:number,postId:string,userId:string,token:string) => void
+    save:(postIndex:number,postId:string,userId:string,token:string) => void,
+    like:(postIndex:number,postId:string,userId:string,token:string) => void,
     comment: (postIndex:number,postId: string, userId: string, comment: string, token: string) => void,
     toggleFullView:(postIndex:number) => void,
+    likeFullView: (messenge:string,force:boolean) => void,
+    saveFullView: (messenge:string,force:boolean) => void,
     toggleUserLikes: (fetchFunction:(startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:Array<ICreator>}>) => void,
 }
 
 const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
     comment:bindActionCreators(COMMENT_POST,dispatch),
     like:bindActionCreators(LIKE_POST,dispatch),
+    likeFullView:bindActionCreators(CALL_FULL_POST_LIKE_SUCCESS,dispatch),
+    save:bindActionCreators(SAVE_POST,dispatch),
+    saveFullView:bindActionCreators(CALL_FULL_POST_SAVE_SUCCESS,dispatch),
     toggleFullView:bindActionCreators(TOGGLE_FULL_POST_VIEW,dispatch),
     toggleUserLikes:bindActionCreators(TOGGLE_USERS_LIST,dispatch)
 })

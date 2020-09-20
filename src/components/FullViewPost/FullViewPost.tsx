@@ -11,7 +11,7 @@ import { AppActions } from '../../actions/types/actions';
 import { ThunkDispatch } from 'redux-thunk';
 import {bindActionCreators} from 'redux';
 import { AppState, ReduxProps } from '../../reducers';
-import { TOGGLE_FULL_POST_VIEW, CALL_FULL_POST_DATA_VIEW, COMMENT_POST, LIKE_POST, LIKE_FULL_POST, COMMENT_FULL_POST } from '../../actions/postActions';
+import { TOGGLE_FULL_POST_VIEW, CALL_FULL_POST_DATA_VIEW, COMMENT_POST, LIKE_POST, LIKE_FULL_POST, COMMENT_FULL_POST, SAVE_POST, SAVE_FULL_POST } from '../../actions/postActions';
 
 // IMPORT OTHER
 import $ from 'jquery';
@@ -47,6 +47,12 @@ class FullViewPost extends React.PureComponent<IProps>{
         this.props.likeFullView();
     }
 
+    private handleSave(){
+        if(this.props.auth && this.props.post) // just so es-lint shuts up
+        this.props.save(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.userId,this.props.auth?.token)
+        this.props.saveFullView();
+    }
+
     private handleComment(comment:string,replyCommentId?:string){
         if(this.props.auth && this.props.post){ // just so es-lint shuts up
             this.props.comment(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id,this.props.auth?.userId,comment,this.props.auth?.token,replyCommentId)
@@ -64,6 +70,7 @@ class FullViewPost extends React.PureComponent<IProps>{
                         <div className={styles.innerContainer}>
                             <Icon onClick={() => this.props.toggleFullView()} id={styles.closeIcon} color='black' size='big' name='close'></Icon>
                             <PostArticle
+                                handleSave={this.handleSave.bind(this)}
                                 handleLike={this.handleLike.bind(this)}
                                 handleComment={this.handleComment.bind(this)}
                             />
@@ -83,7 +90,9 @@ interface DispatchProps {
     toggleFullView:() => void,
     setFullViewPostData:(PostData:IPost) => void,
     like:(postIndex:number,postId:string,userId:string,token:string) => void,
+    save:(postIndex:number,postId:string,userId:string,token:string) => void,
     likeFullView:() => void,
+    saveFullView:() => void,
     comment: (postIndex:number,postId: string, userId: string, comment: string, token: string,replyCommentId?:string) => Promise<IPostCommentResponse>,
     commentFullView:(comment:IPostComment,postId?:string,token?:string) => void
 }
@@ -99,7 +108,9 @@ const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):Dispatch
     comment:bindActionCreators(COMMENT_POST,dispatch),
     commentFullView:bindActionCreators(COMMENT_FULL_POST,dispatch),
     like:bindActionCreators(LIKE_POST,dispatch),
-    likeFullView:bindActionCreators(LIKE_FULL_POST,dispatch)
+    save:bindActionCreators(SAVE_POST,dispatch),
+    likeFullView:bindActionCreators(LIKE_FULL_POST,dispatch),
+    saveFullView:bindActionCreators(SAVE_FULL_POST,dispatch),
 })
 
 export default connect(mapStateToProps,mapDispatchToProps)(FullViewPost as ComponentType<any>);

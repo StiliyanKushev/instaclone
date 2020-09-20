@@ -2,7 +2,7 @@ import { IPost } from './../shared/PostsPartial/PostsPartial';
 import { AppActions } from "./types/actions";
 import { Dispatch } from "react";
 import IGenericResponse from "../types/response";
-import { uploadPost, commentPost, likePost, likeComment, getSubComments, getPostData, getOtherPosts, renewOtherPost } from '../handlers/post';
+import { uploadPost, commentPost, likePost, likeComment, getSubComments, getPostData, getOtherPosts, renewOtherPost, savePost } from '../handlers/post';
 import { IPostComment } from '../shared/PostsPartial/PostsPartial';
 import { IPostCommentResponse, ICommentsChunkResponse } from '../types/response';
 
@@ -108,6 +108,21 @@ export const CALL_POST_LIKE_SUCCESS = (postIndex:number, messege:string):AppActi
     }
 });
 
+export const CALL_POST_SAVE_FAILURE = (messege:string):AppActions => ({
+    type: 'SET_POST_SAVE_FAILURE',
+    payload:{
+        messege
+    }
+});
+
+export const CALL_POST_SAVE_SUCCESS = (postIndex:number, messege:string):AppActions => ({
+    type: 'SET_POST_SAVE_SUCCESS',
+    payload:{
+        messege,
+        postIndex
+    }
+});
+
 export const CALL_FULL_POST_LIKE_FAILURE = (messege:string):AppActions => ({
     type: 'SET_FULL_POST_LIKE_FAILURE',
     payload:{
@@ -117,6 +132,21 @@ export const CALL_FULL_POST_LIKE_FAILURE = (messege:string):AppActions => ({
 
 export const CALL_FULL_POST_LIKE_SUCCESS = (messege:string,didFetch?:boolean):AppActions => ({
     type: 'SET_FULL_POST_LIKE_SUCCESS',
+    payload:{
+        messege,
+        didFetch,
+    }
+});
+
+export const CALL_FULL_POST_SAVE_FAILURE = (messege:string):AppActions => ({
+    type: 'SET_FULL_POST_SAVE_FAILURE',
+    payload:{
+        messege
+    }
+});
+
+export const CALL_FULL_POST_SAVE_SUCCESS = (messege:string,didFetch?:boolean):AppActions => ({
+    type: 'SET_FULL_POST_SAVE_SUCCESS',
     payload:{
         messege,
         didFetch,
@@ -345,6 +375,18 @@ export const LIKE_POST = (postIndex:number,postId:string,userId:string,token:str
     });
 }
 
+export const SAVE_POST = (postIndex:number,postId:string,userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
+    let promise:Promise<IGenericResponse> = savePost(postId,userId,token);
+    promise.then((res:IGenericResponse) => {
+        if(res.success){
+            dispatch(CALL_POST_SAVE_SUCCESS(postIndex,res.messege));
+        }
+        else{
+            dispatch(CALL_POST_SAVE_FAILURE(res.messege));
+        }
+    });
+}
+
 export const LIKE_FULL_POST = (postId?:string,userId?:string,token?:string) => (dispatch:Dispatch<AppActions>) => {
     if(!postId || !userId || !token){
         dispatch(CALL_FULL_POST_LIKE_SUCCESS('Full post liked.'));
@@ -357,6 +399,23 @@ export const LIKE_FULL_POST = (postId?:string,userId?:string,token?:string) => (
             }
             else{
                 dispatch(CALL_FULL_POST_LIKE_FAILURE(res.messege));
+            }
+        });
+    }
+}
+
+export const SAVE_FULL_POST = (postId?:string,userId?:string,token?:string) => (dispatch:Dispatch<AppActions>) => {
+    if(!postId || !userId || !token){
+        dispatch(CALL_FULL_POST_SAVE_SUCCESS('Full post saved.'));
+    }
+    else {
+        let promise:Promise<IGenericResponse> = savePost(postId,userId,token);
+        promise.then((res:IGenericResponse) => {
+            if(res.success){
+                dispatch(CALL_FULL_POST_SAVE_SUCCESS(res.messege,true));
+            }
+            else{
+                dispatch(CALL_FULL_POST_SAVE_FAILURE(res.messege));
             }
         });
     }

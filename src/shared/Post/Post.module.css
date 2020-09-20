@@ -35,6 +35,14 @@
     color:red;
 }
 
+.saveBtn{
+    color: black;
+}
+
+#savedOutline{
+    color: rgba(0,0,0,.87) !important;
+}
+
 #likeOutline{
     color: rgba(0,0,0,.87) !important;
 }
