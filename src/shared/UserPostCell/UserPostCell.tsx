@@ -24,7 +24,7 @@ class UserPostCell extends React.PureComponent<IProps>{
         if (this.props.post && this.props.post._id !== '#')
             return (
                 <Link key={this.props.post._id} to={`/post/${this.props.post._id}`}>
-                    <Grid.Column>
+                    <Grid.Column className={styles.outerColumn}>
                         <Segment id={styles.otherImageSegment}>
                             <img onLoad={this.props.measure} alt='#' className={styles.imageOther} src={`data:${this.props.post.source.contentType};base64,${Buffer.from(this.props.post.source.data).toString('base64')}`}></img>
                             <div id={styles.dimmer} className={styles.dimmer}>

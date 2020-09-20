@@ -44,9 +44,14 @@
     box-shadow: none !important;
     padding: 0rem !important;
     overflow: hidden !important;
-    height: 300px !important;
+    /* height: 300px !important; */
+    height: 100% !important;
 }
 
+.outerColumn{
+    width: 100%;
+    height: 100%;
+}
 
 #otherImageSegment:hover .dimmer{
     opacity: 1;
@@ -54,8 +59,12 @@
 
 .imageOther{
     padding: 10px;
-    width:300px !important;
-    height:300px !important;
+    /* width:300px !important; */
+    /* height:300px !important; */
+    
+    width:100% !important;
+    height:100% !important;
+
     max-width: 100%;
     width: 500000000px;
     -o-object-fit: cover;
@@ -66,13 +75,17 @@
 .dimmer{
     transition-duration: 100ms;
     opacity: 0;
-    width: 280px;
-    height: 280px;
+    /* width: 280px;
+    height: 280px; */
+
+    width: calc(100% - 20px) !important;
+    height: calc(100% - 20px) !important;
 
     background:rgb(51,51,51,0.45);
 
     position: relative;
-    top: -294px;
+    /* top: -294px; */
+    top: calc(-100% + 6px) !important;
     margin-left: 10px !important;
 
     overflow: hidden !important;
@@ -85,4 +98,11 @@
 .dimmerHeader{
     color: white !important;
     text-align: center !important;
+}
+
+
+@media screen and (max-width:420px){
+    .dimmerHeader{
+        font-size: small !important;
+    }
 }

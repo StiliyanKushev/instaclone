@@ -34,12 +34,13 @@ interface IState {
     hasMorePosts: boolean,
     randomKey: number,
     firstRowRendered:boolean,
+    cellSize:number,
 }
 
 class UserPostsGrid extends React.PureComponent<IProps, IState>{
-    public state: IState = { hasMorePosts: true, randomKey:0,firstRowRendered:false}
+    public state: IState = { hasMorePosts: true, randomKey:0,firstRowRendered:false,cellSize:300}
     private cache: CellMeasurerCache;
-    private fetchIncremental:number = 6; // 3 = 1 row
+    private fetchIncremental:number = 3; // 3 = 1 row
     private startIndex: number = 0;
     private vgridRef:any;
 
@@ -52,7 +53,11 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
         });
     }
 
-    componentDidUpdate(oldProps:IProps){
+    public componentDidMount(){
+        this.handleResize()
+    }
+
+    public componentDidUpdate(oldProps:IProps){
         if(oldProps.refreshProp !== this.props.refreshProp){
             this.setState(() => {
                 window.scrollTo({top:0})
@@ -200,6 +205,24 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
         return countOfEmpty;
     }
 
+    private handleResize(){
+        this.cache.clearAll()
+
+        let w = window.innerWidth;
+
+        if(w >= 992 && this.state.cellSize !== 300){
+            this.setState({cellSize:300})
+        }
+
+        else if(w < 992 && w > 640 && this.state.cellSize !== 200){
+            this.setState({cellSize:200})
+        }
+
+        else if(w <= 640){
+            this.setState({cellSize:w * 0.3})
+        }
+    }
+
     public render() {
         return (
             <Segment className={styles.vgridContainer}>
@@ -212,10 +235,11 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
                 >
                     {({ onRowsRendered, registerChild }: InfiniteLoaderChildProps) => (
                         <WindowScroller
-                            scrollingResetTimeInterval={10}
+                            scrollingResetTimeInterval={10} 
+                            onResize={this.handleResize.bind(this)}
                         >
                             {({ height, scrollTop }) => (
-                                <AutoSizer>
+                                <AutoSizer >
                                     {({ width }) => {
                                         return (
                                             <Grid
@@ -229,8 +253,8 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
                                                 cellRenderer={this.cellRenderer.bind(this)}
                                                 rowCount={this.rowCount}
                                                 columnCount={3}
-                                                rowHeight={300}
-                                                columnWidth={300}
+                                                rowHeight={this.state.cellSize}
+                                                columnWidth={this.state.cellSize}
                                                 overscanRowCount={3}
                                                 height={height}
                                                 width={width}
