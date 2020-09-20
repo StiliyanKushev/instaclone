@@ -39,7 +39,7 @@ interface IState {
 class UserPostsGrid extends React.PureComponent<IProps, IState>{
     public state: IState = { hasMorePosts: true, randomKey:0,firstRowRendered:false}
     private cache: CellMeasurerCache;
-    private fetchIncremental:number = 3; // 3 = 1 row
+    private fetchIncremental:number = 6; // 3 = 1 row
     private startIndex: number = 0;
     private vgridRef:any;
 

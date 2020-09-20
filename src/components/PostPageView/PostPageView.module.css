@@ -75,3 +75,14 @@
     color: white !important;
     text-align: center !important;
 }
+
+@media screen and (max-width:620px){
+    .centerContent:nth-child(1){
+        margin-top: 10rem !important;
+        justify-self: center !important;
+        display: flex !important;
+        margin-bottom: 13rem !important;
+        margin-left: 1.5rem !important;
+        margin-right: 0.5rem !important;
+    } 
+}
