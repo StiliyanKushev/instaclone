@@ -1,12 +1,19 @@
-import React from 'react'
+// IMPORT STYLES
+import styles from './SubComment.module.css';
+
+// IMPORT REACT RELTED
+import React from 'react';
 import { Icon, Header, Image } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import { settings } from '../../settings';
-import styles from './SubComment.module.css'
-import { connect } from 'react-redux';
-import { withCookies, ReactCookieProps } from 'react-cookie';
-import { AppState, ReduxProps } from '../../reducers/index';
 import {ComponentType} from 'react';
+import { withCookies, ReactCookieProps } from 'react-cookie';
+
+// IMPORT REDUX RELTED
+import { connect } from 'react-redux';
+import { AppState, ReduxProps } from '../../reducers/index';
+
+// IMPORT OTHER
+import { settings } from '../../settings';
 
 interface IParentProps {
     i: number,
@@ -106,4 +113,4 @@ const mapStateToProps = (state: AppState): ReduxProps => ({
 });
 
 
-export default withCookies(connect(mapStateToProps, null)(SubComment as ComponentType<IProps>));
+export default React.memo(withCookies(connect(mapStateToProps, null)(SubComment as ComponentType<IProps>)));

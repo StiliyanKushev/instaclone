@@ -184,8 +184,44 @@ async function getUserPostsPopular(req,res,next){
     })
 }
 
-function getUserPostsSaved(req,res,next){
-    // todo
+async function getUserPostsSaved(req,res,next){
+    let startIndex = Number(req.params.startIndex);
+    let stopIndex = Number(req.params.stopIndex);
+
+    let givenUser = await User.findById(req.params.userId);
+
+    UserSavePost.find({user:givenUser}).skip(startIndex).limit(stopIndex - startIndex).exec(async (err,savedPostsModls) => {
+        if(err){
+            console.log(err);
+            return res.status(200).json({
+                success:false,
+                posts:[]
+            })
+        }
+
+        if(savedPostsModls.length === 0){
+            return res.status(200).json({
+                success:true,
+                posts:[]
+            })
+        }
+
+        let newPosts = []
+
+        for(let modl of savedPostsModls){
+            let currentPost = await Post.findById(modl.post);
+            newPosts.push({
+                _id:currentPost.id,
+                likesCount:currentPost.likesCount,
+                source:currentPost.smallSource,
+            })
+        }
+
+        return res.status(200).json({
+            success:true,
+            posts:newPosts,
+        })
+    })
 }
 
 function userSavePost(req,res,next){

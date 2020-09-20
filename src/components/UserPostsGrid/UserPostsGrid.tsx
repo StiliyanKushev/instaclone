@@ -1,17 +1,27 @@
+// IMPORT STYLES
+import styles from '../UserView/UserView.module.css'
+
+// IMPORT REACT RELETED
 import React, { ComponentType } from 'react';
 import { Segment } from 'semantic-ui-react';
 import { InfiniteLoader, WindowScroller, AutoSizer, Grid, InfiniteLoaderChildProps, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
-import styles from '../UserView/UserView.module.css'
-import { IPost, IOtherPost } from '../../shared/PostsPartial/PostsPartial';
-import UserPostCell from '../../shared/UserPostCell/UserPostCell';
-import IGenericResponse from '../../types/response';
-import { IPostsListGrid } from '../../reducers/postReducer';
+
+// IMPORT REDUX RELETED
 import { AppState, ReduxProps } from '../../reducers/index';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AppActions } from '../../actions/types/actions';
 import { ADD_USER_POSTS_ROW_LIST, SET_USER_DATA_CLEAR } from '../../actions/userActions';
+
+// IMPORT TYPES
+import IGenericResponse from '../../types/response';
+
+// IMPORT OTHER
+import UserPostCell from '../../shared/UserPostCell/UserPostCell';
+import { IPostsListGrid } from '../../reducers/postReducer';
+import { IPost, IOtherPost } from '../../shared/PostsPartial/PostsPartial';
+
 
 interface IParentProps {
     currentPostSelectionFunction: (startIndex:number,stopIndex:number) => Promise<any>,

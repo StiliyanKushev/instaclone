@@ -1,8 +1,16 @@
+
+// IMPORT STYLES
+import styles from './UserPostCell.module.css';
+
+// IMPORT REACT RELETED
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Segment, Grid, Header, Placeholder, PlaceholderImage } from 'semantic-ui-react';
+
+// IMPORT REDUX RELETED
+
+// IMPORT OTHER
 import { IPost } from '../PostsPartial/PostsPartial';
-import styles from './UserPostCell.module.css';
 
 interface IParentProps {
     measure?: () => void,
@@ -45,4 +53,4 @@ class UserPostCell extends React.PureComponent<IProps>{
     }
 }
 
-export default UserPostCell;
+export default React.memo(UserPostCell);

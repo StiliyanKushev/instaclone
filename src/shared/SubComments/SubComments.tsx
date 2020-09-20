@@ -117,4 +117,4 @@ const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):Dispatch
     replyingComment:bindActionCreators(SET_REPLYING_COMMENT,dispatch)
 })
 
-export default withCookies(connect(mapStateToProps, mapDispatchToProps)(SubComments as ComponentType<IProps>));
+export default React.memo(withCookies(connect(mapStateToProps, mapDispatchToProps)(SubComments as ComponentType<IProps>)));
