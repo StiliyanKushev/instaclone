@@ -30,7 +30,6 @@ router.get('/photo/user/:username',(req,res,next) => {
         return res.send(user.avatarImg.data);
     });
 })
-
 router.get('/photo/post/:id',(req,res,next) => {
     let id = req.params.id;
 

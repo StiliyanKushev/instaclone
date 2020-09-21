@@ -4,6 +4,7 @@ const path = require('path');
 const Post = require("../models/Post");
 const jwt = require('jsonwebtoken');
 const UserSavePost = require("../models/UserSavePost");
+const sharp = require('sharp');
 
 async function getSuggestedUsers(req,res,next){
     User.count().exec(async function (err, count) {
@@ -76,7 +77,7 @@ function sendAvatar(req, res, next) {
     //validate if user with username exists
     User.findOne({
         username
-    }).then(user => {
+    }).then(async (user) => {
         if (!user) {
             return res.status(200).json({
                 success: false,
@@ -84,14 +85,25 @@ function sendAvatar(req, res, next) {
             })
         }
 
-        let imgPath = path.dirname(require.main.filename || process.mainModule.filename) + '/' + req.file.path;
+        let filename = req.file.path.slice(8);
+
+        let imgPath = path.dirname(require.main.filename || process.mainModule.filename) + '/uploads/' + filename;
+        let resizedImgPath = path.dirname(require.main.filename || process.mainModule.filename) + '/resized/' + filename;
+
+        await sharp(imgPath)
+        .resize(100)
+        .toFile(
+            path.resolve(path.dirname(require.main.filename || process.mainModule.filename),'resized',filename)
+        )
 
         const avatarImg = {
-            data: fs.readFileSync(imgPath),
+            data: fs.readFileSync(resizedImgPath),
             contentType: req.file.mimetype,
         }
 
         User.updateOne({ username }, {avatarImg}).then(() => {
+            fs.unlinkSync(imgPath)
+            fs.unlinkSync(resizedImgPath)
             res.status(200).json({
                 success: true,
                 messege: 'New avatar has been set.'
