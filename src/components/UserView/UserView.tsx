@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { AppActions } from '../../actions/types/actions';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
-import { UPDATE_AVATAR_USER, TOGGLE_USER_POSTS_LIST } from '../../actions/userActions';
+import { UPDATE_AVATAR_USER, TOGGLE_USER_POSTS_LIST, RESET_USER_AVATAR_UPLOAD } from '../../actions/userActions';
 import { AppState, ReduxProps } from '../../reducers';
 
 // IMPORT OTHER
@@ -74,6 +74,7 @@ class UserView extends React.Component<IProps, IState> {
                     let date = new Date();
                     let user = this.props.auth?.username;
                     $(this.userImageRef.current as HTMLImageElement).attr("src", `${settings.BASE_URL}/feed/photo/user/${user}?` + date.getTime());
+                    this.props.resetAvatarUploaded();
                 }
             }
 
@@ -249,11 +250,13 @@ const mapStateToProps = (state: AppState): ReduxProps => ({
 interface DispatchProps {
     updateAvatar: (formData: FormData, username: string, token: string) => void,
     togglePostsSection: (fetchFunction: (startIndex: number, stopIndex: number) => Promise<IGenericResponse & { posts: IPostsListGrid }>) => void
+    resetAvatarUploaded: () => void,
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): DispatchProps => ({
     updateAvatar: bindActionCreators(UPDATE_AVATAR_USER, dispatch),
     togglePostsSection: bindActionCreators(TOGGLE_USER_POSTS_LIST, dispatch),
+    resetAvatarUploaded: bindActionCreators(RESET_USER_AVATAR_UPLOAD, dispatch)
 })
 
 export default withCookies(connect(mapStateToProps, mapDispatchToProps)(UserView as ComponentType<IProps>));

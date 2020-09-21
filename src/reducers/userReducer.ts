@@ -120,6 +120,14 @@ const userReducer = (state = userState, action:userActionTypes) => {
             } as IUserState
         }
 
+        case 'RESET_USER_AVATAR_UPLOAD':{
+            return {
+                ...state,
+                error:false,
+                isUserAvatarUpdated:false,
+            } as IUserState
+        }
+
         default: {
             return {...state};
         }

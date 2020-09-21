@@ -9,6 +9,11 @@ import { IOtherPost } from '../shared/PostsPartial/PostsPartial';
 export const CALL_USER_LOADING = ():AppActions => ({
     type: 'SET_USER_LOADING',
 });
+
+export const RESET_USER_AVATAR_UPLOAD = ():AppActions => ({
+    type: 'RESET_USER_AVATAR_UPLOAD'
+});
+
 export const CALL_USER_UPDATE_AVATER_SUCCESS = (messege:string):AppActions => ({
     type: 'SET_USER_UPDATE_AVATER_SUCCESS',
     payload:{

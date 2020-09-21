@@ -1,7 +1,7 @@
 import { ICreator } from '../../types/auth';
 import IGenericResponse from '../../types/response';
 import { IPostsListGrid } from '../../reducers/postReducer';
-import { IPost, IOtherPost } from '../../shared/PostsPartial/PostsPartial';
+import { IOtherPost } from '../../shared/PostsPartial/PostsPartial';
 
 const SET_USER_UPDATE_AVATER_SUCCESS = 'SET_USER_UPDATE_AVATER_SUCCESS';
 const SET_USER_UPDATE_AVATER_FAILURE = 'SET_USER_UPDATE_AVATER_FAILURE';
@@ -11,6 +11,7 @@ const SET_TOGGLE_USERS_LIST = 'SET_TOGGLE_USERS_LIST';
 const SET_TOGGLE_USER_POSTS_LIST = 'SET_TOGGLE_USER_POSTS_LIST';
 const ADD_USER_LIST_ENTRIES = 'ADD_USER_LIST_ENTRIES';
 const ADD_USER_POSTS_ROW_LIST = 'ADD_USER_POSTS_ROW_LIST';
+const RESET_USER_AVATAR_UPLOAD = 'RESET_USER_AVATAR_UPLOAD';
 const SET_USER_LOADING = 'SET_USER_LOADING';
 const SET_USER_CLEAR = 'SET_USER_CLEAR';
 
@@ -80,12 +81,17 @@ export interface setUserClear{
     type: typeof SET_USER_CLEAR,
 }
 
+export interface resetUserAvatarUpload{
+    type: typeof RESET_USER_AVATAR_UPLOAD,
+}
+
 export type userActionTypes = 
 setUserUpdateAvatarSuccess |
 setUserUpdateAvatarFailure |
 getSuggestedUsersSuccess |
 getSuggestedUsersFauilre |
 setToggleUserPostsList |
+resetUserAvatarUpload |
 addUserPostsRowList |
 setToggleUsersList |
 addUserListEntries |
