@@ -80,6 +80,8 @@ class UserView extends React.Component<IProps, IState> {
 
         if(this.urlUsername !== this.props.auth?.username)
         this.props.setCurrentUserData(this.urlUsername,this.props.auth?.userId as string,this.props.auth?.token as string)
+        else
+        this.props.setCurrentUserData(this.props.auth?.username,this.props.auth?.userId as string,this.props.auth?.token as string)
     }
 
     public componentWillUnmount() {
