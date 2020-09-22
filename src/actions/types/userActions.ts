@@ -31,7 +31,12 @@ const ADD_USER_POSTS_ROW_LIST = 'ADD_USER_POSTS_ROW_LIST';
 const SET_TOGGLE_USERS_LIST = 'SET_TOGGLE_USERS_LIST';
 const ADD_USER_LIST_ENTRIES = 'ADD_USER_LIST_ENTRIES';
 const SET_USER_LOADING = 'SET_USER_LOADING';
+const RESET_USER_DATA = 'RESET_USER_DATA';
 const SET_USER_CLEAR = 'SET_USER_CLEAR';
+
+export interface resetUserData{
+    type: typeof RESET_USER_DATA,
+}
 
 export interface setUserLoading{
     type: typeof SET_USER_LOADING,
@@ -253,4 +258,5 @@ addUserPostsRowList |
 setToggleUsersList |
 addUserListEntries |
 setUserLoading |
+resetUserData |
 setUserClear;

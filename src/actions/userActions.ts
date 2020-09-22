@@ -317,3 +317,7 @@ export const CALL_UNFOLLOW_USER_PAGE_FAILURE = (messege:string):AppActions => ({
         messege,
     }
 })
+
+export const RESET_USER_DATA = ():AppActions => ({
+    type: 'RESET_USER_DATA',
+})

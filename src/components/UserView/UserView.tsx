@@ -13,7 +13,7 @@ import { AppActions } from '../../actions/types/actions';
 import { AppState, ReduxProps } from '../../reducers';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
-import { UPDATE_AVATAR_USER, TOGGLE_USER_POSTS_LIST, RESET_USER_AVATAR_UPLOAD, SET_CURRENT_USER_DATA, FOLLOW_USER_PAGE, UNFOLLOW_USER_PAGE } from '../../actions/userActions';
+import { UPDATE_AVATAR_USER, TOGGLE_USER_POSTS_LIST, RESET_USER_AVATAR_UPLOAD, SET_CURRENT_USER_DATA, FOLLOW_USER_PAGE, UNFOLLOW_USER_PAGE, RESET_USER_DATA } from '../../actions/userActions';
 import { IPostsListGrid } from '../../reducers/postReducer';
 
 // IMPORT OTHER
@@ -51,10 +51,11 @@ interface IState {
     selectionTab: string,
     settingsPopup: boolean,
     editProfilePopup: boolean,
+    refreshProp:string,
 }
 
 class UserView extends React.Component<IProps, IState> {
-    state: IState = { selectionTab: 'recent', settingsPopup: false, editProfilePopup: false }
+    state: IState = {refreshProp:'recent', selectionTab: 'recent', settingsPopup: false, editProfilePopup: false }
     private userImageRef = createRef<HTMLImageElement>();
 
     constructor(props: IProps) {
@@ -68,36 +69,58 @@ class UserView extends React.Component<IProps, IState> {
         this.handleChangeAvatar = this.handleChangeAvatar.bind(this);
         this.setupAvatarHandlerUpload = this.setupAvatarHandlerUpload.bind(this);
         this.setFetchFunction = this.setFetchFunction.bind(this);
+        this.setUserData = this.setUserData.bind(this);
     }
 
     get urlUsername(): string{
         return this.props.match.params.name;
     }
 
-    public componentDidMount() {
-        this.setupAvatarHandlerUpload()
-        this.setFetchFunction(getUserPostsRecent)
+    private resetImgSrc(){
+        let date = new Date();
+        let user = this.props.auth?.username;
+        $(this.userImageRef.current as HTMLImageElement).attr("src", `${settings.BASE_URL}/feed/photo/user/${user}?` + date.getTime());
+    }
 
+    private setUserData(){
         if(this.urlUsername !== this.props.auth?.username)
         this.props.setCurrentUserData(this.urlUsername,this.props.auth?.userId as string,this.props.auth?.token as string)
         else
         this.props.setCurrentUserData(this.props.auth?.username,this.props.auth?.userId as string,this.props.auth?.token as string)
     }
 
+    public componentDidMount() {
+        this.setupAvatarHandlerUpload()
+        this.setFetchFunction(getUserPostsRecent)
+        this.setUserData();
+    }
+
     public componentWillUnmount() {
         $('#global-file-input').unbind('change')
     }
 
+    private onRouteChanged(prevProps: RouteComponentProps) {
+        if(this.props.location.pathname !== prevProps.location.pathname && this.props.location.pathname.startsWith('/profile/')){
+            this.props.clearUserData();
+            this.resetImgSrc();
+            this.setUserData();
+            this.setFetchFunction(getUserPostsRecent);
+            this.setState({refreshProp:'' + Math.random()})
+        }        
+    }
+
     public componentDidUpdate(prevProps: IProps) {
+        if (this.props.location !== prevProps.location) {
+            this.onRouteChanged(prevProps);
+        }
+
         //on props change
         if (!_.isEqual(this.props.user, prevProps.user)) {
             if (!this.props.user?.error) {
                 //if it was successfull
                 if (this.props.user?.isUserAvatarUpdated) {
                     toast.success(this.props.user?.messege);
-                    let date = new Date();
-                    let user = this.props.auth?.username;
-                    $(this.userImageRef.current as HTMLImageElement).attr("src", `${settings.BASE_URL}/feed/photo/user/${user}?` + date.getTime());
+                    this.resetImgSrc();
                     this.props.resetAvatarUploaded();
                 }
             }
@@ -160,7 +183,7 @@ class UserView extends React.Component<IProps, IState> {
     private handleItemClick(selectionTab: string) {
         if(selectionTab === this.state.selectionTab) return;
 
-        this.setState({ selectionTab })
+        this.setState({ selectionTab, refreshProp:selectionTab })
 
         switch (selectionTab) {
             case 'recent':
@@ -275,7 +298,7 @@ class UserView extends React.Component<IProps, IState> {
                                 </Item>
                             </Segment>
                         </Grid.Row>
-                        <UserPostsGrid refreshProp={this.state.selectionTab} currentPostSelectionFunction={this.props.user?.currentPostSelectionFunction as any} />
+                        <UserPostsGrid refreshProp={this.state.refreshProp} currentPostSelectionFunction={this.props.user?.currentPostSelectionFunction as any} />
                     </Grid>
                 </Container>
                 {this.state.editProfilePopup && <EditProfile handleClose={this.handleCloseEditProfile} />}
@@ -298,6 +321,7 @@ interface DispatchProps {
     setCurrentUserData: (username:string,userId:string,token:string) => void,
     followUser: (username:string,userId:string,token:string) => void,
     unfollowUser: (username:string,userId:string,token:string) => void,
+    clearUserData: () => void,
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): DispatchProps => ({
@@ -307,6 +331,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): Disp
     setCurrentUserData: bindActionCreators(SET_CURRENT_USER_DATA,dispatch),
     followUser: bindActionCreators(FOLLOW_USER_PAGE,dispatch),
     unfollowUser: bindActionCreators(UNFOLLOW_USER_PAGE,dispatch),
+    clearUserData: bindActionCreators(RESET_USER_DATA,dispatch),
 })
 
 export default withRouter(withCookies(connect(mapStateToProps, mapDispatchToProps)(UserView as ComponentType<IProps>)));

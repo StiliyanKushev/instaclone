@@ -15,6 +15,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { AppActions } from '../../actions/types/actions';
 import { TOGGLE_FULL_POST_VIEW } from '../../actions/postActions';
 import { bindActionCreators } from 'redux';
+import { TOGGLE_USERS_LIST } from '../../actions/userActions';
 
 type IProps = RouteComponentProps & ReactCookieProps & ReduxProps & DispatchProps;
 
@@ -60,9 +61,13 @@ class NavMenu extends React.Component<IProps>{
         this.handleVisibility();
     }
 
-    private onRouteChanged() {
+    private onRouteChanged(prevProps: RouteComponentProps) {
         if (this.props.post?.fullViewToggled && this.props.location.pathname !== '/') {
             this.props.toggleFullView()
+        }
+
+        if (this.props.user?.usersListToggled && (this.props.location.pathname !== '/' && !this.props.location.pathname.startsWith('/post/'))) {
+            this.props.toggleUserList();
         }
 
         this.handleVisibility()
@@ -70,7 +75,7 @@ class NavMenu extends React.Component<IProps>{
 
     public componentDidUpdate(prevProps: RouteComponentProps) {
         if (this.props.location !== prevProps.location) {
-            this.onRouteChanged();
+            this.onRouteChanged(prevProps);
         }
     }
 
@@ -106,8 +111,8 @@ class NavMenu extends React.Component<IProps>{
                         <Link className={styles.LinkContainer} to={`/feed`}>
                             <Icon className={`${styles.iconBtn} heart ${this.isCurrentPath('/feed')}`} size='big'></Icon>
                         </Link>
-                        <Link className={styles.LinkContainer} to={`/profile/${this.props.cookies?.get('username')}`}>
-                            <Icon className={`${styles.iconBtn} user circle ${this.isCurrentPath('/profile')}`} size='big'></Icon>
+                        <Link className={styles.LinkContainer} to={`/profile/${this.props.auth?.username}`}>
+                            <Icon className={`${styles.iconBtn} user circle ${this.isCurrentPath(`/profile/${this.props.auth?.username}`)}`} size='big'></Icon>
                         </Link>
                     </Item>
                 </Container>
@@ -123,14 +128,18 @@ class NavMenu extends React.Component<IProps>{
 
 const mapStateToProps = (state: AppState): ReduxProps => ({
     post: state.post,
+    auth: state.auth,
+    user: state.user,
 })
 
 interface DispatchProps {
+    toggleUserList: () => void,
     toggleFullView: () => void,
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): DispatchProps => ({
     toggleFullView: bindActionCreators(TOGGLE_FULL_POST_VIEW, dispatch),
+    toggleUserList: bindActionCreators(TOGGLE_USERS_LIST,dispatch),
 })
 
 export default React.memo(withRouter(withCookies(connect(mapStateToProps, mapDispatchToProps)(NavMenu as ComponentType<IProps>)) as any));

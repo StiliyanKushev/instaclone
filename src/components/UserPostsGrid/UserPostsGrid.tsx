@@ -3,7 +3,7 @@ import styles from '../UserView/UserView.module.css'
 
 // IMPORT REACT RELETED
 import React, { ComponentType } from 'react';
-import { Segment } from 'semantic-ui-react';
+import { Segment, Header, Icon } from 'semantic-ui-react';
 import { InfiniteLoader, WindowScroller, AutoSizer, Grid, InfiniteLoaderChildProps, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 
 // IMPORT REDUX RELETED
@@ -35,10 +35,12 @@ interface IState {
     randomKey: number,
     firstRowRendered:boolean,
     cellSize:number,
+    userHasPosts:boolean,
+    userHasSavedPosts:boolean,
 }
 
 class UserPostsGrid extends React.PureComponent<IProps, IState>{
-    public state: IState = { hasMorePosts: true, randomKey:0,firstRowRendered:false,cellSize:300}
+    public state: IState = {userHasSavedPosts:true, userHasPosts:true, hasMorePosts: true, randomKey:0,firstRowRendered:false,cellSize:300}
     private cache: CellMeasurerCache;
     private fetchIncremental:number = 3; // 3 = 1 row
     private startIndex: number = 0;
@@ -64,7 +66,6 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
                 this.cache.clearAll()
                 this.startIndex = 0;
                 try{ this.vgridRef.forceUpdateGrid();this.vgridRef.forceUpdate(); } catch {}
-                
                 return  {hasMorePosts:true,randomKey: Math.random(),firstRowRendered:false}
             })
         }
@@ -129,6 +130,15 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
         return this.props.currentPostSelectionFunction(startIndex, stopIndex).then((res: IGenericResponse & { posts: Array<IOtherPost> }) => {
             if (res.success) {
                 if (!res.posts || res.posts.length === 0) {
+                    // no posts at all
+                    if(startIndex === 0){
+                        if(this.props.refreshProp !== 'saved'){
+                            this.setState({userHasPosts:false},cb);
+                        }
+                        else{
+                            this.setState({userHasSavedPosts:false},cb)
+                        }
+                    }
                     // no more posts
                     this.setState({ hasMorePosts: false },cb)
                 }
@@ -223,6 +233,11 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
     }
 
     public render() {
+        if(this.props.refreshProp === 'saved' && !this.state.userHasSavedPosts){
+            return <Header className={styles.noPosts}>User has no saved posts.<Icon name='save'></Icon></Header>
+        }
+
+        if(this.state.userHasPosts)
         return (
             <Segment className={styles.vgridContainer}>
                 <InfiniteLoader
@@ -267,6 +282,10 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
                 </InfiniteLoader>
 
             </Segment>
+        )
+        else
+        return (
+            <Header className={styles.noPosts}>User has no posts.<Icon name='user secret'></Icon></Header>
         )
     }
 }

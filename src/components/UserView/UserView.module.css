@@ -169,3 +169,10 @@
 .vgrid::-webkit-scrollbar{
     width: 0px;
 }
+
+
+.noPosts{
+    width: 100% !important;
+    text-align: center !important;
+    text-decoration-line: underline;
+}

@@ -27,10 +27,7 @@ const userState:IUserState = {
     messege:'',
     isUserLoading:false,
     isUserAvatarUpdated:false,
-    suggestedUsers:[] as any,
-    usersList:[] as any,
     usersListToggled: false,
-    currentUsersFetchFunction: (startIndex:number,stopIndex:number) => (1 as any),
     currentPostSelectionFunction: (startIndex:number,stopIndex:number) => (new Promise<any>(() => {}) as any),
     currentPostSelectionList: [] as any,
     isCurrentUserFollowed: false,
@@ -38,6 +35,9 @@ const userState:IUserState = {
     currentUserPostsNum:0,
     currentUserFollowersNum:0,
     currentUserFollowingNum:0,
+    suggestedUsers:[] as any,
+    usersList:[] as any,
+    currentUsersFetchFunction: (startIndex:number,stopIndex:number) => (1 as any),
 }
 
 const userReducer = (state = userState, action:userActionTypes) => {
@@ -307,6 +307,24 @@ const userReducer = (state = userState, action:userActionTypes) => {
                 messege:action.payload.messege,
             } as IUserState
         } 
+
+        case 'RESET_USER_DATA':{
+            return{
+                ...state,
+                error:false,
+                messege:'',
+                isUserLoading:false,
+                isUserAvatarUpdated:false,
+                usersListToggled: false,
+                currentPostSelectionFunction: (startIndex:number,stopIndex:number) => (new Promise<any>(() => {}) as any),
+                currentPostSelectionList: [] as any,
+                isCurrentUserFollowed: false,
+                isCurrentUserFollowLoading:false,
+                currentUserPostsNum:0,
+                currentUserFollowersNum:0,
+                currentUserFollowingNum:0,
+            } as IUserState
+        }
 
         default: {
             return {...state};
