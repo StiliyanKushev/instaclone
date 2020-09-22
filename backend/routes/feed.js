@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const authCheck = require('../config/auth-check');
 const {renewOtherPosts,getOtherPosts,getPost,getCommentsFromComment,createPost,getPopularFromAllPost,commentPost,likePost,likeComment,getCommentsFromPost,getLikesFromPost,getLikesFromComment} = require('../handlers/posts');
-const {userSavePost,getUserPostsRecent,getUserPostsPopular,getUserPostsSaved,sendAvatar,getSuggestedUsers} = require('../handlers/user');
+const {userFollow,userUnfollow,getUserData,userSavePost,getUserPostsRecent,getUserPostsPopular,getUserPostsSaved,sendAvatar,getSuggestedUsers} = require('../handlers/user');
 const multer = require('multer'); 
 const User = require('../models/User');
 const Post = require('../models/Post');
@@ -66,7 +66,8 @@ router.get('/user/posts/recent/:startIndex/:stopIndex/as/:userId',authCheck,getU
 router.get('/user/posts/popular/:startIndex/:stopIndex/as/:userId',authCheck,getUserPostsPopular)
 router.get('/user/posts/saved/:startIndex/:stopIndex/as/:userId',authCheck,getUserPostsSaved)
 router.post('/user/save-post/:id',authCheck,userSavePost)
-// router.post('/user/follow/:username',authCheck,userFollowUserPost)
-// router.post('/user/unfollow/:username',authCheck,userUnfollowUserPost)
+router.get('/user/:username/data/as/:userId',authCheck,getUserData)
+router.post('/user/follow/:username',authCheck,userFollow)
+router.post('/user/unfollow/:username',authCheck,userUnfollow)
 
 module.exports = router;

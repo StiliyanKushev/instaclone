@@ -106,7 +106,6 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
     };
 
     private fetchPosts = ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => {
-        // I DONT KNOW HOW DOES THAT FIX THE FIRST ROW NOT REPEATING, NOR IF ITS BROWSER CONSISTENT
         if(startIndex === 0 && this.startIndex === 0 && !this.state.firstRowRendered){
             this.setState({firstRowRendered:true},() => {
                 this.startIndex += this.fetchIncremental;

@@ -1,13 +1,32 @@
 import { AppActions } from "./types/actions";
 import { Dispatch } from "react";
-import { sendUserAvatar, getSuggestedUsers } from '../handlers/user';
+import { sendUserAvatar, getSuggestedUsers, getCurrentUserData, followUser, unfollowUser } from '../handlers/user';
 import IGenericResponse from "../types/response";
 import { ICreator } from '../types/auth';
 import { IPostsListGrid } from '../reducers/postReducer';
 import { IOtherPost } from '../shared/PostsPartial/PostsPartial';
+import { IUserData } from '../components/UserView/UserView';
 
 export const CALL_USER_LOADING = ():AppActions => ({
     type: 'SET_USER_LOADING',
+});
+
+export const CALL_USER_SUGGESTED_LOADING = (index:number):AppActions => ({
+    type: 'SET_USER_SUGGESTED_LOADING',
+    payload:{
+        index
+    }
+});
+
+export const CALL_USER_USER_LIST_LOADING = (index:number):AppActions => ({
+    type: 'SET_USER_USER_LIST_LOADING',
+    payload:{
+        index
+    }
+});
+
+export const CALL_USER_USER_PAGE_LOADING = ():AppActions => ({
+    type: 'SET_USER_USER_PAGE_LOADING',
 });
 
 export const RESET_USER_AVATAR_UPLOAD = ():AppActions => ({
@@ -108,5 +127,193 @@ export const ADD_USER_LIST_ENTRIES = (entries:Array<ICreator>):AppActions => ({
     type: 'ADD_USER_LIST_ENTRIES',
     payload: {
         entries
+    }
+})
+
+export const SET_CURRENT_USER_DATA = (username:string,userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
+    getCurrentUserData(username,userId,token).then((res: {user:IUserData} & IGenericResponse) => {
+        if(res.success){
+            dispatch(CALL_SET_CURRENT_USER_DATA_SUCCESS(res.user,res.messege));
+        }
+        else{
+            dispatch(CALL_SET_CURRENT_USER_DATA_FAILURE(res.messege));
+        }
+    })
+}
+
+export const CALL_SET_CURRENT_USER_DATA_SUCCESS = (userData:IUserData,messege:string):AppActions => ({
+    type: 'SET_CURRENT_USER_DATA_SUCCESS',
+    payload: {
+        userData,
+        messege,
+    }
+})
+
+export const CALL_SET_CURRENT_USER_DATA_FAILURE = (messege:string):AppActions => ({
+    type: 'SET_CURRENT_USER_DATA_FAILURE',
+    payload: {
+        messege,
+    }
+})
+
+export const FOLLOW_SUGGESTED = (index:number,username:string,userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
+    dispatch(CALL_USER_SUGGESTED_LOADING(index))
+    followUser(username,userId,token).then((res: IGenericResponse) => {
+        if(res.success){
+            dispatch(CALL_FOLLOW_SUGGESTED_SUCCESS(index,res.messege));
+        }
+        else{
+            dispatch(CALL_FOLLOW_SUGGESTED_FAILURE(res.messege));
+        }
+    })
+}
+
+export const UNFOLLOW_SUGGESTED = (index:number,username:string,userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
+    dispatch(CALL_USER_SUGGESTED_LOADING(index))
+    unfollowUser(username,userId,token).then((res: IGenericResponse) => {
+        if(res.success){
+            dispatch(CALL_UNFOLLOW_SUGGESTED_SUCCESS(index,res.messege));
+        }
+        else{
+            dispatch(CALL_UNFOLLOW_SUGGESTED_FAILURE(res.messege));
+        }
+    })
+}
+
+export const CALL_FOLLOW_SUGGESTED_SUCCESS = (index:number,messege:string):AppActions => ({
+    type: 'SET_FOLLOW_SUGGESTED_SUCCESS',
+    payload: {
+        index,
+        messege,
+    }
+})
+
+export const CALL_UNFOLLOW_SUGGESTED_SUCCESS = (index:number,messege:string):AppActions => ({
+    type: 'SET_UNFOLLOW_SUGGESTED_SUCCESS',
+    payload: {
+        index,
+        messege,
+    }
+})
+
+export const CALL_FOLLOW_SUGGESTED_FAILURE = (messege:string):AppActions => ({
+    type: 'SET_FOLLOW_SUGGESTED_FAILURE',
+    payload: {
+        messege,
+    }
+})
+
+export const CALL_UNFOLLOW_SUGGESTED_FAILURE = (messege:string):AppActions => ({
+    type: 'SET_FOLLOW_SUGGESTED_FAILURE',
+    payload: {
+        messege,
+    }
+})
+
+
+
+export const FOLLOW_USER_LIST = (index:number,username:string,userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
+    dispatch(CALL_USER_USER_LIST_LOADING(index))
+    followUser(username,userId,token).then((res: IGenericResponse) => {
+        if(res.success){
+            dispatch(CALL_FOLLOW_USER_LIST_SUCCESS(index,res.messege));
+        }
+        else{
+            dispatch(CALL_FOLLOW_USER_LIST_FAILURE(res.messege));
+        }
+    })
+}
+
+export const UNFOLLOW_USER_LIST = (index:number,username:string,userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
+    dispatch(CALL_USER_USER_LIST_LOADING(index))
+    unfollowUser(username,userId,token).then((res: IGenericResponse) => {
+        if(res.success){
+            dispatch(CALL_UNFOLLOW_USER_LIST_SUCCESS(index,res.messege));
+        }
+        else{
+            dispatch(CALL_UNFOLLOW_USER_LIST_FAILURE(res.messege));
+        }
+    })
+}
+
+export const CALL_FOLLOW_USER_LIST_SUCCESS = (index:number,messege:string):AppActions => ({
+    type: 'SET_FOLLOW_USER_LIST_SUCCESS',
+    payload: {
+        index,
+        messege,
+    }
+})
+
+export const CALL_UNFOLLOW_USER_LIST_SUCCESS = (index:number,messege:string):AppActions => ({
+    type: 'SET_UNFOLLOW_USER_LIST_SUCCESS',
+    payload: {
+        index,
+        messege,
+    }
+})
+
+export const CALL_FOLLOW_USER_LIST_FAILURE = (messege:string):AppActions => ({
+    type: 'SET_FOLLOW_USER_LIST_FAILURE',
+    payload: {
+        messege,
+    }
+})
+
+export const CALL_UNFOLLOW_USER_LIST_FAILURE = (messege:string):AppActions => ({
+    type: 'SET_FOLLOW_USER_LIST_FAILURE',
+    payload: {
+        messege,
+    }
+})
+
+export const FOLLOW_USER_PAGE = (username:string,userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
+    dispatch(CALL_USER_USER_PAGE_LOADING())
+    followUser(username,userId,token).then((res: IGenericResponse) => {
+        if(res.success){
+            dispatch(CALL_FOLLOW_USER_PAGE_SUCCESS(res.messege));
+        }
+        else{
+            dispatch(CALL_FOLLOW_USER_PAGE_FAILURE(res.messege));
+        }
+    })
+}
+
+export const UNFOLLOW_USER_PAGE = (username:string,userId:string,token:string) => (dispatch:Dispatch<AppActions>) => {
+    dispatch(CALL_USER_USER_PAGE_LOADING())
+    unfollowUser(username,userId,token).then((res: IGenericResponse) => {
+        if(res.success){
+            dispatch(CALL_UNFOLLOW_USER_PAGE_SUCCESS(res.messege));
+        }
+        else{
+            dispatch(CALL_UNFOLLOW_USER_PAGE_FAILURE(res.messege));
+        }
+    })
+}
+
+export const CALL_FOLLOW_USER_PAGE_SUCCESS = (messege:string):AppActions => ({
+    type: 'SET_FOLLOW_USER_PAGE_SUCCESS',
+    payload: {
+        messege,
+    }
+})
+
+export const CALL_UNFOLLOW_USER_PAGE_SUCCESS = (messege:string):AppActions => ({
+    type: 'SET_UNFOLLOW_USER_PAGE_SUCCESS',
+    payload: {
+        messege,
+    }
+})
+
+export const CALL_FOLLOW_USER_PAGE_FAILURE = (messege:string):AppActions => ({
+    type: 'SET_FOLLOW_USER_PAGE_FAILURE',
+    payload: {
+        messege,
+    }
+})
+
+export const CALL_UNFOLLOW_USER_PAGE_FAILURE = (messege:string):AppActions => ({
+    type: 'SET_FOLLOW_USER_PAGE_FAILURE',
+    payload: {
+        messege,
     }
 })

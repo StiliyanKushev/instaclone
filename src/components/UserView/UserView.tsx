@@ -3,33 +3,49 @@ import styles from './UserView.module.css';
 
 // IMPORT REACT RELATED
 import React, { ComponentType, createRef } from 'react';
+import { toast } from 'react-toastify';
 import { ReactCookieProps, withCookies } from 'react-cookie';
 import { Container, Grid, Item, Segment, Header, Button, Image, Menu, Ref } from 'semantic-ui-react';
 
 // IMPORT REDUX RELATED
 import { connect } from 'react-redux';
 import { AppActions } from '../../actions/types/actions';
+import { AppState, ReduxProps } from '../../reducers';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
-import { UPDATE_AVATAR_USER, TOGGLE_USER_POSTS_LIST, RESET_USER_AVATAR_UPLOAD } from '../../actions/userActions';
-import { AppState, ReduxProps } from '../../reducers';
+import { UPDATE_AVATAR_USER, TOGGLE_USER_POSTS_LIST, RESET_USER_AVATAR_UPLOAD, SET_CURRENT_USER_DATA, FOLLOW_USER_PAGE, UNFOLLOW_USER_PAGE } from '../../actions/userActions';
+import { IPostsListGrid } from '../../reducers/postReducer';
 
 // IMPORT OTHER
+import _ from 'lodash';
+import $ from 'jquery';
+import {Helmet} from "react-helmet";
+import { settings } from '../../settings';
 import EditProfile from '../EditProfile/EditProfile';
 import UserSettings from '../UserSettings/UserSettings';
-
-// IMPORT VALIDATION
-import $ from 'jquery';
-import _ from 'lodash';
-import { toast } from 'react-toastify';
-import { settings } from '../../settings';
-import IGenericResponse from '../../types/response';
-import { IPostsListGrid } from '../../reducers/postReducer';
-import { getUserPostsRecent, getUserPostsPopular, getUserPostsSaved } from '../../handlers/user';
-import {Helmet} from "react-helmet";
 import UserPostsGrid from '../UserPostsGrid/UserPostsGrid';
+import { getUserPostsRecent, getUserPostsPopular, getUserPostsSaved } from '../../handlers/user';
 
-type IProps = ReactCookieProps & ReduxProps & DispatchProps;
+// IMPORT TYPES
+import IGenericResponse from '../../types/response';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
+
+export interface IUserData {
+    posts: number,
+    followers: number,
+    following: number,
+    isFollowing: boolean,
+}
+
+interface IRouteProps {
+    match:{
+        params:{
+            name: string
+        }
+    }
+}
+
+type IProps = ReactCookieProps & ReduxProps & DispatchProps & RouteComponentProps & IRouteProps;
 
 interface IState {
     selectionTab: string,
@@ -54,10 +70,16 @@ class UserView extends React.Component<IProps, IState> {
         this.setFetchFunction = this.setFetchFunction.bind(this);
     }
 
+    get urlUsername(): string{
+        return this.props.match.params.name;
+    }
 
     public componentDidMount() {
         this.setupAvatarHandlerUpload()
         this.setFetchFunction(getUserPostsRecent)
+
+        if(this.urlUsername !== this.props.auth?.username)
+        this.props.setCurrentUserData(this.urlUsername,this.props.auth?.userId as string,this.props.auth?.token as string)
     }
 
     public componentWillUnmount() {
@@ -85,15 +107,23 @@ class UserView extends React.Component<IProps, IState> {
         }
     }
 
+    private followUser(){
+        this.props.followUser(this.urlUsername,this.props.auth?.userId as string,this.props.auth?.token as string)
+    }
+
+    private unfollowUser(){
+        this.props.unfollowUser(this.urlUsername,this.props.auth?.userId as string,this.props.auth?.token as string)
+    }
+
     private setFetchFunction(func: Function) {
         // toggle the posts to the first option (recent)
         this.props.togglePostsSection((startIndex: number, stopIndex: number) => {
-            return func(startIndex, stopIndex, this.props.auth?.userId as string, this.props.auth?.token as string);
+            return func(startIndex, stopIndex, this.urlUsername, this.props.auth?.token as string);
         });
     }
 
     private setupAvatarHandlerUpload() {
-        let user = this.props.auth?.username || '';
+        let user = this.urlUsername;
         let token = this.props.auth?.token || '';
         $(this.userImageRef.current as HTMLImageElement).attr('src', `${settings.BASE_URL}/feed/photo/user/${user}`);
 
@@ -156,9 +186,10 @@ class UserView extends React.Component<IProps, IState> {
     private handleChangeAvatar(e: React.MouseEvent<HTMLImageElement>) {
         e.preventDefault();
 
-        $('#global-file-input').trigger('click');
+        if(this.urlUsername === this.props.auth?.username){
+            $('#global-file-input').trigger('click');
+        }
     }
-
 
     public render() {
         return (
@@ -183,8 +214,19 @@ class UserView extends React.Component<IProps, IState> {
                                     <Segment id={styles.noBorders} attached='top' padded>
                                         <Item>
                                             <Grid className={styles.fluidGrid}>
-                                                <Grid.Column className={styles.usernameColumn}><Header className={styles.username} as='h1'>{this.props.auth?.username}</Header></Grid.Column>
-                                                <Grid.Column className={styles.userSettingsBtns} floated='right'><Button onClick={this.handleEditProfileClick} secondary>Edit Profile</Button><Button onClick={this.handleSettingClick} primary icon='setting'></Button></Grid.Column>
+                                                <Grid.Column className={styles.usernameColumn}><Header className={styles.username} as='h1'>{this.urlUsername}</Header></Grid.Column>
+                                                {
+                                                    this.urlUsername === this.props.auth?.username && 
+                                                    <Grid.Column className={styles.userSettingsBtns} floated='right'><Button onClick={this.handleEditProfileClick} secondary>Edit Profile</Button><Button onClick={this.handleSettingClick} primary icon='setting'></Button></Grid.Column>
+                                                }
+                                                {
+                                                    this.urlUsername !== this.props.auth?.username && (
+                                                        this.props.user?.isCurrentUserFollowed ?
+                                                        <Grid.Column className={styles.userSettingsBtns} floated='right'><Button onClick={() => {}} secondary>Messege</Button><Button onClick={this.unfollowUser.bind(this)} primary icon='remove user'></Button></Grid.Column>
+                                                        :
+                                                        <Grid.Column className={styles.userSettingsBtns} floated='right'><Button onClick={this.followUser.bind(this)} primary>Follow</Button></Grid.Column>
+                                                    )
+                                                }
                                             </Grid>
                                         </Item>
                                     </Segment>
@@ -194,9 +236,9 @@ class UserView extends React.Component<IProps, IState> {
                                     <Segment id={styles.noBorders} className={styles.stats} attached='bottom'>
                                         <Item id={styles.fluidItems}>
                                             <Grid className={styles.fluidGrid}>
-                                                <Grid.Column id={styles.fluidColumn} textAlign='center' width='6'><Header as='span' className={styles.columnHeader} size='small'>0</Header> Posts</Grid.Column>
-                                                <Grid.Column id={styles.fluidColumn} textAlign='center' width='5'><Header as='span' className={styles.columnHeader} size='small'>0</Header> Followers</Grid.Column>
-                                                <Grid.Column id={styles.fluidColumn} textAlign='center' width='5'><Header as='span' className={styles.columnHeader} size='small'>0</Header> Following</Grid.Column>
+                                                <Grid.Column id={styles.fluidColumn} textAlign='center' width='6'><Header as='span' className={styles.columnHeader} size='small'>{this.props.user?.currentUserPostsNum}</Header> Posts</Grid.Column>
+                                                <Grid.Column id={styles.fluidColumn} textAlign='center' width='5'><Header as='span' className={styles.columnHeader} size='small'>{this.props.user?.currentUserFollowersNum}</Header> Followers</Grid.Column>
+                                                <Grid.Column id={styles.fluidColumn} textAlign='center' width='5'><Header as='span' className={styles.columnHeader} size='small'>{this.props.user?.currentUserFollowingNum}</Header> Following</Grid.Column>
                                             </Grid>
                                         </Item>
                                     </Segment>
@@ -251,12 +293,18 @@ interface DispatchProps {
     updateAvatar: (formData: FormData, username: string, token: string) => void,
     togglePostsSection: (fetchFunction: (startIndex: number, stopIndex: number) => Promise<IGenericResponse & { posts: IPostsListGrid }>) => void
     resetAvatarUploaded: () => void,
+    setCurrentUserData: (username:string,userId:string,token:string) => void,
+    followUser: (username:string,userId:string,token:string) => void,
+    unfollowUser: (username:string,userId:string,token:string) => void,
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): DispatchProps => ({
     updateAvatar: bindActionCreators(UPDATE_AVATAR_USER, dispatch),
     togglePostsSection: bindActionCreators(TOGGLE_USER_POSTS_LIST, dispatch),
-    resetAvatarUploaded: bindActionCreators(RESET_USER_AVATAR_UPLOAD, dispatch)
+    resetAvatarUploaded: bindActionCreators(RESET_USER_AVATAR_UPLOAD, dispatch),
+    setCurrentUserData: bindActionCreators(SET_CURRENT_USER_DATA,dispatch),
+    followUser: bindActionCreators(FOLLOW_USER_PAGE,dispatch),
+    unfollowUser: bindActionCreators(UNFOLLOW_USER_PAGE,dispatch),
 })
 
-export default withCookies(connect(mapStateToProps, mapDispatchToProps)(UserView as ComponentType<IProps>));
+export default withRouter(withCookies(connect(mapStateToProps, mapDispatchToProps)(UserView as ComponentType<IProps>)));

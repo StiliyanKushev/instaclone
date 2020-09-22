@@ -159,8 +159,8 @@ class HomeView extends React.Component<IProps, IHomeState>{
                                 <Divider className={styles.profileDivider} horizontal><Header disabled size='small'>Suggested</Header></Divider>
                                 <Segment>
                                     {
-                                        this.props.user?.suggestedUsers.map(user => (
-                                            <UserRow key={user.id} username={user.username} userId={user.id} />
+                                        this.props.user?.suggestedUsers.map((user,index) => (
+                                            <UserRow indexSuggested={index} key={user.id} username={user.username} userId={user.id} />
                                         ))
                                     }
                                 </Segment>

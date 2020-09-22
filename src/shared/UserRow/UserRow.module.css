@@ -37,3 +37,11 @@
     border: none !important;
     box-shadow: none !important;
 }
+
+#unfollowBtn{
+    background: none !important;
+    border: none !important;
+    color: #2185D0 !important;
+    text-align: center !important;
+    padding-right: 13px !important;
+}

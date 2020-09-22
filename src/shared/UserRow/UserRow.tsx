@@ -13,11 +13,13 @@ import { ReduxProps, AppState } from '../../reducers/index';
 
 // IMPORT OTHER
 import { settings } from '../../settings';
+import { bindActionCreators } from 'redux';
+import { FOLLOW_SUGGESTED, UNFOLLOW_SUGGESTED, FOLLOW_USER_LIST, UNFOLLOW_USER_LIST } from '../../actions/userActions';
 
 interface IParentProps {
     username?: string,
     userId?: string,
-
+    indexSuggested?:number,
     index?:number,
     isLoaded?:boolean,
     measure?:() => void
@@ -30,13 +32,35 @@ interface IState {
 }
 
 class UserRow extends React.PureComponent<IProps,IState>{
+    private handleUnfollow(username:string){
+        this.props.unfollow(this.props.index as number,username,this.props.auth?.userId as string,this.props.auth?.token as string)
+    }
+
+    private handleFollow(username:string){
+        this.props.follow(this.props.index as number,username,this.props.auth?.userId as string,this.props.auth?.token as string)
+
+    }
+
+    private handleUnfollowSuggested(username:string){
+        this.props.unfollowSuggested(this.props.indexSuggested as number,username,this.props.auth?.userId as string,this.props.auth?.token as string)
+    }
+
+    private handleFollowSuggested(username:string){
+        this.props.followSuggested(this.props.indexSuggested as number,username,this.props.auth?.userId as string,this.props.auth?.token as string)
+    }
+
     public render(){
-        if(this.props.username && this.props.userId)
+        if(this.props.username && this.props.userId && this.props.indexSuggested !== undefined)
         return (
             <Segment className={styles.profileSegmentInternal}>
                 <Image className={styles.verySmallImg} circular size='tiny' src={`${settings.BASE_URL}/feed/photo/user/${this.props.username}`}></Image>
                 <Header className={styles.profileUsernameSmall} size='tiny'>{this.props.username}</Header>
-                <Button primary size='tiny'>Folllow</Button>
+                {
+                    this.props.user?.suggestedUsers[this.props.indexSuggested].isFollowed ?
+                    <Button id={styles.unfollowBtn} loading={this.props.user?.suggestedUsers[this.props.indexSuggested].isLoading} onClick={() => this.handleUnfollowSuggested.bind(this)(this.props.user?.suggestedUsers[this.props.indexSuggested as number].username as string)} primary size='tiny'>Unfolllow</Button>
+                    :
+                    <Button loading={this.props.user?.suggestedUsers[this.props.indexSuggested].isLoading} onClick={() => this.handleFollowSuggested.bind(this)(this.props.user?.suggestedUsers[this.props.indexSuggested as number].username as string)} primary size='tiny'>Folllow</Button>
+                }
             </Segment>
         )
     
@@ -45,7 +69,12 @@ class UserRow extends React.PureComponent<IProps,IState>{
             <Segment className={styles.profileSegmentInternal}>
                 <Image className={styles.verySmallImg} circular size='tiny' src={`${settings.BASE_URL}/feed/photo/user/${this.props.user?.usersList[this.props.index].username}`}></Image>
                 <Header className={styles.profileUsernameSmall} size='tiny'>{this.props.user?.usersList[this.props.index].username}</Header>
-                <Button primary size='tiny'>Folllow</Button>
+                {
+                    this.props.user?.usersList[this.props.index].isFollowed ?
+                    <Button loading={this.props.user?.usersList[this.props.index].isLoading} id={styles.unfollowBtn} onClick={() => this.handleUnfollow.bind(this)(this.props.user?.usersList[this.props.index as number].username as string)} primary size='tiny'>Unfolllow</Button>
+                    :
+                    <Button loading={this.props.user?.usersList[this.props.index].isLoading} onClick={() => this.handleFollow.bind(this)(this.props.user?.usersList[this.props.index as number].username as string)} primary size='tiny'>Folllow</Button>
+                }
             </Segment>
         )
     
@@ -60,15 +89,22 @@ class UserRow extends React.PureComponent<IProps,IState>{
 }
 
 const mapStateToProps = (state: AppState): ReduxProps => ({
-    user: state.user
+    user: state.user,
+    auth: state.auth
 });
 
 interface DispatchProps {
-    // todo
+    followSuggested: (index:number,username:string,userId:string,token:string) => void,
+    unfollowSuggested: (index:number,username:string,userId:string,token:string) => void,
+    follow: (index:number,username:string,userId:string,token:string) => void,
+    unfollow: (index:number,username:string,userId:string,token:string) => void,
 }
 
 const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
-    // todo
+    followSuggested: bindActionCreators(FOLLOW_SUGGESTED,dispatch),
+    unfollowSuggested: bindActionCreators(UNFOLLOW_SUGGESTED,dispatch),
+    follow: bindActionCreators(FOLLOW_USER_LIST,dispatch),
+    unfollow: bindActionCreators(UNFOLLOW_USER_LIST,dispatch),
 })
 
 export default connect(mapStateToProps,mapDispatchToProps)(UserRow as ComponentType<IProps>);

@@ -8,6 +8,7 @@ const fs = require('fs');
 const path = require('path'); 
 const sharp = require('sharp');
 const UserSavePost = require("../models/UserSavePost");
+const UserFollow = require("../models/UserFollow");
 
 function validateCreateAndCommentPost(payload){
     const errors = {}
@@ -745,10 +746,12 @@ async function getLikesFromPost(req,res,next){
 
         for(let like of likes){
             let likeUser = await User.findById(like.user);
+            let isFollowed = await UserFollow.findOne({fromUser:user,toUser:like.user})
 
             newLikes.push({
                 id: likeUser._id,
-                username: likeUser.username
+                username: likeUser.username,
+                isFollowed:isFollowed
             })
         }
 
@@ -785,10 +788,12 @@ async function getLikesFromComment(req,res,next){
 
         for(let like of likes){
             let likeUser = await User.findById(like.user);
+            let isFollowed = await UserFollow.findOne({fromUser:user,toUser:like.user})
 
             newLikes.push({
                 id: likeUser._id,
-                username: likeUser.username
+                username: likeUser.username,
+                isFollowed:isFollowed
             })
         }
 

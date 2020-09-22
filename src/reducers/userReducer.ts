@@ -14,7 +14,12 @@ export interface IUserState {
     usersListToggled:boolean,
     currentPostSelectionFunction: (startIndex:number,stopIndex:number) => Promise<IGenericResponse & {posts:IPostsListGrid}>
     currentUsersFetchFunction: (startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:Array<ICreator>}>
-    currentPostSelectionList: Array<Array<IOtherPost>>
+    currentPostSelectionList: Array<Array<IOtherPost>>,
+    isCurrentUserFollowed: boolean,
+    isCurrentUserFollowLoading:boolean,
+    currentUserPostsNum:number,
+    currentUserFollowersNum:number,
+    currentUserFollowingNum:number,
 }
 
 const userState:IUserState = {
@@ -27,7 +32,12 @@ const userState:IUserState = {
     usersListToggled: false,
     currentUsersFetchFunction: (startIndex:number,stopIndex:number) => (1 as any),
     currentPostSelectionFunction: (startIndex:number,stopIndex:number) => (new Promise<any>(() => {}) as any),
-    currentPostSelectionList: [] as any
+    currentPostSelectionList: [] as any,
+    isCurrentUserFollowed: false,
+    isCurrentUserFollowLoading:false,
+    currentUserPostsNum:0,
+    currentUserFollowersNum:0,
+    currentUserFollowingNum:0,
 }
 
 const userReducer = (state = userState, action:userActionTypes) => {
@@ -127,6 +137,176 @@ const userReducer = (state = userState, action:userActionTypes) => {
                 isUserAvatarUpdated:false,
             } as IUserState
         }
+
+        case 'SET_CURRENT_USER_DATA_SUCCESS':{
+            return {
+                ...state,
+                error:false,
+                messege:action.payload.messege,
+                isCurrentUserFollowed: action.payload.userData.isFollowing,
+                currentUserPostsNum: action.payload.userData.posts,
+                currentUserFollowersNum: action.payload.userData.followers,
+                currentUserFollowingNum: action.payload.userData.following,
+            } as IUserState
+        }
+
+        case 'SET_CURRENT_USER_DATA_FAILURE':{
+            return {
+                ...state,
+                error:true,
+                messege:action.payload.messege
+            } as IUserState
+        }
+
+        case 'SET_FOLLOW_SUGGESTED_SUCCESS':{
+            state.suggestedUsers[action.payload.index].isFollowed = true;
+            state.suggestedUsers[action.payload.index].isLoading = false;
+            return {
+                ...state,
+                error:false,
+                messege: action.payload.messege
+            } as IUserState
+        } 
+
+        case 'SET_UNFOLLOW_SUGGESTED_SUCCESS':{
+            state.suggestedUsers[action.payload.index].isFollowed = false;
+            state.suggestedUsers[action.payload.index].isLoading = false;
+            return {
+                ...state,
+                error:false,
+                messege: action.payload.messege
+            } as IUserState
+        } 
+
+        case 'SET_FOLLOW_SUGGESTED_FAILURE':{
+            return {
+                ...state,
+                error:true,
+                messege:action.payload.messege,
+            } as IUserState
+        } 
+
+        case 'SET_UNFOLLOW_SUGGESTED_FAILURE':{
+            return {
+                ...state,
+                error:true,
+                messege:action.payload.messege,
+            } as IUserState
+        }  
+
+        case 'SET_USER_SUGGESTED_LOADING':{
+            state.suggestedUsers[action.payload.index].isLoading = true;
+            return {
+                ...state,
+            } as IUserState
+        }
+
+        case 'SET_USER_USER_LIST_LOADING':{
+            state.usersList[action.payload.index].isLoading = true;
+            return {
+                ...state,
+            } as IUserState
+        }
+
+        case 'SET_FOLLOW_USER_LIST_SUCCESS':{
+            state.usersList[action.payload.index].isFollowed = true;
+            state.usersList[action.payload.index].isLoading = false;
+
+            let usrToFind = state.usersList[action.payload.index].username;
+            for(let i = 0; i < state.suggestedUsers.length;i++){
+                let usr = state.suggestedUsers[i]
+                if(usr.username === usrToFind){
+                    state.suggestedUsers[i].isFollowed = true;
+                    break;
+                }
+            }
+
+            return {
+                ...state,
+                error:false,
+                messege: action.payload.messege
+            } as IUserState
+        } 
+
+        case 'SET_UNFOLLOW_USER_LIST_SUCCESS':{
+            state.usersList[action.payload.index].isFollowed = false;
+            state.usersList[action.payload.index].isLoading = false;
+
+            let usrToFind = state.usersList[action.payload.index].username;
+            for(let i = 0; i < state.suggestedUsers.length;i++){
+                let usr = state.suggestedUsers[i]
+                if(usr.username === usrToFind){
+                    state.suggestedUsers[i].isFollowed = false;
+                    break;
+                }
+            }
+            return {
+                ...state,
+                error:false,
+                messege: action.payload.messege
+            } as IUserState
+        } 
+
+        case 'SET_FOLLOW_USER_LIST_FAILURE':{
+            return {
+                ...state,
+                error:true,
+                messege:action.payload.messege,
+            } as IUserState
+        }
+
+        case 'SET_UNFOLLOW_USER_LIST_FAILURE':{
+            return {
+                ...state,
+                error:true,
+                messege:action.payload.messege,
+            } as IUserState
+        } 
+
+        case 'SET_USER_USER_PAGE_LOADING':{
+            return {
+                ...state,
+                isCurrentUserFollowLoading:true
+            } as IUserState
+        }
+
+        case 'SET_FOLLOW_USER_PAGE_SUCCESS':{
+            return {
+                ...state,
+                error:false,
+                messege: action.payload.messege,
+                isCurrentUserFollowed:true,
+                isCurrentUserFollowLoading:false,
+                currentUserFollowersNum: state.currentUserFollowersNum + 1
+            } as IUserState
+        } 
+
+        case 'SET_UNFOLLOW_USER_PAGE_SUCCESS':{
+            return {
+                ...state,
+                error:false,
+                messege: action.payload.messege,
+                isCurrentUserFollowed:false,
+                isCurrentUserFollowLoading:false,
+                currentUserFollowersNum: state.currentUserFollowersNum - 1
+            } as IUserState
+        } 
+
+        case 'SET_FOLLOW_USER_PAGE_FAILURE':{
+            return {
+                ...state,
+                error:true,
+                messege:action.payload.messege,
+            } as IUserState
+        }
+
+        case 'SET_UNFOLLOW_USER_PAGE_FAILURE':{
+            return {
+                ...state,
+                error:true,
+                messege:action.payload.messege,
+            } as IUserState
+        } 
 
         default: {
             return {...state};

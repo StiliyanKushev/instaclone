@@ -5,6 +5,7 @@ const Post = require("../models/Post");
 const jwt = require('jsonwebtoken');
 const UserSavePost = require("../models/UserSavePost");
 const sharp = require('sharp');
+const UserFollow = require("../models/UserFollow");
 
 async function getSuggestedUsers(req,res,next){
     User.count().exec(async function (err, count) {
@@ -30,10 +31,13 @@ async function getSuggestedUsers(req,res,next){
         User.find({_id: { $ne: user._id }}).skip(randomIndex).limit(5).exec(async (err,users) => {
             let newUsers = [];
 
-            for(let user of users){
+            for(let current_user of users){
+                let isFollowed = await UserFollow.findOne({fromUser:user,toUser:current_user})
+
                 newUsers.push({
-                    id: user._id,
-                    username: user.username
+                    id: current_user._id,
+                    username: current_user.username,
+                    isFollowed: isFollowed
                 })
             }
 
@@ -121,7 +125,7 @@ async function getUserPostsRecent(req,res,next){
     let startIndex = Number(req.params.startIndex);
     let stopIndex = Number(req.params.stopIndex);
 
-    let givenUser = await User.findById(req.params.userId);
+    let givenUser = await User.find({username:req.params.userId});
 
     Post.count({creator:givenUser}).exec(async function (err, count) {
         let limit = stopIndex - startIndex
@@ -168,7 +172,7 @@ async function getUserPostsPopular(req,res,next){
     let startIndex = Number(req.params.startIndex);
     let stopIndex = Number(req.params.stopIndex);
 
-    let givenUser = await User.findById(req.params.userId);
+    let givenUser = await User.find({username:req.params.userId});
 
     Post.find({creator:givenUser}).skip(startIndex).limit(stopIndex - startIndex).sort({likesCount:'desc'}).exec(async (err,posts) => {
         if(err){
@@ -200,7 +204,7 @@ async function getUserPostsSaved(req,res,next){
     let startIndex = Number(req.params.startIndex);
     let stopIndex = Number(req.params.stopIndex);
 
-    let givenUser = await User.findById(req.params.userId);
+    let givenUser = await User.find({username:req.params.userId});
 
     UserSavePost.find({user:givenUser}).skip(startIndex).limit(stopIndex - startIndex).exec(async (err,savedPostsModls) => {
         if(err){
@@ -296,11 +300,130 @@ function userSavePost(req,res,next){
     })
 }
 
+async function getUserData(req,res,next){
+    let username = req.params.username;
+    let userId = req.params.userId;
+
+    let userToGet = await User.find({username});
+    let asUser = await User.findById(userId);
+
+    if(!userToGet || !asUser){
+        return res.status(200).json({
+            success:false,
+            messege:'internal error. Could not fetch user data. Invalid user given.'
+        })
+    }
+
+    let postsNum = await Post.count({creator:userToGet});
+    let followersNum = await UserFollow.count({toUser:userToGet});
+    let followingNum = await UserFollow.count({fromUser:userToGet});
+    let isFollowing = !!await UserFollow.findOne({fromUser:asUser,toUser:userToGet});
+
+    return res.status(200).json({
+        success:true,
+        user:{
+            posts: postsNum,
+            followers: followersNum,
+            following: followingNum,
+            isFollowing: isFollowing,
+        }
+    })
+}
+
+async function userFollow(req,res,next){
+    let username = req.params.username;
+    let userId = req.body.userId;
+
+    let userToGet = await User.findOne({username});
+    let asUser = await User.findById(userId);
+
+    if(!userToGet || !asUser){
+        return res.status(200).json({
+            success:false,
+            messege:'internal error. Invalid user given.'
+        })
+    }
+
+    let alreadyFollowed = await UserFollow.findOne({fromUser:asUser, toUser:userToGet});
+
+    if(alreadyFollowed){
+        return res.status(200).json({
+            success:false,
+            messege:'User is alredy followed once.'
+        });
+    }
+
+    new UserFollow({
+        fromUser:asUser,
+        toUser:userToGet,
+    }).save().then(userFollow => {
+        return res.status(200).json({
+            success:true,
+            messege:'User followed successfully.'
+        });
+    }).catch(err => {
+        console.log(err);
+        return res.status(200).json({
+            success:false,
+            messege:'There was an error following a user.'
+        });
+    });
+}
+
+async function userUnfollow(req,res,next){
+    let username = req.params.username;
+    let userId = req.body.userId;
+
+    let userToGet = await User.find({username});
+    let asUser = await User.findById(userId);
+
+    if(!userToGet || !asUser){
+        return res.status(200).json({
+            success:false,
+            messege:'internal error. Invalid user given.'
+        })
+    }
+
+    let alreadyFollowed = await UserFollow.findOne({fromUser:asUser, toUser:userToGet});
+
+    if(!alreadyFollowed){
+        return res.status(200).json({
+            success:false,
+            messege:'User is not followed.'
+        });
+    }
+
+    let usrFollow = await UserFollow.findOne({fromUser:asUser,toUser:userToGet});
+
+    if(!usrFollow){
+        return res.status(200).json({
+            success:false,
+            messege:'There was an error unfollowing a user.'
+        });
+    }
+
+    UserFollow.deleteOne({fromUser:asUser,toUser:userToGet}).then(() => {
+        return res.status(200).json({
+            success:true,
+            messege:'User unfollowed successfully.'
+        });
+    }).catch(err => {
+        console.log(err);
+        return res.status(200).json({
+            success:false,
+            messege:'There was an error unfollowing a user.'
+        });
+    })
+}
+
 module.exports = {
     sendAvatar,
     getSuggestedUsers,
     getUserPostsRecent,
     getUserPostsPopular,
     getUserPostsSaved,
-    userSavePost
+    userSavePost,
+    getUserData,
+    userUnfollow,
+    userFollow,
 }

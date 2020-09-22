@@ -12,6 +12,8 @@ export interface IAuthResponse extends IGenericResponse{
 export interface ICreator {
     id:string,
     username:string,
+    isFollowed?:boolean,
+    isLoading?:boolean,
 }
 
 export interface IEditProfileResponse extends IGenericResponse{
