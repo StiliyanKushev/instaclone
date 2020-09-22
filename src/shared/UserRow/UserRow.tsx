@@ -74,7 +74,7 @@ class UserRow extends React.PureComponent<IProps,IState>{
                     this.props.user?.usersList[this.props.index].isFollowed ?
                     <Button loading={this.props.user?.usersList[this.props.index].isLoading} id={styles.unfollowBtn} onClick={() => this.handleUnfollow.bind(this)(this.props.user?.usersList[this.props.index as number].username as string)} primary size='tiny'>Unfolllow</Button>
                     :
-                    <Button loading={this.props.user?.usersList[this.props.index].isLoading} onClick={() => this.handleFollow.bind(this)(this.props.user?.usersList[this.props.index as number].username as string)} primary size='tiny'>Folllow</Button>
+                    <Button disabled={this.props.user?.usersList[this.props.index].username === this.props.auth?.username} loading={this.props.user?.usersList[this.props.index].isLoading} onClick={() => this.handleFollow.bind(this)(this.props.user?.usersList[this.props.index as number].username as string)} primary size='tiny'>Folllow</Button>
                 }
             </Segment>
         )
