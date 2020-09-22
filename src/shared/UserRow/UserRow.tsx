@@ -15,6 +15,7 @@ import { ReduxProps, AppState } from '../../reducers/index';
 import { settings } from '../../settings';
 import { bindActionCreators } from 'redux';
 import { FOLLOW_SUGGESTED, UNFOLLOW_SUGGESTED, FOLLOW_USER_LIST, UNFOLLOW_USER_LIST } from '../../actions/userActions';
+import { Link } from 'react-router-dom';
 
 interface IParentProps {
     username?: string,
@@ -54,7 +55,7 @@ class UserRow extends React.PureComponent<IProps,IState>{
         return (
             <Segment className={styles.profileSegmentInternal}>
                 <Image className={styles.verySmallImg} circular size='tiny' src={`${settings.BASE_URL}/feed/photo/user/${this.props.username}`}></Image>
-                <Header className={styles.profileUsernameSmall} size='tiny'>{this.props.username}</Header>
+                <Link to={`/profile/${this.props.username}`}><Header className={styles.profileUsernameSmall} size='tiny'>{this.props.username}</Header></Link>
                 {
                     this.props.user?.suggestedUsers[this.props.indexSuggested].isFollowed ?
                     <Button id={styles.unfollowBtn} loading={this.props.user?.suggestedUsers[this.props.indexSuggested].isLoading} onClick={() => this.handleUnfollowSuggested.bind(this)(this.props.user?.suggestedUsers[this.props.indexSuggested as number].username as string)} primary size='tiny'>Unfolllow</Button>
@@ -68,7 +69,7 @@ class UserRow extends React.PureComponent<IProps,IState>{
         return (
             <Segment className={styles.profileSegmentInternal}>
                 <Image className={styles.verySmallImg} circular size='tiny' src={`${settings.BASE_URL}/feed/photo/user/${this.props.user?.usersList[this.props.index].username}`}></Image>
-                <Header className={styles.profileUsernameSmall} size='tiny'>{this.props.user?.usersList[this.props.index].username}</Header>
+                <Link to={`/profile/${this.props.user?.usersList[this.props.index].username}`}><Header className={styles.profileUsernameSmall} size='tiny'>{this.props.user?.usersList[this.props.index].username}</Header></Link>
                 {
                     this.props.user?.usersList[this.props.index].isFollowed ?
                     <Button loading={this.props.user?.usersList[this.props.index].isLoading} id={styles.unfollowBtn} onClick={() => this.handleUnfollow.bind(this)(this.props.user?.usersList[this.props.index as number].username as string)} primary size='tiny'>Unfolllow</Button>

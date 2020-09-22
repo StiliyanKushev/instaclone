@@ -20,6 +20,7 @@ import IGenericResponse from '../../types/response';
 import { ICreator } from '../../types/auth';
 import { TOGGLE_USERS_LIST } from '../../actions/userActions';
 import { getUserLikesFromComment } from '../../handlers/post';
+import { Link } from 'react-router-dom';
 
 interface ParentProps {
     commentIndex: number,
@@ -74,9 +75,9 @@ class PostComment extends React.PureComponent<IProps, IState>{
                         ></Image>
                         <div>
                             <Header className={styles.commentItemHeader}>
-                                <span>
+                                <Link id={styles.noTextDecor} to={`/profile/${this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].creator?.username || this.props.auth?.username || this.props.cookies?.get('username')}`}><span>
                                     {this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].creator?.username || this.props.auth?.username || this.props.cookies?.get('username')}
-                                </span>{" "}
+                                </span></Link>{" "}
                                 {this.props.post?.fullViewPostData.commentsList[this.props.commentIndex].content}
                             </Header>
                             

@@ -92,3 +92,7 @@
 #cancelHeader{
     color: red !important;
 }
+
+#noTextDecor{
+    color: rgb(33,33,33) !important;
+}

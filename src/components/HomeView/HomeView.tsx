@@ -28,6 +28,7 @@ import FullViewPost from '../FullViewPost/FullViewPost'
 import PostsPartial from '../../shared/PostsPartial/PostsPartial';
 import UsersList from '../../shared/UsersList/UsersList';
 import UserRow from '../../shared/UserRow/UserRow';
+import { Link } from 'react-router-dom';
 
 type IProps = ReduxProps & DispatchProps & ReactCookieProps;
 
@@ -154,7 +155,7 @@ class HomeView extends React.Component<IProps, IHomeState>{
                             <div className={`${styles.fixedDiv} ui fixed top sticky`}>
                                 <Segment className={styles.profileSegment}>
                                     <Image className={styles.profileImage} circular size='tiny' src={`${settings.BASE_URL}/feed/photo/user/${this.props.auth?.username}`}></Image>
-                                    <Header className={styles.profileUsername} size='small'>{this.props.auth?.username}</Header>
+                                    <Link to={`/profile/${this.props.auth?.username}`}><Header className={styles.profileUsername} size='small'>{this.props.auth?.username}</Header></Link>
                                 </Segment>
                                 <Divider className={styles.profileDivider} horizontal><Header disabled size='small'>Suggested</Header></Divider>
                                 <Segment>

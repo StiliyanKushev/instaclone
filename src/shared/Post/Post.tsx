@@ -155,7 +155,7 @@ class Post extends React.PureComponent<IProps,IState> {
                     </Menu>
                     <Header onClick={this.handleLikesClick.bind(this)} className={styles.likes} size='tiny'>{this.props.post.homePosts[this.props.postIndex].likesCount} likes</Header>
                     <Header className={styles.description} size='tiny'>
-                        <Header size='tiny' className={styles.commentUsername} as='span'>{this.props.post?.homePosts[this.props.postIndex].creator.username}</Header>
+                        <Link to={`/profile/${this.props.post?.homePosts[this.props.postIndex].creator.username}`}><Header size='tiny' className={styles.commentUsername} as='span'>{this.props.post?.homePosts[this.props.postIndex].creator.username}</Header></Link>
                         <Header className={styles.commentText} as='span' size='tiny'> {this.props.post?.homePosts[this.props.postIndex].description}</Header>
                     </Header>
                     <Header onClick={() => this.props.toggleFullView(this.props.postIndex)} className={styles.viewAllComments} size='tiny' disabled>View all comments</Header>
@@ -163,7 +163,7 @@ class Post extends React.PureComponent<IProps,IState> {
                         // backend will return the first 3-4 messeges only (own comments + other comments)
                         this.props.post.homePosts[this.props.postIndex].ownComments.map((comment,index) => (
                             <Header key={index} className={styles.description} size='tiny'>
-                                <Header size='tiny' className={styles.commentUsername} as='span'>{this.props.auth?.username}</Header>
+                                <Link to={`/profile/${this.props.auth?.username}`}><Header size='tiny' className={styles.commentUsername} as='span'>{this.props.auth?.username}</Header></Link>
                                 <Header className={styles.commentText} as='span' size='tiny'> {comment.content}</Header>
                             </Header>
                         ))
@@ -171,7 +171,7 @@ class Post extends React.PureComponent<IProps,IState> {
                     {
                         this.props.post.homePosts[this.props.postIndex].comments.map((comment,index) => (
                             <Header key={index} className={styles.description} size='tiny'>
-                                <Header size='tiny' className={styles.commentUsername} as='span'>{comment.creator?.username}</Header>
+                                <Link to={`/profile/${comment.creator?.username}`}><Header size='tiny' className={styles.commentUsername} as='span'>{comment.creator?.username}</Header></Link>
                                 <Header className={styles.commentText} as='span' size='tiny'> {comment.content}</Header>
                             </Header>
                         ))

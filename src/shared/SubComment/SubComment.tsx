@@ -52,14 +52,15 @@ class SubComment extends React.PureComponent<IProps>{
                         ></Image>
                         <div>
                             <Header className={styles.commentItemHeader}>
+                                <Link id={styles.noTextDecor} to={`/profile/${((this.props.post?.fullViewPostData.commentsList[this.props.index].subComments) as any)[this.props.i].creator?.username || this.props.auth?.username || this.props.cookies?.get('username')}`}>
                                 <span>
                                     {((this.props.post?.fullViewPostData.commentsList[this.props.index].subComments) as any)[this.props.i].creator?.username || this.props.auth?.username || this.props.cookies?.get('username')}
-                                </span>{" "}
+                                </span></Link>{" "}
                                 {
                                     /^(@\w+) (.+)/.exec(((this.props.post?.fullViewPostData.commentsList[this.props.index].subComments) as any)[this.props.i].content) !== null ?
                                     (
                                        <React.Fragment>
-                                           <Link to='#'>
+                                           <Link to={`/profile/${(/^(@\w+) (.+)/.exec(((this.props.post?.fullViewPostData.commentsList[this.props.index].subComments) as any)[this.props.i].content) as any)[1].slice(1)}`}>
                                                 {
                                                     (/^(@\w+) (.+)/.exec(((this.props.post?.fullViewPostData.commentsList[this.props.index].subComments) as any)[this.props.i].content) as any)[1]
                                                 }
