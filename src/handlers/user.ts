@@ -37,6 +37,14 @@ export function getCurrentUserData(username:string,userId:string,token:string){
     return get<IGenericResponse>(`/feed/user/${username}/data/as/${userId}`,token).then((res: any) => res.data);
 }
 
+export function getFollowers(startIndex:number,stopIndex:number,username:string,userId:string,token:string){
+    return get<IGenericResponse>(`/feed/user/${username}/followers/${startIndex}/${stopIndex}/as/${userId}`,token).then((res: any) => res.data);
+}
+
+export function getFollowing(startIndex:number,stopIndex:number,username:string,userId:string,token:string){
+    return get<IGenericResponse>(`/feed/user/${username}/following/${startIndex}/${stopIndex}/as/${userId}`,token).then((res: any) => res.data);
+}
+
 export function getUserPostsRecent(startIndex:number,stopIndex:number,username:string,token:string){
     return get<IGenericResponse>(`/feed/user/posts/recent/${startIndex}/${stopIndex}/as/${username}`,token).then((res: any) => res.data);
 }

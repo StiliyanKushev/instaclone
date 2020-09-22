@@ -24,6 +24,7 @@ import $ from 'jquery';
 import UserRow from '../UserRow/UserRow';
 
 interface IParentProps {
+    customTitle?:string,
     lowerDim?: boolean,
     fetchFunction: (startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:Array<ICreator>}>
 }
@@ -122,12 +123,12 @@ class UsersList extends React.PureComponent<IProps, IState>{
                 <Dimmer id={this.props.lowerDim ? `${styles.lowerDim}` : ''} className={styles.container} active>
                     {
                         this.props.user?.usersList.length === 0 && (
-                            <p className={styles.noOtherLikes}>Others have not liked this yet.</p>
+                            <p className={styles.noOtherLikes}>Nothing to see here. Be gone!</p>
                         )
                     }
                     
                     <Segment className={styles.likes} attached='top'>
-                        Likes
+                        {this.props.customTitle || 'Likes'}
                         <Icon onClick={this.handleClose.bind(this)} name='close' size='big' className={styles.closeIcon}></Icon>
                     </Segment>
                     <Segment attached='bottom'>

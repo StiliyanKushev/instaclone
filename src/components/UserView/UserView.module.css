@@ -138,7 +138,12 @@
     }
 }
 
+#fluidColumn:nth-child(1){
+    cursor: initial !important;
+}
+
 #fluidColumn{
+    cursor: pointer;
     width: 33% !important;
     text-align: left !important;
 }

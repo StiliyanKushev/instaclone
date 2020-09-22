@@ -416,6 +416,92 @@ async function userUnfollow(req,res,next){
     })
 }
 
+async function getUserFollowers(req,res,next){
+    let startIndex = Number(req.params.startIndex);
+    let stopIndex = Number(req.params.stopIndex);
+    let username = req.params.username;
+    let userId = req.params.userId;
+
+    let limit = stopIndex - startIndex;
+    if(limit === 0) limit = 1;
+
+    let user = await User.findById(userId);
+    let toUser = await User.findOne({username:username});
+
+    UserFollow.find({toUser:toUser}).skip(startIndex).limit(limit).exec(async (err,follows) => {
+        if(err){
+            console.log(err);
+            return res.status(200).json({
+                success:false,
+                likes:[],
+                messege: 'Error When finding likes.'
+            })
+        }
+
+        let newLikes = [];
+
+        for(let follow of follows){
+            let follower = await User.findById(follow.fromUser);
+            let isFollowed = await UserFollow.findOne({fromUser:user,toUser:follow.fromUser})
+
+            newLikes.push({
+                id: follower._id,
+                username: follower.username,
+                isFollowed:isFollowed
+            })
+        }
+
+        return res.status(200).json({
+            success:true,
+            likes:newLikes,
+            messege: 'Here are all accounts that find that cool.'
+        })
+    })
+}
+
+async function getUserFollowing(req,res,next){
+    let startIndex = Number(req.params.startIndex);
+    let stopIndex = Number(req.params.stopIndex);
+    let username = req.params.username;
+    let userId = req.params.userId;
+
+    let limit = stopIndex - startIndex;
+    if(limit === 0) limit = 1;
+
+    let user = await User.findById(userId);
+    let toUser = await User.findOne({username:username});
+
+    UserFollow.find({fromUser:toUser}).skip(startIndex).limit(limit).exec(async (err,follows) => {
+        if(err){
+            console.log(err);
+            return res.status(200).json({
+                success:false,
+                likes:[],
+                messege: 'Error When finding likes.'
+            })
+        }
+
+        let newLikes = [];
+
+        for(let follow of follows){
+            let follower = await User.findById(follow.toUser);
+            let isFollowed = await UserFollow.findOne({fromUser:user,toUser:follow.toUser})
+
+            newLikes.push({
+                id: follower._id,
+                username: follower.username,
+                isFollowed:isFollowed
+            })
+        }
+
+        return res.status(200).json({
+            success:true,
+            likes:newLikes,
+            messege: 'Here are all accounts that find that cool.'
+        })
+    })
+}
+
 module.exports = {
     sendAvatar,
     getSuggestedUsers,
@@ -426,4 +512,6 @@ module.exports = {
     getUserData,
     userUnfollow,
     userFollow,
+    getUserFollowers,
+    getUserFollowing,
 }

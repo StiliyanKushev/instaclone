@@ -13,7 +13,7 @@ import { AppActions } from '../../actions/types/actions';
 import { AppState, ReduxProps } from '../../reducers';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
-import { UPDATE_AVATAR_USER, TOGGLE_USER_POSTS_LIST, RESET_USER_AVATAR_UPLOAD, SET_CURRENT_USER_DATA, FOLLOW_USER_PAGE, UNFOLLOW_USER_PAGE, RESET_USER_DATA } from '../../actions/userActions';
+import { UPDATE_AVATAR_USER, TOGGLE_USER_POSTS_LIST, RESET_USER_AVATAR_UPLOAD, SET_CURRENT_USER_DATA, FOLLOW_USER_PAGE, UNFOLLOW_USER_PAGE, RESET_USER_DATA, TOGGLE_USERS_LIST } from '../../actions/userActions';
 import { IPostsListGrid } from '../../reducers/postReducer';
 
 // IMPORT OTHER
@@ -24,11 +24,13 @@ import { settings } from '../../settings';
 import EditProfile from '../EditProfile/EditProfile';
 import UserSettings from '../UserSettings/UserSettings';
 import UserPostsGrid from '../UserPostsGrid/UserPostsGrid';
-import { getUserPostsRecent, getUserPostsPopular, getUserPostsSaved } from '../../handlers/user';
+import { getUserPostsRecent, getUserPostsPopular, getUserPostsSaved, getFollowers, getFollowing } from '../../handlers/user';
 
 // IMPORT TYPES
 import IGenericResponse from '../../types/response';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { ICreator } from '../../types/auth';
+import UsersList from '../../shared/UsersList/UsersList';
 
 export interface IUserData {
     posts: number,
@@ -57,6 +59,7 @@ interface IState {
 class UserView extends React.Component<IProps, IState> {
     state: IState = {refreshProp:'recent', selectionTab: 'recent', settingsPopup: false, editProfilePopup: false }
     private userImageRef = createRef<HTMLImageElement>();
+    private customTitle:string = 'Followers';
 
     constructor(props: IProps) {
         super(props);
@@ -216,6 +219,20 @@ class UserView extends React.Component<IProps, IState> {
         }
     }
 
+    private handleClickFollowers(){
+        this.customTitle = 'Followers';
+        this.props.toggleUserLikes((startIndex:number,stopIndex:number) => {
+            return getFollowers(startIndex,stopIndex, this.urlUsername, this.props.auth?.userId as string,this.props.auth?.token as string);
+        });
+    }
+
+    private handleClickFollowing(){
+        this.customTitle = 'Following';
+        this.props.toggleUserLikes((startIndex:number,stopIndex:number) => {
+            return getFollowing(startIndex,stopIndex, this.urlUsername, this.props.auth?.userId as string,this.props.auth?.token as string);
+        });
+    }
+
     public render() {
         return (
             <div className={`${styles.viewContainer} view-container`}>
@@ -226,6 +243,9 @@ class UserView extends React.Component<IProps, IState> {
                     }
                 `}</style>
                 </Helmet>
+                {
+                    this.props.user?.usersListToggled && <UsersList customTitle={this.customTitle} lowerDim={false} fetchFunction={this.props.user?.currentUsersFetchFunction}/>
+                }
                 <Container className={styles.container}>
                     <Grid>
                         <Grid.Row className={styles.userRow}>
@@ -262,8 +282,8 @@ class UserView extends React.Component<IProps, IState> {
                                         <Item id={styles.fluidItems}>
                                             <Grid className={styles.fluidGrid}>
                                                 <Grid.Column id={styles.fluidColumn} textAlign='center' width='6'><Header as='span' className={styles.columnHeader} size='small'>{this.props.user?.currentUserPostsNum}</Header> Posts</Grid.Column>
-                                                <Grid.Column id={styles.fluidColumn} textAlign='center' width='5'><Header as='span' className={styles.columnHeader} size='small'>{this.props.user?.currentUserFollowersNum}</Header> Followers</Grid.Column>
-                                                <Grid.Column id={styles.fluidColumn} textAlign='center' width='5'><Header as='span' className={styles.columnHeader} size='small'>{this.props.user?.currentUserFollowingNum}</Header> Following</Grid.Column>
+                                                <Grid.Column onClick={this.handleClickFollowers.bind(this)} id={styles.fluidColumn} textAlign='center' width='5'><Header as='span' className={styles.columnHeader} size='small'>{this.props.user?.currentUserFollowersNum}</Header> Followers</Grid.Column>
+                                                <Grid.Column onClick={this.handleClickFollowing.bind(this)} id={styles.fluidColumn} textAlign='center' width='5'><Header as='span' className={styles.columnHeader} size='small'>{this.props.user?.currentUserFollowingNum}</Header> Following</Grid.Column>
                                             </Grid>
                                         </Item>
                                     </Segment>
@@ -275,11 +295,11 @@ class UserView extends React.Component<IProps, IState> {
                                         </Segment>
                                         <Segment id={styles.noBorders} attached>
                                             <Item>
-                                                <Header as='span' className={styles.columnHeader} size='small'>0</Header> Followers
+                                                <Header onClick={this.handleClickFollowers.bind(this)} as='span' className={styles.columnHeader} size='small'>0</Header> Followers
                                             </Item>
                                         </Segment>
                                         <Segment id={styles.noBorders} attached='bottom'>
-                                            <Item>
+                                            <Item onClick={this.handleClickFollowing.bind(this)}>
                                                 <Header as='span' className={styles.columnHeader} size='small'>0</Header> Following
                                             </Item>
                                         </Segment>
@@ -322,6 +342,7 @@ interface DispatchProps {
     followUser: (username:string,userId:string,token:string) => void,
     unfollowUser: (username:string,userId:string,token:string) => void,
     clearUserData: () => void,
+    toggleUserLikes: (fetchFunction:(startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:Array<ICreator>}>) => void,
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): DispatchProps => ({
@@ -332,6 +353,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): Disp
     followUser: bindActionCreators(FOLLOW_USER_PAGE,dispatch),
     unfollowUser: bindActionCreators(UNFOLLOW_USER_PAGE,dispatch),
     clearUserData: bindActionCreators(RESET_USER_DATA,dispatch),
+    toggleUserLikes:bindActionCreators(TOGGLE_USERS_LIST,dispatch)
 })
 
 export default withRouter(withCookies(connect(mapStateToProps, mapDispatchToProps)(UserView as ComponentType<IProps>)));
