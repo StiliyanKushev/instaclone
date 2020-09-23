@@ -502,6 +502,37 @@ async function getUserFollowing(req,res,next){
     })
 }
 
+async function getUserSearch(req,res,next){
+    let searchQuery = req.params.search;
+
+    // todo validate the token and userid
+    //let userId = req.params.userId;
+
+    let regexQuery = {
+        username: new RegExp(searchQuery, 'i'),
+    }
+
+    User.find(regexQuery).limit(10).exec(async (err,users) => {
+        if(err){
+            return res.status(200).json({
+                success:false,
+                messege: 'No match.',
+                results:[],
+            })
+        }
+
+        let newResults = [];
+        for(let usr of users){
+            newResults.push({name: usr.username})
+        }
+
+        return res.status(200).json({
+            success:true,
+            results:newResults,
+        })
+    })
+}
+
 module.exports = {
     sendAvatar,
     getSuggestedUsers,
@@ -514,4 +545,5 @@ module.exports = {
     userFollow,
     getUserFollowers,
     getUserFollowing,
+    getUserSearch,
 }

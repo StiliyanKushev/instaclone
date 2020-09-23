@@ -18,12 +18,13 @@ import { bindActionCreators } from 'redux';
 import { TOGGLE_USERS_LIST } from '../../actions/userActions';
 import { CALL_UPDATE_SELECTION, CALL_START_SEARCH, CALL_CLEAN_QUERY, CALL_FINISH_SEARCH } from '../../actions/navSearchActions';
 import { settings } from '../../settings';
+import axios from 'axios';
 
 type IProps = RouteComponentProps & ReactCookieProps & ReduxProps & DispatchProps;
 
 class NavMenu extends React.Component<IProps>{
     state = { isVisible: true }
-
+    private cancelToken:any;
     private mobileSearchBar = createRef<HTMLDivElement>();
 
     constructor(props: IProps) {
@@ -92,20 +93,35 @@ class NavMenu extends React.Component<IProps>{
 
     private handleOnSearchChange(event: React.MouseEvent<HTMLElement, MouseEvent>, data: SearchProps){
         this.props.startSearch(data.value as any);
-        setTimeout(() => {
-            if (!data.value || data.value.length === 0) {
+        
+        if (!data.value || data.value.length === 0) {
+            this.props.cleanQuery();
+            return
+        }
+
+        if (this.cancelToken) {
+            this.cancelToken.cancel();
+        }
+        this.cancelToken = axios.CancelToken.source();
+        
+        axios.get(settings.BASE_URL + `/feed/user/users/${data.value}/as/${this.props.auth?.userId}`,
+        {
+            headers: {
+            'token': this.props.auth?.token,
+            },
+            cancelToken: this.cancelToken.token
+        }).then((r) => {
+            let res = r.data;
+
+            if(res.success){
+                this.props.finishSearch(res.results);
+            }
+        })
+        .catch((error) => {
+            if (axios.isCancel(error) || error) {
                 this.props.cleanQuery();
-                return
             }
-
-            // dummy data
-            let results = [];
-            for(let i = 0; i < 10;i++){
-                results.push({name:'StiliyanKushev'});
-            }
-
-            this.props.finishSearch(results);
-        },300)
+        });
     }
 
     private searchResultRenderer(props: SearchResultProps){
