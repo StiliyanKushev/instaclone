@@ -306,12 +306,12 @@ class UserView extends React.Component<IProps, IState> {
                                             </Item>
                                         </Segment>
                                         <Segment id={styles.noBorders} attached>
-                                            <Item>
-                                                <Header onClick={this.handleClickFollowers.bind(this)} as='span' className={styles.columnHeader} size='small'>{this.props.user?.currentUserFollowersNum}</Header> Followers
+                                            <Item className={styles.cursorPointer} onClick={this.handleClickFollowers.bind(this)}>
+                                                <Header as='span' className={styles.columnHeader} size='small'>{this.props.user?.currentUserFollowersNum}</Header> Followers
                                             </Item>
                                         </Segment>
                                         <Segment id={styles.noBorders} attached='bottom'>
-                                            <Item onClick={this.handleClickFollowing.bind(this)}>
+                                            <Item className={styles.cursorPointer} onClick={this.handleClickFollowing.bind(this)}>
                                                 <Header as='span' className={styles.columnHeader} size='small'>{this.props.user?.currentUserFollowingNum}</Header> Following
                                             </Item>
                                         </Segment>

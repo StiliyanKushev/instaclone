@@ -44,6 +44,10 @@
     font-weight: lighter !important;
 }
 
+.cursorPointer{
+    cursor: pointer !important;
+}
+
 .avatar{
     cursor: pointer;
     height: 150px !important;
