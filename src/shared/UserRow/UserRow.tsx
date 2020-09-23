@@ -24,6 +24,7 @@ interface IParentProps {
     index?:number,
     isLoaded?:boolean,
     measure?:() => void
+    onActionCallback?:(didFollow:boolean) => void
 }
 
 type IProps = IParentProps & ReduxProps & DispatchProps;
@@ -35,19 +36,26 @@ interface IState {
 class UserRow extends React.PureComponent<IProps,IState>{
     private handleUnfollow(username:string){
         this.props.unfollow(this.props.index as number,username,this.props.auth?.userId as string,this.props.auth?.token as string)
+        if(this.props.onActionCallback)
+        this.props.onActionCallback(false);
     }
 
     private handleFollow(username:string){
         this.props.follow(this.props.index as number,username,this.props.auth?.userId as string,this.props.auth?.token as string)
-
+        if(this.props.onActionCallback)
+        this.props.onActionCallback(true);
     }
 
     private handleUnfollowSuggested(username:string){
         this.props.unfollowSuggested(this.props.indexSuggested as number,username,this.props.auth?.userId as string,this.props.auth?.token as string)
+        if(this.props.onActionCallback)
+        this.props.onActionCallback(false);
     }
 
     private handleFollowSuggested(username:string){
         this.props.followSuggested(this.props.indexSuggested as number,username,this.props.auth?.userId as string,this.props.auth?.token as string)
+        if(this.props.onActionCallback)
+        this.props.onActionCallback(true);
     }
 
     public render(){

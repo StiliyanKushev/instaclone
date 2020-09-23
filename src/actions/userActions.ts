@@ -7,6 +7,14 @@ import { IPostsListGrid } from '../reducers/postReducer';
 import { IOtherPost } from '../shared/PostsPartial/PostsPartial';
 import { IUserData } from '../components/UserView/UserView';
 
+export const SET_USER_INCREMENT_FOLLOWING = ():AppActions => ({
+    type: 'SET_USER_INCREMENT_FOLLOWING',
+})
+
+export const SET_USER_DECREMENT_FOLLOWING = ():AppActions => ({
+    type: 'SET_USER_DECREMENT_FOLLOWING',
+})
+
 export const CALL_USER_LOADING = ():AppActions => ({
     type: 'SET_USER_LOADING',
 });

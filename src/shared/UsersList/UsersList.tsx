@@ -24,6 +24,7 @@ import $ from 'jquery';
 import UserRow from '../UserRow/UserRow';
 
 interface IParentProps {
+    onActionCallback?:(didFollow:boolean) => void,
     customTitle?:string,
     lowerDim?: boolean,
     fetchFunction: (startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:Array<ICreator>}>
@@ -106,6 +107,7 @@ class UsersList extends React.PureComponent<IProps, IState>{
                 {({ measure, registerChild }: any) => (
                     <div className="row" ref={registerChild} style={style}>
                         <UserRow
+                            onActionCallback={this.props.onActionCallback}
                             index={index}
                             isLoaded={this.isRowLoaded({index})}
                             measure={measure}

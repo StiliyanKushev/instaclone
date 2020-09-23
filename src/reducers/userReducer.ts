@@ -326,6 +326,20 @@ const userReducer = (state = userState, action:userActionTypes) => {
             } as IUserState
         }
 
+        case 'SET_USER_INCREMENT_FOLLOWING':{
+            return {
+                ...state,
+                currentUserFollowingNum: state.currentUserFollowingNum + 1
+            } as IUserState
+        }
+
+        case 'SET_USER_DECREMENT_FOLLOWING':{
+            return {
+                ...state,
+                currentUserFollowingNum: state.currentUserFollowingNum - 1
+            } as IUserState
+        }
+
         default: {
             return {...state};
         }

@@ -33,6 +33,16 @@ const ADD_USER_LIST_ENTRIES = 'ADD_USER_LIST_ENTRIES';
 const SET_USER_LOADING = 'SET_USER_LOADING';
 const RESET_USER_DATA = 'RESET_USER_DATA';
 const SET_USER_CLEAR = 'SET_USER_CLEAR';
+const SET_USER_INCREMENT_FOLLOWING = 'SET_USER_INCREMENT_FOLLOWING';
+const SET_USER_DECREMENT_FOLLOWING = 'SET_USER_DECREMENT_FOLLOWING';
+
+export interface setUserIncrementFollowing{
+    type: typeof SET_USER_INCREMENT_FOLLOWING,
+}
+
+export interface setUserDecrementFollowing{
+    type: typeof SET_USER_DECREMENT_FOLLOWING,
+}
 
 export interface resetUserData{
     type: typeof RESET_USER_DATA,
@@ -239,6 +249,8 @@ setUnFollowUserListSuccess |
 setUnfollowUserListFailure |
 setUserUpdateAvatarFailure |
 setUnFollowUserPageSuccess |
+setUserIncrementFollowing |
+setUserDecrementFollowing |
 setFollowSuggestedFailure |
 setFollowSuggestedSuccess |
 setCurrentUserDataSuccess |

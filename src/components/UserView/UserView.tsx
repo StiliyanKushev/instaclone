@@ -13,7 +13,7 @@ import { AppActions } from '../../actions/types/actions';
 import { AppState, ReduxProps } from '../../reducers';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
-import { UPDATE_AVATAR_USER, TOGGLE_USER_POSTS_LIST, RESET_USER_AVATAR_UPLOAD, SET_CURRENT_USER_DATA, FOLLOW_USER_PAGE, UNFOLLOW_USER_PAGE, RESET_USER_DATA, TOGGLE_USERS_LIST } from '../../actions/userActions';
+import { UPDATE_AVATAR_USER, TOGGLE_USER_POSTS_LIST, RESET_USER_AVATAR_UPLOAD, SET_CURRENT_USER_DATA, FOLLOW_USER_PAGE, UNFOLLOW_USER_PAGE, RESET_USER_DATA, TOGGLE_USERS_LIST, SET_USER_INCREMENT_FOLLOWING, SET_USER_DECREMENT_FOLLOWING } from '../../actions/userActions';
 import { IPostsListGrid } from '../../reducers/postReducer';
 
 // IMPORT OTHER
@@ -233,6 +233,15 @@ class UserView extends React.Component<IProps, IState> {
         });
     }
 
+    private onActionCallback(didFollow:boolean){
+        if(didFollow){
+            this.props.incrementFollowing()
+        }
+        else{
+            this.props.decrementFollowing()
+        }
+    }
+
     public render() {
         return (
             <div className={`${styles.viewContainer} view-container`}>
@@ -244,7 +253,7 @@ class UserView extends React.Component<IProps, IState> {
                 `}</style>
                 </Helmet>
                 {
-                    this.props.user?.usersListToggled && <UsersList customTitle={this.customTitle} lowerDim={false} fetchFunction={this.props.user?.currentUsersFetchFunction}/>
+                    this.props.user?.usersListToggled && <UsersList onActionCallback={this.onActionCallback.bind(this)} customTitle={this.customTitle} lowerDim={false} fetchFunction={this.props.user?.currentUsersFetchFunction}/>
                 }
                 <Container className={styles.container}>
                     <Grid>
@@ -354,6 +363,8 @@ interface DispatchProps {
     followUser: (username:string,userId:string,token:string) => void,
     unfollowUser: (username:string,userId:string,token:string) => void,
     clearUserData: () => void,
+    incrementFollowing: () => void,
+    decrementFollowing: () => void,
     toggleUserLikes: (fetchFunction:(startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:Array<ICreator>}>) => void,
 }
 
@@ -365,7 +376,9 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): Disp
     followUser: bindActionCreators(FOLLOW_USER_PAGE,dispatch),
     unfollowUser: bindActionCreators(UNFOLLOW_USER_PAGE,dispatch),
     clearUserData: bindActionCreators(RESET_USER_DATA,dispatch),
-    toggleUserLikes:bindActionCreators(TOGGLE_USERS_LIST,dispatch)
+    toggleUserLikes:bindActionCreators(TOGGLE_USERS_LIST,dispatch),
+    incrementFollowing: bindActionCreators(SET_USER_INCREMENT_FOLLOWING,dispatch),
+    decrementFollowing: bindActionCreators(SET_USER_DECREMENT_FOLLOWING,dispatch),
 })
 
 export default withRouter(withCookies(connect(mapStateToProps, mapDispatchToProps)(UserView as ComponentType<IProps>)));
