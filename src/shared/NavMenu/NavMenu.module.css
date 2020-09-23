@@ -3,6 +3,19 @@
     display: none !important;
 }
 
+.verySmallImg{
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 100% !important;
+    margin-right: 10px !important;
+}
+
+.usernameRowLink {
+    display: flex !important;
+    color: rgb(33,33,33) !important;
+    align-items: center;
+}
+
 .LinkContainer,.LinkContainer:hover{
     color: rgb(55,55,55);
 }

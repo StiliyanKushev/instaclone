@@ -4,7 +4,7 @@ import styles from './NavMenu.module.css';
 // IMPORT REACT RELATED
 import React, { createRef, ComponentType } from 'react';
 import { ReactCookieProps, withCookies } from 'react-cookie';
-import { Menu, Container, Item, Search, Icon, Ref } from 'semantic-ui-react';
+import { Menu, Container, Item, Search, Icon, Ref, SearchResultProps, SearchResultData, SearchProps, Image } from 'semantic-ui-react';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 
 // IMPORT OTHER
@@ -16,6 +16,8 @@ import { AppActions } from '../../actions/types/actions';
 import { TOGGLE_FULL_POST_VIEW } from '../../actions/postActions';
 import { bindActionCreators } from 'redux';
 import { TOGGLE_USERS_LIST } from '../../actions/userActions';
+import { CALL_UPDATE_SELECTION, CALL_START_SEARCH, CALL_CLEAN_QUERY, CALL_FINISH_SEARCH } from '../../actions/navSearchActions';
+import { settings } from '../../settings';
 
 type IProps = RouteComponentProps & ReactCookieProps & ReduxProps & DispatchProps;
 
@@ -84,6 +86,37 @@ class NavMenu extends React.Component<IProps>{
         return (this.props.location.pathname === '/' && path === '/') || (path !== '/' && this.props.location.pathname.startsWith(path)) ? '' : prefix + 'outline';
     }
 
+    private handleOnResultSelect(event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: SearchResultData){
+        this.props.updateSelection(data.result.name)
+    }
+
+    private handleOnSearchChange(event: React.MouseEvent<HTMLElement, MouseEvent>, data: SearchProps){
+        this.props.startSearch(data.value as any);
+        setTimeout(() => {
+            if (!data.value || data.value.length === 0) {
+                this.props.cleanQuery();
+                return
+            }
+
+            // dummy data
+            let results = [];
+            for(let i = 0; i < 10;i++){
+                results.push({name:'StiliyanKushev'});
+            }
+
+            this.props.finishSearch(results);
+        },300)
+    }
+
+    private searchResultRenderer(props: SearchResultProps){
+        return (
+            <Link className={styles.usernameRowLink} to={`/profile/${props.name}`}>
+                <Image className={styles.verySmallImg} circular size='tiny' src={`${settings.BASE_URL}/feed/photo/user/${props.name}`}></Image>
+                <p>{props.name}</p>
+            </Link>
+        )
+    }
+
     public render() {
         if (!this.state.isVisible) return ''
         return (
@@ -95,7 +128,15 @@ class NavMenu extends React.Component<IProps>{
                         </Item>
                     </Link>
                     <Item className={`right ${styles.searchItem}`}>
-                        <Search placeholder='Search' />
+                        <Search 
+                        loading={this.props.navSearch?.loading} 
+                        value={this.props.navSearch?.value}
+                        results={this.props.navSearch?.results}
+                        onResultSelect={this.handleOnResultSelect.bind(this)}
+                        onSearchChange={this.handleOnSearchChange.bind(this)}
+                        resultRenderer={this.searchResultRenderer.bind(this)}
+
+                        placeholder='Search' />
                     </Item>
                     <Item className='right'>
                         <Icon onClick={this.handleMobileSearchClick} className={`${styles.searchBtn} ${styles.iconBtn}`} name='search' size='big'></Icon>
@@ -130,16 +171,25 @@ const mapStateToProps = (state: AppState): ReduxProps => ({
     post: state.post,
     auth: state.auth,
     user: state.user,
+    navSearch: state.navSearch,
 })
 
 interface DispatchProps {
     toggleUserList: () => void,
     toggleFullView: () => void,
+    updateSelection: (selection:string) => void,
+    startSearch: (value:string) => void,
+    cleanQuery: () => void,
+    finishSearch: (results:Array<{name:string}>) => void,
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): DispatchProps => ({
     toggleFullView: bindActionCreators(TOGGLE_FULL_POST_VIEW, dispatch),
     toggleUserList: bindActionCreators(TOGGLE_USERS_LIST,dispatch),
+    updateSelection: bindActionCreators(CALL_UPDATE_SELECTION,dispatch),
+    startSearch: bindActionCreators(CALL_START_SEARCH,dispatch),
+    cleanQuery: bindActionCreators(CALL_CLEAN_QUERY,dispatch),
+    finishSearch: bindActionCreators(CALL_FINISH_SEARCH,dispatch),
 })
 
 export default React.memo(withRouter(withCookies(connect(mapStateToProps, mapDispatchToProps)(NavMenu as ComponentType<IProps>)) as any));

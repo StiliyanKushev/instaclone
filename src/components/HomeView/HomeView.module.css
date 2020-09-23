@@ -84,6 +84,10 @@
     outline: none;
 }
 
+.secondColumn{
+    z-index: 0;
+}
+
 @media screen and (max-width:645px){
     #gridID{
         margin-left: 0rem !important;
