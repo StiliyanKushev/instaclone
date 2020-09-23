@@ -276,7 +276,19 @@ class UserView extends React.Component<IProps, IState> {
                                         </Item>
                                     </Segment>
                                     <Segment id={styles.noBorders} className={styles.userSettingsBtns2} attached>
-                                        <Button size='mini' className={styles.editBtn2} onClick={this.handleEditProfileClick} secondary>Edit Profile</Button><Button onClick={this.handleSettingClick} className={styles.settingsBtn2} size='mini' primary icon='setting'></Button>
+                                    {
+                                                    this.urlUsername === this.props.auth?.username && 
+                                                    <React.Fragment><Button size='mini' className={styles.editBtn2} onClick={this.handleEditProfileClick} secondary>Edit Profile</Button><Button onClick={this.handleSettingClick} className={styles.settingsBtn2} size='mini' primary icon='setting'></Button></React.Fragment>
+                                                }
+                                                {
+                                                    this.urlUsername !== this.props.auth?.username && (
+                                                        this.props.user?.isCurrentUserFollowed ?
+                                                            <React.Fragment><Button size='mini' className={styles.editBtn2} onClick={() => {}} secondary>Messege</Button><Button className={styles.settingsBtn2} size='mini' onClick={this.unfollowUser.bind(this)} primary icon='remove user'/></React.Fragment>
+                                                        :
+                                                        <Button size='mini' className={styles.editBtn3} onClick={this.followUser.bind(this)} primary>Follow</Button>
+                                                    )
+                                                }
+                                        {/*  */}
                                     </Segment>
                                     <Segment id={styles.noBorders} className={styles.stats} attached='bottom'>
                                         <Item id={styles.fluidItems}>
@@ -290,17 +302,17 @@ class UserView extends React.Component<IProps, IState> {
                                     <div id={styles.noBorders} className={styles.stats2}>
                                         <Segment id={styles.noBorders} attached>
                                             <Item>
-                                                <Header as='span' className={styles.columnHeader} size='small'>0</Header> Posts
+                                                <Header as='span' className={styles.columnHeader} size='small'>{this.props.user?.currentUserPostsNum}</Header> Posts
                                             </Item>
                                         </Segment>
                                         <Segment id={styles.noBorders} attached>
                                             <Item>
-                                                <Header onClick={this.handleClickFollowers.bind(this)} as='span' className={styles.columnHeader} size='small'>0</Header> Followers
+                                                <Header onClick={this.handleClickFollowers.bind(this)} as='span' className={styles.columnHeader} size='small'>{this.props.user?.currentUserFollowersNum}</Header> Followers
                                             </Item>
                                         </Segment>
                                         <Segment id={styles.noBorders} attached='bottom'>
                                             <Item onClick={this.handleClickFollowing.bind(this)}>
-                                                <Header as='span' className={styles.columnHeader} size='small'>0</Header> Following
+                                                <Header as='span' className={styles.columnHeader} size='small'>{this.props.user?.currentUserFollowingNum}</Header> Following
                                             </Item>
                                         </Segment>
                                     </div>

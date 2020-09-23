@@ -66,7 +66,7 @@
     display: none;
 }
 
-@media screen and (max-width:660px){
+@media screen and (max-width:758px){
     .userSettingsBtns{
         display: none !important;
     }
@@ -77,6 +77,10 @@
 
     .editBtn2{
         width: calc(100% - 3rem) !important;
+    }
+
+    .editBtn3{
+        width: 100% !important;
     }
 }
 
@@ -107,7 +111,8 @@
     }
 
     .stats2{
-        display: block;
+        display: flex;
+        flex-direction: row !important;
     }
 
     .stats2 *{
