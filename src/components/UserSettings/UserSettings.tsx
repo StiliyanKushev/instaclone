@@ -56,6 +56,13 @@ class UserSettings extends React.Component<IProps,IState> {
                 <Menu size='massive' vertical>
                     <Segment className={styles.segmentPaddingNone} attached='top'>
                         <Menu.Item>
+                            <Link to='/forgot-password'>
+                                <Header as='span' size='tiny' textAlign='center'>Forgot password</Header>
+                            </Link>
+                        </Menu.Item>
+                    </Segment>
+                    <Segment className={styles.segmentPaddingNone} attached>
+                        <Menu.Item>
                             <Link to='#'>
                                 <Header onClick={() => this.setState({showTabView:'change-password'})} as='span' size='tiny' textAlign='center'>Change password</Header>
                             </Link>
