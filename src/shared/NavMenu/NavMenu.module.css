@@ -51,8 +51,9 @@
     position: absolute;
     bottom: -4rem;
     width: 100%;
-    background: rgb(206, 206, 206);
     padding: .7rem;
+    margin-bottom: 2px !important;
+    background: rgb(243,243,243);
 }
 
 .searchBar > *{

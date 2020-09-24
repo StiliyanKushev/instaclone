@@ -145,14 +145,13 @@ class NavMenu extends React.Component<IProps>{
                     </Link>
                     <Item className={`right ${styles.searchItem}`}>
                         <Search 
-                        loading={this.props.navSearch?.loading} 
-                        value={this.props.navSearch?.value}
-                        results={this.props.navSearch?.results}
-                        onResultSelect={this.handleOnResultSelect.bind(this)}
-                        onSearchChange={this.handleOnSearchChange.bind(this)}
-                        resultRenderer={this.searchResultRenderer.bind(this)}
-
-                        placeholder='Search' />
+                            loading={this.props.navSearch?.loading} 
+                            value={this.props.navSearch?.value}
+                            results={this.props.navSearch?.results}
+                            onResultSelect={this.handleOnResultSelect.bind(this)}
+                            onSearchChange={this.handleOnSearchChange.bind(this)}
+                            resultRenderer={this.searchResultRenderer.bind(this)}
+                            placeholder='Search' />
                     </Item>
                     <Item className='right'>
                         <Icon onClick={this.handleMobileSearchClick} className={`${styles.searchBtn} ${styles.iconBtn}`} name='search' size='big'></Icon>
@@ -175,7 +174,14 @@ class NavMenu extends React.Component<IProps>{
                 </Container>
                 <Ref innerRef={this.mobileSearchBar}>
                     <Container fluid className={styles.searchBar}>
-                        <Search placeholder='Search' />
+                        <Search
+                            loading={this.props.navSearch?.loading} 
+                            value={this.props.navSearch?.value}
+                            results={this.props.navSearch?.results}
+                            onResultSelect={this.handleOnResultSelect.bind(this)}
+                            onSearchChange={this.handleOnSearchChange.bind(this)}
+                            resultRenderer={this.searchResultRenderer.bind(this)}
+                            placeholder='Search'/>
                     </Container>
                 </Ref>
             </Menu>
