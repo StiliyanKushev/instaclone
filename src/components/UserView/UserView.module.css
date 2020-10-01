@@ -64,6 +64,7 @@
     width: -webkit-fit-content !important;
     width: -moz-fit-content !important;
     width: fit-content !important;
+    padding-left: 0rem !important;
 }
 
 .userSettingsBtns2{

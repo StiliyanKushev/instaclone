@@ -79,6 +79,7 @@ class App extends React.Component<IProps,any> {
                 <CustomRoute exact path='/profile/:name' component={UserView} {...this.privateOnly}/>
                 <CustomRoute exact path='/post/:id' component={PostPageView} {...this.privateOnly}/>
 
+                <Route exact path='/404' component={Error404}/>
                 <Route exact path='*' component={Error404}/>
               </Switch>
             </main>

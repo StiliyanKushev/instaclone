@@ -7,8 +7,7 @@ import { ReactCookieProps, withCookies } from 'react-cookie';
 import { Menu, Container, Item, Search, Icon, Ref, SearchResultProps, SearchResultData, SearchProps, Image } from 'semantic-ui-react';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 
-// IMPORT OTHER
-import $ from 'jquery';
+// IMPORT REDUX RELETED
 import { connect } from 'react-redux';
 import { AppState, ReduxProps } from '../../reducers/index';
 import { ThunkDispatch } from 'redux-thunk';
@@ -17,6 +16,9 @@ import { TOGGLE_FULL_POST_VIEW } from '../../actions/postActions';
 import { bindActionCreators } from 'redux';
 import { TOGGLE_USERS_LIST } from '../../actions/userActions';
 import { CALL_UPDATE_SELECTION, CALL_START_SEARCH, CALL_CLEAN_QUERY, CALL_FINISH_SEARCH } from '../../actions/navSearchActions';
+
+// IMPORT OTHER
+import $ from 'jquery';
 import { settings } from '../../settings';
 import axios from 'axios';
 

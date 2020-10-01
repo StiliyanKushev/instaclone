@@ -533,6 +533,23 @@ async function getUserSearch(req,res,next){
     })
 }
 
+async function isUserValid(req,res,next){
+    let username = req.params.username;
+
+    let gotUser = await User.findOne({username});
+
+    if(gotUser){
+        return res.status(200).json({
+            success:true,
+        })
+    }
+    else{
+        return res.status(200).json({
+            success:false,
+        })
+    }
+}
+
 module.exports = {
     sendAvatar,
     getSuggestedUsers,
@@ -546,4 +563,5 @@ module.exports = {
     getUserFollowers,
     getUserFollowing,
     getUserSearch,
+    isUserValid
 }

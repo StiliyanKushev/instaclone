@@ -31,6 +31,7 @@ import IGenericResponse from '../../types/response';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { ICreator } from '../../types/auth';
 import UsersList from '../../shared/UsersList/UsersList';
+import axios from 'axios';
 
 export interface IUserData {
     posts: number,
@@ -73,6 +74,16 @@ class UserView extends React.Component<IProps, IState> {
         this.setupAvatarHandlerUpload = this.setupAvatarHandlerUpload.bind(this);
         this.setFetchFunction = this.setFetchFunction.bind(this);
         this.setUserData = this.setUserData.bind(this);
+
+        (async () => {if(!await this.isUserValid()){
+            this.props.history.push('/404')
+        }})()
+    }
+
+    private async isUserValid(){
+        let res = await axios.get(settings.BASE_URL + `/feed/user/isValid/${this.urlUsername}`,{headers:{'token':this.props.auth?.token}})
+        if(res.data.success) return true;
+        else return false;
     }
 
     get urlUsername(): string{
