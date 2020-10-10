@@ -21,6 +21,7 @@ import IGenericResponse from '../../types/response';
 import UserPostCell from '../../shared/UserPostCell/UserPostCell';
 import { IPostsListGrid } from '../../reducers/postReducer';
 import { IPost, IOtherPost } from '../../shared/PostsPartial/PostsPartial';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 
 interface IParentProps {
@@ -28,7 +29,7 @@ interface IParentProps {
     refreshProp: any, // this is used to refresh the whole component *(has to be unique everytime)
 }
 
-type IProps = IParentProps & ReduxProps & DispatchProps;
+type IProps = IParentProps & ReduxProps & DispatchProps & RouteComponentProps;
 
 interface IState {
     hasMorePosts: boolean,
@@ -60,6 +61,10 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
     }
 
     public componentDidUpdate(oldProps:IProps){
+        if (this.props.location !== oldProps.location) {
+            this.onRouteChanged(oldProps);
+        }
+
         if(oldProps.refreshProp !== this.props.refreshProp){
             this.setState(() => {
                 window.scrollTo({top:0})
@@ -232,6 +237,12 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
         }
     }
 
+    private onRouteChanged(prevProps: RouteComponentProps) {
+        if(this.props.location.pathname !== prevProps.location.pathname && this.props.location.pathname.startsWith('/profile/')){
+            this.setState({userHasPosts:true,userHasSavedPosts:true})
+        }        
+    }
+
     public render() {
         if(this.props.refreshProp === 'saved' && !this.state.userHasSavedPosts){
             return <Header className={styles.noPosts}>User has no saved posts.<Icon name='save'></Icon></Header>
@@ -307,4 +318,4 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): Disp
     clearUserData: bindActionCreators(SET_USER_DATA_CLEAR,dispatch)
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserPostsGrid as ComponentType<IProps>);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(UserPostsGrid as ComponentType<IProps>));
