@@ -104,9 +104,10 @@ class UserView extends React.Component<IProps, IState> {
     }
 
     public componentDidMount() {
-        this.setupAvatarHandlerUpload()
-        this.setFetchFunction(getUserPostsRecent)
+        this.setupAvatarHandlerUpload();
+        this.setFetchFunction(getUserPostsRecent);
         this.setUserData();
+        this.resetImgSrc();
     }
 
     public componentWillUnmount() {
@@ -119,7 +120,7 @@ class UserView extends React.Component<IProps, IState> {
             this.resetImgSrc();
             this.setUserData();
             this.setFetchFunction(getUserPostsRecent);
-            this.setState({refreshProp:'' + Math.random()})
+            this.setState({refreshProp:'' + Math.random()});
         }        
     }
 

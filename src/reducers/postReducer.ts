@@ -248,6 +248,8 @@ const postReducer = (state = postState, action:postActionTypes) => {
                     parentComment.moreToggled = false;
                     parentComment.subComments = [] as any;
                 }
+
+                state.fullViewPostData = emptyFullViewPostData;
             }
 
             return {
@@ -281,18 +283,35 @@ const postReducer = (state = postState, action:postActionTypes) => {
         }
 
         case 'SET_FULL_POST_LIKE_SUCCESS':{
+            // :ugly: loop the home view posts and update the one with correct id
+            const homeAction = (like: boolean) => {
+                if (action.payload.id && state.homePosts && state.homePosts.length > 0)
+                    for (let i = 0; i < state.homePosts.length; i++) {
+                        if (state.homePosts[i]._id === action.payload.id) {
+                            state.homePosts[i].isLiked = like;
+                            state.homePosts[i].likesCount += like ? 1 : -1;
+                            break;
+                        }
+                    }
+            }
+
             if(action.payload.didFetch === true){
                 if(!state.fullViewPostData.isLiked){
                     // change the value of specific index to increment
                     state.fullViewPostData.likesCount++;
+                    homeAction(true)
                 }
                 else{
                     // change the value of specific index to decrement
                     state.fullViewPostData.likesCount--;
+                    homeAction(false)
                 }
     
                 // update the isliked value of the post
                 state.fullViewPostData.isLiked = !state.fullViewPostData.isLiked;
+            }
+            else{
+                console.log('here')
             }
 
             return {
@@ -311,9 +330,21 @@ const postReducer = (state = postState, action:postActionTypes) => {
         }
 
         case 'SET_FULL_POST_SAVE_SUCCESS':{
+            // :ugly: loop the home view posts and update the one with correct id
+            const homeAction = (save: boolean) => {
+                if (action.payload.id && state.homePosts && state.homePosts.length > 0)
+                    for (let i = 0; i < state.homePosts.length; i++) {
+                        if (state.homePosts[i]._id === action.payload.id) {
+                            state.homePosts[i].isSaved = save;
+                            break;
+                        }
+                    }
+            }
+
             if(action.payload.didFetch === true){    
                 // update the isliked value of the post
                 state.fullViewPostData.isSaved = !state.fullViewPostData.isSaved;
+                homeAction(state.fullViewPostData.isSaved);
             }
 
             return {

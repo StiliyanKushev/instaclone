@@ -130,11 +130,12 @@ export const CALL_FULL_POST_LIKE_FAILURE = (messege:string):AppActions => ({
     }
 });
 
-export const CALL_FULL_POST_LIKE_SUCCESS = (messege:string,didFetch?:boolean):AppActions => ({
+export const CALL_FULL_POST_LIKE_SUCCESS = (messege:string,didFetch?:boolean,id?:string):AppActions => ({
     type: 'SET_FULL_POST_LIKE_SUCCESS',
     payload:{
         messege,
         didFetch,
+        id,
     }
 });
 
@@ -145,11 +146,12 @@ export const CALL_FULL_POST_SAVE_FAILURE = (messege:string):AppActions => ({
     }
 });
 
-export const CALL_FULL_POST_SAVE_SUCCESS = (messege:string,didFetch?:boolean):AppActions => ({
+export const CALL_FULL_POST_SAVE_SUCCESS = (messege:string,didFetch?:boolean,id?:string):AppActions => ({
     type: 'SET_FULL_POST_SAVE_SUCCESS',
     payload:{
         messege,
         didFetch,
+        id,
     }
 });
 
@@ -395,7 +397,7 @@ export const LIKE_FULL_POST = (postId?:string,userId?:string,token?:string) => (
         let promise:Promise<IGenericResponse> = likePost(postId,userId,token);
         promise.then((res:IGenericResponse) => {
             if(res.success){
-                dispatch(CALL_FULL_POST_LIKE_SUCCESS(res.messege,true));
+                dispatch(CALL_FULL_POST_LIKE_SUCCESS(res.messege,true,postId));
             }
             else{
                 dispatch(CALL_FULL_POST_LIKE_FAILURE(res.messege));
@@ -412,7 +414,7 @@ export const SAVE_FULL_POST = (postId?:string,userId?:string,token?:string) => (
         let promise:Promise<IGenericResponse> = savePost(postId,userId,token);
         promise.then((res:IGenericResponse) => {
             if(res.success){
-                dispatch(CALL_FULL_POST_SAVE_SUCCESS(res.messege,true));
+                dispatch(CALL_FULL_POST_SAVE_SUCCESS(res.messege,true,postId));
             }
             else{
                 dispatch(CALL_FULL_POST_SAVE_FAILURE(res.messege));

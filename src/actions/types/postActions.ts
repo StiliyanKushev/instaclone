@@ -200,6 +200,7 @@ export interface setFullPostLikeSuccess {
     payload:{
         messege:string,
         didFetch?:boolean,
+        id?:string,
     }
 }
 
@@ -215,6 +216,7 @@ export interface setFullPostSaveSuccess {
     payload:{
         messege:string,
         didFetch?:boolean,
+        id?:string,
     }
 }
 

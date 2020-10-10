@@ -184,7 +184,7 @@ class PostsPartial extends React.PureComponent<IProps>{
 
 const mapStateToProps = (state:AppState):ReduxProps => ({
     post:state.post,
-    auth:state.auth
+    auth:state.auth,
 })
 
 interface DispatchProps {
