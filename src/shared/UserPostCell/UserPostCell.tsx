@@ -7,8 +7,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Segment, Grid, Header, Placeholder, PlaceholderImage } from 'semantic-ui-react';
 
-// IMPORT REDUX RELETED
-
 // IMPORT OTHER
 import { IPost } from '../PostsPartial/PostsPartial';
 

@@ -1,5 +1,6 @@
 import { IPost, IPostComment } from './../shared/PostsPartial/PostsPartial';
 import { postActionTypes } from "../actions/types/postActions";
+import { IOtherPost } from '../shared/PostsPartial/PostsPartial';
 
 export type IFullViewPostCommentList = Array<IPostComment & {isDescription?:boolean}>;
 export type IFullViewPostData = IPost & {commentsList:IFullViewPostCommentList};
@@ -24,6 +25,7 @@ export interface IPostState {
     fullViewPostIndex:number,
     currentReplyingComment:number,
     currentReplyingSubComment:number,
+    currentExplorerGrid:Array<Array<IOtherPost>>,
     didJustReplyToComment:boolean,
     fullViewOtherPosts: IPostsListGrid,
 }
@@ -62,7 +64,8 @@ const postState:IPostState = {
     currentReplyingComment: -1,
     currentReplyingSubComment: -1,
     didJustReplyToComment: false,
-    fullViewOtherPosts: [] as any
+    fullViewOtherPosts: [] as any,
+    currentExplorerGrid: [] as any,
 }
 
 const postReducer = (state = postState, action:postActionTypes) => {
@@ -481,6 +484,15 @@ const postReducer = (state = postState, action:postActionTypes) => {
             return {
                 ...state,
                 isPostUploaded: false
+            } as IPostState
+        }
+
+        case 'ADD_EXPLORER_POSTS_ROW_LIST':{
+            for(let row of action.payload.posts){
+                state.currentExplorerGrid.push(row)
+            }
+            return {
+                ...state,
             } as IPostState
         }
 

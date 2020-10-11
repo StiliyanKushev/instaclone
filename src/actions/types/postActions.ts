@@ -1,5 +1,5 @@
 import { IPost } from './../../shared/PostsPartial/PostsPartial';
-import { IPostComment } from '../../shared/PostsPartial/PostsPartial';
+import { IPostComment, IOtherPost } from '../../shared/PostsPartial/PostsPartial';
 
 const SET_FULL_POST_COMMENT_FAILURE = 'SET_FULL_POST_COMMENT_FAILURE';
 const SET_FULL_POST_COMMENT_SUCCESS = 'SET_FULL_POST_COMMENT_SUCCESS';
@@ -31,6 +31,7 @@ const SET_OTHER_POST_DATA_LOADING_DONE = 'SET_OTHER_POST_DATA_LOADING_DONE';
 const SET_SAVE_OTHER_POSTS = 'SET_SAVE_OTHER_POSTS';
 const SET_RENEW_OTHER_POSTS = 'SET_RENEW_OTHER_POSTS';
 const RESET_POST_UPLOADED = 'RESET_POST_UPLOADED';
+const ADD_EXPLORER_POSTS_ROW_LIST = 'ADD_EXPLORER_POSTS_ROW_LIST';
 
 export interface resetPostUploaded{
     type: typeof RESET_POST_UPLOADED,
@@ -241,17 +242,24 @@ export interface addCommentsPost {
     }
 }
 
-export interface setToggleFullPostView{
+export interface setToggleFullPostView {
     type: typeof SET_TOGGLE_FULL_POST_VIEW,
     payload: {
         postIndex?:number
     }
 }
 
-export interface setFullPostDataView{
+export interface setFullPostDataView {
     type: typeof SET_FULL_POST_DATA_VIEW,
     payload: {
         postData:IPost
+    }
+}
+
+export interface addExplorerPostsRowList {
+    type: typeof ADD_EXPLORER_POSTS_ROW_LIST,
+    payload: {
+        posts: Array<Array<IOtherPost>>
     }
 }
 
@@ -260,6 +268,7 @@ setOtherPostDataLoadingDone |
 setFullPostCommentFailure | 
 setFullPostCommentSuccess | 
 setOtherPostDataLoading |
+addExplorerPostsRowList |
 setFullPostSaveSuccess |
 setFullPostSaveFailure |
 setFullPostLikeSuccess |

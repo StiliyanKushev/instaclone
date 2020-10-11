@@ -3,7 +3,7 @@ import { AppActions } from "./types/actions";
 import { Dispatch } from "react";
 import IGenericResponse from "../types/response";
 import { uploadPost, commentPost, likePost, likeComment, getSubComments, getPostData, getOtherPosts, renewOtherPost, savePost } from '../handlers/post';
-import { IPostComment } from '../shared/PostsPartial/PostsPartial';
+import { IPostComment, IOtherPost } from '../shared/PostsPartial/PostsPartial';
 import { IPostCommentResponse, ICommentsChunkResponse } from '../types/response';
 
 export const SET_REPLYING_COMMENT = (commentIndex:number,subCommentIndex?:number):AppActions => ({
@@ -422,3 +422,10 @@ export const SAVE_FULL_POST = (postId?:string,userId?:string,token?:string) => (
         });
     }
 }
+
+export const ADD_EXPLORER_POSTS_ROW_LIST = (posts: Array<Array<IOtherPost>>):AppActions => ({
+    type: 'ADD_EXPLORER_POSTS_ROW_LIST',
+    payload: {
+        posts
+    }
+})

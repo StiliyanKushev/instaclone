@@ -166,6 +166,11 @@
     height: 100vh !important;
 }
 
+.viewContainerNoMargin{
+    height: 100vh !important;
+    margin-top: -6rem !important;
+}
+
 .vgridContainer{
     width: 100%;
     height: 50vh !important;

@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const authCheck = require('../config/auth-check');
-const {renewOtherPosts,getOtherPosts,getPost,getCommentsFromComment,createPost,getPopularFromAllPost,commentPost,likePost,likeComment,getCommentsFromPost,getLikesFromPost,getLikesFromComment} = require('../handlers/posts');
+const {getExploreChunk,renewOtherPosts,getOtherPosts,getPost,getCommentsFromComment,createPost,getPopularFromAllPost,commentPost,likePost,likeComment,getCommentsFromPost,getLikesFromPost,getLikesFromComment} = require('../handlers/posts');
 const {isUserValid,getUserSearch,getUserFollowers,getUserFollowing,userFollow,userUnfollow,getUserData,userSavePost,getUserPostsRecent,getUserPostsPopular,getUserPostsSaved,sendAvatar,getSuggestedUsers} = require('../handlers/user');
 const multer = require('multer'); 
 const User = require('../models/User');
@@ -58,6 +58,7 @@ router.post('/comments/:id/like',authCheck,likeComment)
 router.get('/comments/:id/likes/:startIndex/:stopIndex/as/:userId',authCheck,getLikesFromComment)
 router.get('/comments/:id/subcomments/:startIndex/:stopIndex/as/:userId',authCheck,getCommentsFromComment)
 router.post('/posts/:id/like',authCheck,likePost)
+router.get('/posts/explore/:startIndex/:stopIndex/as/:username',authCheck,getExploreChunk)
 
 //users
 router.get('/user/suggested/:userId',authCheck,getSuggestedUsers)

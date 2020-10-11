@@ -233,7 +233,7 @@ class UserPostsGrid extends React.PureComponent<IProps, IState>{
         }
 
         else if(w <= 640){
-            this.setState({cellSize:w * 0.3})
+            this.setState({cellSize:w * 0.28})
         }
     }
 

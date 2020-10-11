@@ -1,5 +1,6 @@
 import IGenericResponse from "../types/response";
 import { postFormData, get, post } from "./api";
+import { IOtherPost } from '../shared/PostsPartial/PostsPartial';
 
 export function uploadPost(form: FormData,username:string,token:string) {
     let data = {
@@ -44,17 +45,8 @@ export function commentPost(postId:string,comment:string,userId:string,token:str
     return post<typeof data,IGenericResponse>(data,`/feed/posts/${postId}/comment`,token).then((res:any) => res.data);
 }
 
-export function renewOtherPost(id:string,others:[{
-    likesCount: number;
-    source: {
-        data: any;
-        contentType: string;
-    };
-    _id: string;
-}],userId:string,token:string){
-
+export function renewOtherPost(id:string,others:[IOtherPost],userId:string,token:string){
     let othersArr = [];
-
     for(let p of others){
         othersArr.push({_id:p._id})
     }
@@ -94,4 +86,8 @@ export function getUserLikesFromPost(startIndex:number,stopIndex:number,userId:s
 
 export function getNewCommentsChunk(startIndex:number,stopIndex:number,id:string,userId:string,token:string){
     return get<IGenericResponse>(`/feed/posts/${id}/comments/${startIndex}/${stopIndex}/as/${userId}`,token).then((res: any) => res.data);
+}
+
+export function getExploreChunck(startIndex:number,stopIndex:number,username:string,token:string){
+    return get<IGenericResponse>(`/feed/posts/explore/${startIndex}/${stopIndex}/as/${username}`,token).then((res: any) => res.data);
 }

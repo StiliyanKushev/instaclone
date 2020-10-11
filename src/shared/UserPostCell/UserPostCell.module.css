@@ -106,3 +106,16 @@
         font-size: small !important;
     }
 }
+
+@media screen and (max-width:640px){
+    .imageOther{
+        padding: 2px !important;
+    }
+
+    .dimmer{
+        width: calc(100% - 2px) !important;
+        height: calc(100% - 2px) !important;
+        top: calc(-100% + -3px) !important;
+        margin-left: 1px !important;
+    }
+}

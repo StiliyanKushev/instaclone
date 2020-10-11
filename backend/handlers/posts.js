@@ -805,6 +805,52 @@ async function getLikesFromComment(req,res,next){
     })
 }
 
+async function getExploreChunk(req,res,next){
+    let startIndex = Number(req.params.startIndex);
+    let stopIndex = Number(req.params.stopIndex);
+
+    let givenUser = await User.find({username:req.params.username});
+
+    Post.count().exec(async function (err, count) {
+        let limit = stopIndex - startIndex
+
+        if(startIndex >= count){
+            return res.status(200).json({
+                success:true,
+                posts:[]
+            })
+        }
+
+        if(stopIndex >= count){
+            limit = count - startIndex
+        }
+
+        Post.find().skip(startIndex).limit(limit).sort({date: 'asc'}).exec(async (err,posts) => {
+            if(err){
+                console.log(err);
+                return res.status(200).json({
+                    success:false,
+                    posts:[]
+                })
+            }
+
+            let newPosts = [];
+
+            for(let post of posts){
+                newPosts.push({
+                    _id:post.id,
+                    likesCount:post.likesCount,
+                    source:post.smallSource,
+                })
+            }
+
+            return res.status(200).json({
+                success:true,
+                posts:newPosts,
+            })
+        })
+    })
+}
 module.exports = {
     createPost,
     getPopularFromAllPost,
@@ -817,5 +863,6 @@ module.exports = {
     getLikesFromComment,
     getCommentsFromComment,
     getOtherPosts,
-    renewOtherPosts
+    renewOtherPosts,
+    getExploreChunk
 }
