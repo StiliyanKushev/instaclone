@@ -106,7 +106,7 @@ class NavMenu extends React.Component<IProps>{
         }
         this.cancelToken = axios.CancelToken.source();
         
-        axios.get(settings.BASE_URL + `/feed/user/users/${data.value}/as/${this.props.auth?.userId}`,
+        axios.get(settings.BASE_URL + `/feed/user/users/${data.value}/as/${this.props.auth?.userId}/more`,
         {
             headers: {
             'token': this.props.auth?.token,

@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const UserSavePost = require("../models/UserSavePost");
 const sharp = require('sharp');
 const UserFollow = require("../models/UserFollow");
+const userDirectItem = require("../models/UserDirectItem");
 
 async function getSuggestedUsers(req,res,next){
     User.count().exec(async function (err, count) {
@@ -512,7 +513,13 @@ async function getUserSearch(req,res,next){
         username: new RegExp(searchQuery, 'i'),
     }
 
-    User.find(regexQuery).limit(10).exec(async (err,users) => {
+    let limit = 4;
+
+    if(req.params.cmd === 'more'){
+        limit = 10;
+    }
+
+    User.find(regexQuery).limit(limit).exec(async (err,users) => {
         if(err){
             return res.status(200).json({
                 success:false,
@@ -550,6 +557,60 @@ async function isUserValid(req,res,next){
     }
 }
 
+async function addUserToDirectList(req,res,next){
+    let username = req.params.username;
+
+    User.findById(req.body.userId).then(async (user) => {
+        if(!user){
+            return res.status(200).json({
+                success:false,
+                messege: 'The user trying to like a post is not valid.'
+            })
+        }
+
+        const tempToken = jwt.sign(user.id,'s0m3 r4nd0m str1ng')
+
+        //check if user is the one from the username's user id
+        if(tempToken !== req.headers.token){
+            return res.status(401).end('Cannot like a post from different account');
+        }
+
+        User.findOne({username:username}).then(async (asUserItem) => {
+            if(!asUserItem){
+                return res.status(200).json({
+                    success:false,
+                    messege: 'The selected user does not exist'
+                })
+            }
+
+            let isAlreadyThere = await userDirectItem.findOne({forUser:user,asUser:asUserItem});
+            
+            // add it now
+            if(!isAlreadyThere){
+                new userDirectItem({forUser:user,asUser:asUserItem}).save().then(userItem => {
+                    return res.status(200).json({
+                        success:true,
+                        messege: 'User added to direct.'
+                    })
+                }).catch(err => {
+                    console.log(err);
+                    return res.status(200).json({
+                        success:false,
+                        messege:'internal error. Could not add user to user direct.'
+                    })
+                })
+            }
+            //unlike it now
+            else{
+                return res.status(200).json({
+                    success:true,
+                    messege:'User is already added to your direct'
+                })
+            }
+        })
+    })
+}
+
 module.exports = {
     sendAvatar,
     getSuggestedUsers,
@@ -563,5 +624,6 @@ module.exports = {
     getUserFollowers,
     getUserFollowing,
     getUserSearch,
-    isUserValid
+    isUserValid,
+    addUserToDirectList
 }

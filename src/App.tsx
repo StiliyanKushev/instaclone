@@ -26,7 +26,8 @@ const LoginView = React.lazy(() => import('./components/LoginView/LoginView'));
 const RegisterView = React.lazy(() => import('./components/RegisterView/RegisterView'));
 const UserView = React.lazy(() => import('./components/UserView/UserView'));
 const PostPageView = React.lazy(() => import('./components/PostPageView/PostPageView'));
-const ExploreView = React.lazy(() => import('./components/ExploreView/ExploreView'))
+const ExploreView = React.lazy(() => import('./components/ExploreView/ExploreView'));
+const InboxView = React.lazy(() => import('./components/InboxView/InboxView'));
 
 type IProps = ReduxProps & OtherReduxProps;
 
@@ -80,6 +81,7 @@ class App extends React.Component<IProps,any> {
                 <CustomRoute exact path='/profile/:name' component={UserView} {...this.privateOnly}/>
                 <CustomRoute exact path='/post/:id' component={PostPageView} {...this.privateOnly}/>
                 <CustomRoute exact path='/explore' component={ExploreView} {...this.privateOnly}/>
+                <CustomRoute exact path='/inbox' component={InboxView} {...this.privateOnly}/>
 
                 <Route exact path='/404' component={Error404}/>
                 <Route exact path='*' component={Error404}/>

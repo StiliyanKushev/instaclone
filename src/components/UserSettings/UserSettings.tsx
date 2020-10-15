@@ -108,7 +108,6 @@ const mapDispathToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchP
     logout: bindActionCreators(LOGOUT_AUTH,dispatch),
     clearPostData: bindActionCreators(SET_POST_DATA_CLEAR,dispatch),
     clearUserData: bindActionCreators(SET_USER_DATA_CLEAR,dispatch),
-
 })
 
 export default connect(null,mapDispathToProps)(UserSettings as ComponentType<IProps>);

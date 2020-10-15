@@ -1,0 +1,137 @@
+.directTopSegment{
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.directHeader{
+    margin: 0rem !important;
+}
+
+.directBottomSegment{
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    height: calc(100% - 60px) !important;
+}
+
+.directItemContainer{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding-top: 13px;
+    padding-bottom: 13px;
+}
+
+.directItemContainer:hover{
+    background: rgba(51,51,51,0.1);
+    cursor: pointer;
+}
+
+.directItemImg{
+    width: 40px !important;
+    height: 40px !important;
+    margin-left: 10px !important;
+    border-radius: 100% !important;
+}
+
+.directItemContent{
+    margin-left: 15px !important;
+}
+
+.directBtn{
+    cursor: pointer;
+}
+
+.directItemLastMsg{
+    margin: 0px !important;
+    margin-top: 5px !important;
+}
+
+.directItemUsername{
+    margin: 0rem !important;
+    padding: 0px !important;
+}
+
+#viewContainer {
+    height: 100vh !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.grid{
+    height: 95% !important;
+    display: flex !important;
+    justify-content: center !important;
+}
+
+.contentTopSegment{
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+}
+
+.contentImg{
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 100% !important;
+    margin-left: 10px !important;
+}
+
+.contentUsername{
+    margin: 0px !important;
+    margin-left: 10px !important;
+}
+
+.contentBtns{
+    margin-left: auto !important;
+}
+
+.contentBottomSegment{
+    height: calc(100% - 60px) !important;
+}
+
+.uiContainer{
+    height: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.firstCol{
+    min-width: 360px !important;
+}
+
+
+
+@media screen and (max-width:1000px){
+    .firstCol{
+        min-width: 450px !important;
+    }
+    .secondCol{
+        display: none !important;
+    }
+}
+
+@media screen and (max-width:500px){
+    .firstCol{
+        min-width: 360px !important;
+    }
+}
+
+.chatContent{
+    height: calc(100% - 60px);
+}
+
+.inputSendContainer{
+    width: 100%;
+    height: 60px;
+    padding-top: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.inputSend{
+    width: 100%;
+}

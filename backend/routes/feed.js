@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const authCheck = require('../config/auth-check');
 const {getExploreChunk,renewOtherPosts,getOtherPosts,getPost,getCommentsFromComment,createPost,getPopularFromAllPost,commentPost,likePost,likeComment,getCommentsFromPost,getLikesFromPost,getLikesFromComment} = require('../handlers/posts');
-const {isUserValid,getUserSearch,getUserFollowers,getUserFollowing,userFollow,userUnfollow,getUserData,userSavePost,getUserPostsRecent,getUserPostsPopular,getUserPostsSaved,sendAvatar,getSuggestedUsers} = require('../handlers/user');
+const {addUserToDirectList, isUserValid,getUserSearch,getUserFollowers,getUserFollowing,userFollow,userUnfollow,getUserData,userSavePost,getUserPostsRecent,getUserPostsPopular,getUserPostsSaved,sendAvatar,getSuggestedUsers} = require('../handlers/user');
 const multer = require('multer'); 
 const User = require('../models/User');
 const Post = require('../models/Post');
@@ -72,7 +72,8 @@ router.post('/user/follow/:username',authCheck,userFollow)
 router.post('/user/unfollow/:username',authCheck,userUnfollow)
 router.get('/user/:username/followers/:startIndex/:stopIndex/as/:userId',authCheck,getUserFollowers)
 router.get('/user/:username/following/:startIndex/:stopIndex/as/:userId',authCheck,getUserFollowing)
-router.get('/user/users/:search/as/:userId',authCheck,getUserSearch)
+router.get('/user/users/:search/as/:userId/:cmd',authCheck,getUserSearch)
 router.get('/user/isValid/:username',authCheck,isUserValid)
+router.post('/user/inbox/add/:username',authCheck, addUserToDirectList)
 
 module.exports = router;

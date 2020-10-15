@@ -1,0 +1,80 @@
+.topSegment{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.newMsgText{
+    margin: 0rem !important;
+    padding-left: 7rem !important;
+    padding-right: 7rem !important;
+    font-weight: 100 !important;
+}
+
+.closeBtn{
+    cursor: pointer !important;
+    font-weight: 100 !important;
+}
+
+.usernameInput{
+    width: 100% !important;
+}
+
+.suggestedText {
+    text-align: left;
+}
+
+.directItemContainer{
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding-top: 13px;
+    padding-bottom: 13px;
+}
+
+.directItemContainer:hover{
+    background: rgba(51,51,51,0.1);
+    cursor: pointer;
+}
+
+.directItemImg{
+    width: 40px !important;
+    height: 40px !important;
+    margin-left: 10px !important;
+    border-radius: 100% !important;
+}
+
+.directItemContent{
+    margin-left: 15px !important;
+}
+
+.directItemContent *{
+    text-align: left !important;
+}
+
+.directItemLastMsg{
+    margin: 0px !important;
+    margin-top: 5px !important;
+}
+
+.directItemUsername{
+    margin: 0rem !important;
+    padding: 0px !important;
+}
+
+.bottomSegment{
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    height: 350px !important;
+}
+
+.suggestedText{
+    padding-left: 10px !important;
+}
+
+#placeholder{
+    height: calc(100% - 16px) !important;
+    opacity: 0.3 !important;
+    transition-duration: 100ms;
+}
