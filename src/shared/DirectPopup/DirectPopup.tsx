@@ -6,10 +6,10 @@ import { ThunkDispatch } from 'redux-thunk';
 import { CALL_TOGGLE_DIRECT, CALL_UPDATE_SELECTION_DIRECT, CALL_START_SEARCH_DIRECT, CALL_CLEAN_QUERY_DIRECT, CALL_FINISH_SEARCH_DIRECT, CALL_HANDLE_DIRECT_SELECTION } from '../../actions/inboxActions';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import defaultImg from '../../assets/avatar.jpg';
 import { ReduxProps, AppState } from '../../reducers/index';
 import axios from 'axios';
 import { settings } from '../../settings';
+import { DirectItem } from '../../components/InboxView/InboxView';
 
 
 type IProps = DispatchProps & ReduxProps;
@@ -59,7 +59,7 @@ class DirectPopup extends React.PureComponent<IProps, any>{
             });
     }
 
-    private handleSelectItem(e:any,user:{name:string}){
+    private handleSelectItem(e:any,user:DirectItem){
         e.stopPropagation();
         this.props.handleDirectSelection(user.name, this.props.auth?.userId as string, this.props.auth?.token as string);
         this.handleClose();
@@ -90,7 +90,7 @@ class DirectPopup extends React.PureComponent<IProps, any>{
 
                         this.props.inbox?.results.map(user => (
                             <Container onClick={(e:any) => this.handleSelectItem.bind(this)(e,user)} className={styles.directItemContainer}>
-                                <Image src={defaultImg} className={styles.directItemImg}></Image>
+                                <Image src={`${settings.BASE_URL}/feed/photo/user/${user?.name}`} className={styles.directItemImg}></Image>
                                 <div className={styles.directItemContent}>
                                     <Header className={styles.directItemUsername} size='small'>{user.name}</Header>
                                     <Header className={styles.directItemLastMsg} size='small' disabled>hello friend! How are you doing?</Header>
@@ -110,7 +110,7 @@ interface DispatchProps {
     updateSelection: (selection: string) => void,
     startSearch: (value: string) => void,
     cleanQuery: () => void,
-    finishSearch: (results: Array<{ name: string }>) => void,
+    finishSearch: (results: Array<DirectItem>) => void,
     handleDirectSelection: (username: string, userId: string, token: string) => void,
 }
 

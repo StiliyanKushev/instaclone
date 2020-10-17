@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const authCheck = require('../config/auth-check');
 const {getExploreChunk,renewOtherPosts,getOtherPosts,getPost,getCommentsFromComment,createPost,getPopularFromAllPost,commentPost,likePost,likeComment,getCommentsFromPost,getLikesFromPost,getLikesFromComment} = require('../handlers/posts');
-const {addUserToDirectList, isUserValid,getUserSearch,getUserFollowers,getUserFollowing,userFollow,userUnfollow,getUserData,userSavePost,getUserPostsRecent,getUserPostsPopular,getUserPostsSaved,sendAvatar,getSuggestedUsers} = require('../handlers/user');
+const {getDirectsChunk,addUserToDirectList, isUserValid,getUserSearch,getUserFollowers,getUserFollowing,userFollow,userUnfollow,getUserData,userSavePost,getUserPostsRecent,getUserPostsPopular,getUserPostsSaved,sendAvatar,getSuggestedUsers} = require('../handlers/user');
 const multer = require('multer'); 
 const User = require('../models/User');
 const Post = require('../models/Post');
@@ -75,5 +75,6 @@ router.get('/user/:username/following/:startIndex/:stopIndex/as/:userId',authChe
 router.get('/user/users/:search/as/:userId/:cmd',authCheck,getUserSearch)
 router.get('/user/isValid/:username',authCheck,isUserValid)
 router.post('/user/inbox/add/:username',authCheck, addUserToDirectList)
+router.get('/user/directs/:startIndex/:stopIndex/as/:userId',authCheck, getDirectsChunk)
 
 module.exports = router;

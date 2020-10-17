@@ -22,6 +22,7 @@ import $ from 'jquery';
 import { settings } from '../../settings';
 import axios from 'axios';
 
+
 type IProps = RouteComponentProps & ReactCookieProps & ReduxProps & DispatchProps;
 
 class NavMenu extends React.Component<IProps>{

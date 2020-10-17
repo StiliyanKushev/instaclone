@@ -1,5 +1,6 @@
 import { IValidationResultErrors } from "./form-validation";
 import { IPost, IPostComment } from '../shared/PostsPartial/PostsPartial';
+import { DirectItem } from '../components/InboxView/InboxView';
 
 export default interface IGenericResponse {
     success: boolean,
@@ -17,6 +18,10 @@ export interface ICommentsChunkResponse {
     comments: Array<IPostComment>
 }
 
-export interface IPostCommentResponse extends IGenericResponse{
+export interface IPostCommentResponse extends IGenericResponse {
     comment: IPostComment,
+}
+
+export interface IDirectsChunkResponse extends IGenericResponse {
+    directs: Array<DirectItem>
 }

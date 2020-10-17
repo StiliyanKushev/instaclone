@@ -1,3 +1,4 @@
+import { DirectItem } from '../../components/InboxView/InboxView';
 const CLEAN_QUERY = 'CLEAN_QUERY';
 const START_SEARCH = 'START_SEARCH';
 const FINISH_SEARCH = 'FINISH_SEARCH';

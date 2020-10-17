@@ -14,6 +14,10 @@
     height: calc(100% - 60px) !important;
 }
 
+.directBottomSegment *{
+    outline: none !important;
+}
+
 .directItemContainer{
     display: flex !important;
     align-items: center !important;
@@ -22,6 +26,15 @@
     padding-bottom: 13px;
 }
 
+.directItemContainerEmpty{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding: 0px !important;
+    margin: 0px !important;
+    height: 0px !important;
+}
+.directItemContainerDark,
 .directItemContainer:hover{
     background: rgba(51,51,51,0.1);
     cursor: pointer;
@@ -134,4 +147,17 @@
 
 .inputSend{
     width: 100%;
+}
+
+.emptySegment{
+    height: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items:  center !important;
+    text-align: center !important;
+    flex-direction: column !important;
+}
+
+.emptySegment *{
+    font-weight: 100 !important;
 }

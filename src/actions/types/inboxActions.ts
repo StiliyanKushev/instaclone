@@ -1,3 +1,4 @@
+import { DirectItem } from '../../components/InboxView/InboxView';
 const SET_TOGGLE_DIRECT = 'SET_TOGGLE_DIRECT';
 const CLEAN_QUERY_DIRECT = 'CLEAN_QUERY_DIRECT';
 const START_SEARCH_DIRECT = 'START_SEARCH_DIRECT';
@@ -5,9 +6,18 @@ const FINISH_SEARCH_DIRECT = 'FINISH_SEARCH_DIRECT';
 const UPDATE_SELECTION_DIRECT = 'UPDATE_SELECTION_DIRECT';
 const SET_HANDLE_DIRECT_SELECTION_FAILURE = 'SET_HANDLE_DIRECT_SELECTION_FAILURE';
 const SET_HANDLE_DIRECT_SELECTION_SUCCESS = 'SET_HANDLE_DIRECT_SELECTION_SUCCESS';
+const SET_ADD_INBOX_DIRECTS = 'SET_ADD_INBOX_DIRECTS';
+const SET_SELECT_DIRECT_ITEM = 'SET_SELECT_DIRECT_ITEM';
 
 export interface setToggleDirect {
     type: typeof SET_TOGGLE_DIRECT,
+}
+
+export interface setAddInboxDirects {
+    type: typeof SET_ADD_INBOX_DIRECTS,
+    payload: {
+        directs: Array<DirectItem>
+    }
 }
 
 export interface setHandleDirectSelectionFailure {
@@ -20,7 +30,16 @@ export interface setHandleDirectSelectionFailure {
 export interface setHandleDirectSelectionSuccess {
     type: typeof SET_HANDLE_DIRECT_SELECTION_SUCCESS,
     payload: {
-        message: string
+        message: string,
+        direct: DirectItem
+    }
+}
+
+export interface setSelectDirectItem {
+    type: typeof SET_SELECT_DIRECT_ITEM,
+    payload: {
+        direct: DirectItem,
+        index: number,
     }
 }
 
@@ -38,7 +57,7 @@ export interface startSearch {
 export interface finishSearch {
     type: typeof FINISH_SEARCH_DIRECT,
     payload: {
-        results: Array<{name:string}>, // array of usernames
+        results: Array<DirectItem>, // array of usernames
     }    
 }
 
@@ -52,6 +71,8 @@ export interface updateSelection {
 export type inboxTypes = 
 setHandleDirectSelectionSuccess |
 setHandleDirectSelectionFailure |
+setSelectDirectItem |
+setAddInboxDirects |
 setToggleDirect |
 updateSelection |
 finishSearch |

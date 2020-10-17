@@ -587,26 +587,75 @@ async function addUserToDirectList(req,res,next){
             
             // add it now
             if(!isAlreadyThere){
-                new userDirectItem({forUser:user,asUser:asUserItem}).save().then(userItem => {
+                new userDirectItem({forUser:user,asUser:asUserItem}).save().then(async (userItem) => {
+                    let name = await User.findById(userItem.asUser);
                     return res.status(200).json({
                         success:true,
-                        messege: 'User added to direct.'
+                        messege: 'User added to direct.',
+                        direct: {
+                            name:name.username,
+                            _id: userItem.id,
+                            lastMsg: 'todotodotodo',
+                            userId: name._id,
+                        }
                     })
-                }).catch(err => {
+                }).catch((err) => {
+                    
                     console.log(err);
                     return res.status(200).json({
                         success:false,
-                        messege:'internal error. Could not add user to user direct.'
+                        messege:'internal error. Could not add user to user direct.',
                     })
                 })
             }
             //unlike it now
             else{
                 return res.status(200).json({
-                    success:true,
+                    success:false,
                     messege:'User is already added to your direct'
                 })
             }
+        })
+    })
+}
+
+async function getDirectsChunk(req,res,next){
+    let startIndex = Number(req.params.startIndex);
+    let stopIndex = Number(req.params.stopIndex);
+    
+    let limit = stopIndex - startIndex;
+    if(limit === 0) limit = 1;
+
+    // todo validate that the given user and the token match 
+
+    let givenUser = await User.findById(req.params.userId);
+
+    userDirectItem.find({forUser:givenUser}).skip(startIndex).limit(limit).sort({date: 'asc'}).exec(async (err,directs) => {
+        if(err){
+            console.log(err);
+            return res.status(200).json({
+                success:false,
+                directs:[]
+            })
+        }
+
+        let resDirects = [];
+
+        for(let direct of directs){
+            let asUserName = await User.findById(direct.asUser)
+            let newDirect = {
+                name: asUserName.username,
+                _id: direct.id,
+                lastMsg: 'todotodotodo',
+                userId: asUserName._id,
+            }
+
+            resDirects.push(newDirect);
+        }
+
+        return res.status(200).json({
+            success:true,
+            directs:resDirects
         })
     })
 }
@@ -625,5 +674,6 @@ module.exports = {
     getUserFollowing,
     getUserSearch,
     isUserValid,
-    addUserToDirectList
+    addUserToDirectList,
+    getDirectsChunk
 }
