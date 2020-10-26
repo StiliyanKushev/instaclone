@@ -136,6 +136,10 @@
     height: calc(100% - 60px);
 }
 
+.inputSendContainer form{
+    width: 100%;
+}
+
 .inputSendContainer{
     width: 100%;
     height: 60px;

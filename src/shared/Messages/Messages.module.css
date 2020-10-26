@@ -1,0 +1,41 @@
+.headerRight{
+    width: fit-content !important;
+    margin-left: auto !important;
+    margin-top: 1px !important;
+    margin-right: 4px !important;
+    font-weight: 100 !important;
+}
+
+.headerLeft{
+    margin-top: 0px !important;
+    width: fit-content !important;
+    margin-right: auto !important;
+    background-color: transparent !important;
+    font-weight: 100 !important;
+}
+
+.AutoSizer, .AutoSizer *{
+    outline: none !important;
+}
+
+.AutoSizer::-webkit-scrollbar, .AutoSizer *::-webkit-scrollbar{
+    width: 3px !important;
+}
+
+.headerUsername{
+    width: fit-content !important;
+    margin-right: auto !important;
+    font-weight: 100 !important;
+}
+
+.rowContainer{
+    padding-bottom: 20px !important;
+    /* word-break: keep-all; */
+    word-wrap: break-word;
+    max-width: 50% !important;
+    
+}
+
+.right{
+    left: calc(50% - 4px) !important;
+}

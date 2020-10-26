@@ -25,3 +25,13 @@ export interface IPostCommentResponse extends IGenericResponse {
 export interface IDirectsChunkResponse extends IGenericResponse {
     directs: Array<DirectItem>
 }
+
+export interface IMessage {
+    user: string,
+    text: string,
+}
+
+export interface IMessageDB {
+    name: string,
+    text: string,
+}

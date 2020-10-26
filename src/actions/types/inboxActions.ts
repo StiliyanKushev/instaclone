@@ -1,4 +1,5 @@
 import { DirectItem } from '../../components/InboxView/InboxView';
+import { IMessage } from '../../types/response';
 const SET_TOGGLE_DIRECT = 'SET_TOGGLE_DIRECT';
 const CLEAN_QUERY_DIRECT = 'CLEAN_QUERY_DIRECT';
 const START_SEARCH_DIRECT = 'START_SEARCH_DIRECT';
@@ -8,9 +9,27 @@ const SET_HANDLE_DIRECT_SELECTION_FAILURE = 'SET_HANDLE_DIRECT_SELECTION_FAILURE
 const SET_HANDLE_DIRECT_SELECTION_SUCCESS = 'SET_HANDLE_DIRECT_SELECTION_SUCCESS';
 const SET_ADD_INBOX_DIRECTS = 'SET_ADD_INBOX_DIRECTS';
 const SET_SELECT_DIRECT_ITEM = 'SET_SELECT_DIRECT_ITEM';
+const SET_DELETE_DIRECT_SUCCESS = 'SET_DELETE_DIRECT_SUCCESS';
+const SET_DELETE_DIRECT_FAILURE = 'SET_DELETE_DIRECT_FAILURE';
+const ADD_MESSAGES_MESSAGE = 'ADD_MESSAGES_MESSAGE';
+const SET_INPUT_MESSAGE = 'SET_INPUT_MESSAGE';
 
 export interface setToggleDirect {
     type: typeof SET_TOGGLE_DIRECT,
+}
+
+export interface setDeleteDirectSuccess {
+    type: typeof SET_DELETE_DIRECT_SUCCESS,
+    payload: {
+        message: string
+    }
+}
+
+export interface setDeleteDirectFailure {
+    type: typeof SET_DELETE_DIRECT_FAILURE,
+    payload: {
+        message: string
+    }
 }
 
 export interface setAddInboxDirects {
@@ -68,9 +87,27 @@ export interface updateSelection {
     }    
 }
 
+export type setInputMessage = {
+    type: typeof SET_INPUT_MESSAGE,
+    payload: {
+        message: string,
+    }
+}
+
+export type addMessagesMsg = {
+    type: typeof ADD_MESSAGES_MESSAGE,
+    payload: {
+        message: IMessage,
+    }
+}
+
 export type inboxTypes = 
+setInputMessage |
+addMessagesMsg |
 setHandleDirectSelectionSuccess |
 setHandleDirectSelectionFailure |
+setDeleteDirectSuccess |
+setDeleteDirectFailure |
 setSelectDirectItem |
 setAddInboxDirects |
 setToggleDirect |

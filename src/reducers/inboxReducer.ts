@@ -1,5 +1,6 @@
 import { inboxTypes } from '../actions/types/inboxActions';
 import { DirectItem } from '../components/InboxView/InboxView';
+import { IMessage } from '../types/response';
 
 export interface IInboxState {
     toggledDirect: boolean,
@@ -14,6 +15,9 @@ export interface IInboxState {
     currentUsername:string,
     currentUserId:string,
     currentDirectItemId:string,
+
+    messages: Array<IMessage>,
+    inputMessage: string,
 }
 
 const inboxState:IInboxState = {
@@ -29,10 +33,27 @@ const inboxState:IInboxState = {
     currentUsername:'',
     currentUserId:'',
     currentDirectItemId:'',
+
+    messages: [],
+    inputMessage: '',
 }
 
 const inboxReducer = (state = inboxState, action:inboxTypes) => {
     switch (action.type) {
+        case "SET_INPUT_MESSAGE":{
+            return {
+                ...state,
+                inputMessage: action.payload.message,
+            } as IInboxState
+        }
+
+        case "ADD_MESSAGES_MESSAGE":{
+            return {
+                ...state,
+                messages:[...state.messages, action.payload.message]
+            } as IInboxState
+        }
+
         case "SET_SELECT_DIRECT_ITEM":{
             state.directs[action.payload.index].isCurrent = true;
             if(state.directCurrentIndex !== -1)
@@ -106,6 +127,27 @@ const inboxReducer = (state = inboxState, action:inboxTypes) => {
             return {
                 ...state,
                 value: action.payload.selection
+            } as IInboxState
+        }
+
+        case 'SET_DELETE_DIRECT_SUCCESS':{
+            state.directs.splice(state.directCurrentIndex,1);
+            return {
+                ...state,
+                directCurrentIndex:-1,
+                currentUsername:'',
+                currentUserId:'',
+                currentDirectItemId:'',
+                error:false,
+                message: action.payload.message
+            } as IInboxState
+        }
+
+        case 'SET_DELETE_DIRECT_FAILURE':{
+            return {
+                ...state,
+                error:true,
+                message: action.payload.message
             } as IInboxState
         }
 

@@ -7,6 +7,7 @@ const UserSavePost = require("../models/UserSavePost");
 const sharp = require('sharp');
 const UserFollow = require("../models/UserFollow");
 const userDirectItem = require("../models/UserDirectItem");
+const ChatMsg = require("../models/ChatMsg");
 
 async function getSuggestedUsers(req,res,next){
     User.count().exec(async function (err, count) {
@@ -660,6 +661,42 @@ async function getDirectsChunk(req,res,next){
     })
 }
 
+async function deleteDirectItem(req,res,next){
+    let username = req.params.username;
+
+    let givenUser = await User.findById(req.body.userId);
+    let asUserByUsrname = await User.findOne({username});
+
+
+    userDirectItem.findOne({forUser:givenUser,asUser:asUserByUsrname}).then(async (item) => {
+        if(!item){
+            return res.status(200).json({
+                success:false,
+                messege:"Item does not exists, therefore can't be removed."
+            })
+        }
+
+        await userDirectItem.deleteOne({_id:item._id});
+
+        return res.status(200).json({
+            success:true,
+            messege: "Item deleted."
+        })
+
+    }).catch(err => {
+        console.log(err);
+        return res.status(200).json({
+            success:false,
+            messege: "An error occured"
+        })
+    })
+}
+
+function saveMessage(req,res,next){
+   ChatMsg(req.body.msg).save();
+   res.status(200);
+}
+
 module.exports = {
     sendAvatar,
     getSuggestedUsers,
@@ -675,5 +712,7 @@ module.exports = {
     getUserSearch,
     isUserValid,
     addUserToDirectList,
-    getDirectsChunk
+    getDirectsChunk,
+    deleteDirectItem,
+    saveMessage
 }
