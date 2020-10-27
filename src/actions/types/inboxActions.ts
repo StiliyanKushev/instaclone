@@ -1,5 +1,5 @@
 import { DirectItem } from '../../components/InboxView/InboxView';
-import { IMessage } from '../../types/response';
+import { IMessage, IMessageDB } from '../../types/response';
 const SET_TOGGLE_DIRECT = 'SET_TOGGLE_DIRECT';
 const CLEAN_QUERY_DIRECT = 'CLEAN_QUERY_DIRECT';
 const START_SEARCH_DIRECT = 'START_SEARCH_DIRECT';
@@ -13,6 +13,7 @@ const SET_DELETE_DIRECT_SUCCESS = 'SET_DELETE_DIRECT_SUCCESS';
 const SET_DELETE_DIRECT_FAILURE = 'SET_DELETE_DIRECT_FAILURE';
 const ADD_MESSAGES_MESSAGE = 'ADD_MESSAGES_MESSAGE';
 const SET_INPUT_MESSAGE = 'SET_INPUT_MESSAGE';
+const ADD_MESSAGES_INBOX = 'ADD_MESSAGES_INBOX';
 
 export interface setToggleDirect {
     type: typeof SET_TOGGLE_DIRECT,
@@ -101,9 +102,17 @@ export type addMessagesMsg = {
     }
 }
 
+export type addMessagesInbox = {
+    type: typeof ADD_MESSAGES_INBOX,
+    payload: {
+        messages: Array<IMessageDB>,
+    }
+}
+
 export type inboxTypes = 
 setInputMessage |
 addMessagesMsg |
+addMessagesInbox |
 setHandleDirectSelectionSuccess |
 setHandleDirectSelectionFailure |
 setDeleteDirectSuccess |

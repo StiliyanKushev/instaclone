@@ -144,14 +144,17 @@ class InboxView extends React.PureComponent<IProps, IState>{
         e.preventDefault();
         if(this.props.inbox?.inputMessage) {
             this.currentSocket.emit('sendMessage', this.props.inbox?.inputMessage, () => this.props.setInputVal(''));
-           
-            let names = [this.props.auth?.username.toLowerCase(), this.props.inbox?.currentUsername.toLowerCase()];
+            this.props.saveMessageToDb({author: this.props.auth?.username, name: this.msgDbName, text: this.props.inbox?.inputMessage} as IMessageDB,this.props.auth?.userId as string, this.props.auth?.token as string);
+        }
+    }
+
+    private get msgDbName() {
+        let names = [this.props.auth?.username.toLowerCase(), this.props.inbox?.currentUsername.toLowerCase()];
             names.sort();
             if(names[0] && names[1]){
-                let msgName = names[0] + names[1];
-                this.props.saveMessageToDb({name: msgName, text: this.props.inbox?.inputMessage} as IMessageDB,this.props.auth?.userId as string, this.props.auth?.token as string);
+                return names[0] + names[1];
             }
-        }
+            else return '';
     }
 
     private onchatLoad(){

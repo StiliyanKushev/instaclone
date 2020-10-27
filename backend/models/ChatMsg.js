@@ -5,6 +5,7 @@ const REQUIRED_VALIDATION_MESSAGE = '{PATH} is required'
 let ChatMsgSchema = new mongoose.Schema({
     name: {type: String, required: REQUIRED_VALIDATION_MESSAGE},
     text: {type: String, required: REQUIRED_VALIDATION_MESSAGE},
+    author: {type: mongoose.Schema.Types.ObjectId, ref:'User',required: REQUIRED_VALIDATION_MESSAGE},
     created: {type:Date, default: Date.now },
 });
 

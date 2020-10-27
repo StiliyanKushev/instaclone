@@ -104,6 +104,13 @@ export const CALL_ADD_MESSAGES_MESSAGE = (message: IMessage): AppActions => ({
     }
 });
 
+export const CALL_ADD_MESSAGES_INBOX = (messages: Array<IMessageDB>): AppActions => ({
+    type: 'ADD_MESSAGES_INBOX',
+    payload: {
+        messages
+    }
+});
+
 export const CALL_HANDLE_DIRECT_SELECTION = (username: string, userId: string, token: string) => (dispatch: Dispatch<AppActions>) => {
     let promise: Promise<{ direct: DirectItem } & IGenericResponse> = saveUserToDirect(username, userId, token);
     promise.then((res: { direct: DirectItem } & IGenericResponse) => {

@@ -26,12 +26,17 @@ export interface IDirectsChunkResponse extends IGenericResponse {
     directs: Array<DirectItem>
 }
 
+export interface IMessagesChunkResponse extends IGenericResponse {
+    messages: Array<IMessageDB>
+}
+
 export interface IMessage {
     user: string,
     text: string,
 }
 
 export interface IMessageDB {
+    author: string,
     name: string,
     text: string,
 }

@@ -3,11 +3,16 @@ import { connect } from 'react-redux';
 import { ComponentType } from 'react';
 import { ReduxProps, AppState } from '../../reducers/index';
 import { InfiniteLoader, AutoSizer, List, InfiniteLoaderChildProps, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
-import { IMessage } from '../../types/response';
+import { IMessage, IMessageDB, IMessagesChunkResponse } from '../../types/response';
 import styles from './Messages.module.css';
-import { Header } from 'semantic-ui-react';
+import { getNewMessagesChunk } from '../../handlers/inbox';
+import { bindActionCreators } from 'redux';
+import { AppActions } from '../../actions/types/actions';
+import { ThunkDispatch } from 'redux-thunk';
+import { CALL_ADD_MESSAGES_INBOX } from '../../actions/inboxActions';
+import Message from '../Message/Message';
 
-type IProps = ReduxProps;
+type IProps = ReduxProps & DispatchProps;
 
 interface IState {
     hasMoreMessages: boolean,
@@ -15,7 +20,7 @@ interface IState {
 
 class Messages extends React.PureComponent<IProps, IState> {
     private cache: CellMeasurerCache;
-    public state: IState = { hasMoreMessages: false, }
+    public state: IState = { hasMoreMessages: true, }
     private listRef: any;
 
     private get rowCount(): number {
@@ -33,14 +38,16 @@ class Messages extends React.PureComponent<IProps, IState> {
         });
     }
 
-    public componentDidUpdate(prevProps: IProps){
-        if(prevProps.inbox?.messages.length !== this.props.inbox?.messages.length && this.listRef){
+    public componentDidUpdate(prevProps: IProps) {
+        if (prevProps.inbox?.messages.length !== this.props.inbox?.messages.length && this.listRef) {
             this.listRef.scrollToRow(this.props.inbox?.messages.length);
         }
     }
-    
+
     private renderRow({ index, key, style, parent }: any) {
         let currentRow = this.props.inbox?.messages[index] as IMessage;
+        let userA = currentRow && currentRow.user ? currentRow.user.toLowerCase() : "";
+        let userB = this.props.auth?.username.toLowerCase();
         return (
             <CellMeasurer
                 key={key}
@@ -49,34 +56,16 @@ class Messages extends React.PureComponent<IProps, IState> {
                 columnIndex={0}
                 rowIndex={index}
             >
-                {({measure, registerChild }: any) => (
-                    <div onLoad={measure} className={`row ${styles.rowContainer} ${currentRow.user.toLowerCase() === this.props.auth?.username.toLowerCase() ? styles.right: styles.left}`} ref={registerChild} style={style}>
-                        {
-                            currentRow && (
-                                <>
-                                    {
-                                        currentRow.user.toLowerCase() === this.props.auth?.username.toLowerCase() ? (
-                                            <>
-                                                <Header className={styles.headerRight} block size='medium'>{currentRow.text}</Header>
-                                            </>
-                                        ) : 
-                                        (
-                                            <>
-                                                <Header className={styles.headerUsername} size='tiny'>{currentRow.user}</Header>
-                                                <Header className={styles.headerLeft} block size='medium'>{currentRow.text}</Header>
-                                            </>
-                                        )
-                                    }
-                                </>
-                            )
-                        }
+                {({ measure, registerChild }: any) => (
+                    <div className={`row ${styles.rowContainer} ${userA === userB ? styles.right : styles.left}`} ref={registerChild} style={style}>
+                        <Message measure={measure} authUsername={this.props.auth?.username as string} currentRow={currentRow}/>
                     </div>
                 )}
             </CellMeasurer>
         );
     }
 
-    private handleResize(){
+    private handleResize() {
         // clear the cache and update it (this is the solution with best performance)
         this.cache.clearAll();
     }
@@ -86,22 +75,30 @@ class Messages extends React.PureComponent<IProps, IState> {
     };
 
     private fetchMessages = ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => {
-        // return getNewDirectsChunk(startIndex, stopIndex,this.props.auth?.userId as string, this.props.auth?.token as string).then((res: IDirectsChunkResponse) => {
-        //     if (res.success) {
-        //         if (res.directs.length === 0) {
-        //             // no more posts
-        //             this.setState({ hasMoreDirects: false })
-        //         }
-        //         else {
-        //             this.props.ADD_INBOX_DIRECTS(res.directs);
-        //         }
-        //     }
-        //     else {
-        //         // internal error
-        //     }
-        // })
-        return new Promise<any>(() => {})
+        return getNewMessagesChunk(this.msgDbName, startIndex, stopIndex, this.props.auth?.userId as string, this.props.auth?.token as string).then((res: IMessagesChunkResponse) => {
+            if (res.success) {
+                if (res.messages.length === 0) {
+                    // no more posts
+                    this.setState({ hasMoreMessages: false })
+                }
+                else {
+                    this.props.ADD_MESSAGES_INBOX(res.messages);
+                }
+            }
+            else {
+                // internal error
+            }
+        })
     };
+
+    private get msgDbName() {
+        let names = [this.props.auth?.username.toLowerCase(), this.props.inbox?.currentUsername.toLowerCase()];
+        names.sort();
+        if (names[0] && names[1]) {
+            return names[0] + names[1];
+        }
+        else return '';
+    }
 
     public render() {
         return (
@@ -115,21 +112,21 @@ class Messages extends React.PureComponent<IProps, IState> {
                     <AutoSizer className={styles.AutoSizer} onResize={this.handleResize.bind(this)}>
                         {({ width, height }) => {
                             return (
-                                    <List
-                                        ref={(list) => {
-                                            this.listRef = list;
-                                            registerChild(list)
-                                        }}
-                                        onRowsRendered={onRowsRendered}
-                                        className={styles.list}
-                                        width={width}
-                                        height={height}
-                                        deferredMeasurementCache={this.cache}
-                                        rowHeight={this.cache.rowHeight}
-                                        rowRenderer={this.renderRow.bind(this)}
-                                        rowCount={this.rowCount}
-                                        overscanRowCount={5}
-                                    />
+                                <List
+                                    ref={(list) => {
+                                        this.listRef = list;
+                                        registerChild(list)
+                                    }}
+                                    onRowsRendered={onRowsRendered}
+                                    className={styles.list}
+                                    width={width}
+                                    height={height}
+                                    deferredMeasurementCache={this.cache}
+                                    rowHeight={this.cache.rowHeight}
+                                    rowRenderer={this.renderRow.bind(this)}
+                                    rowCount={this.rowCount}
+                                    overscanRowCount={5}
+                                />
                             );
                         }}
                     </AutoSizer>
@@ -144,4 +141,14 @@ const mapStateToProps = (state: AppState): ReduxProps => ({
     auth: state.auth,
 })
 
-export default connect(mapStateToProps, null)(Messages as ComponentType<IProps>);
+
+
+interface DispatchProps {
+    ADD_MESSAGES_INBOX: (messages: Array<IMessageDB>) => void,
+}
+
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): DispatchProps => ({
+    ADD_MESSAGES_INBOX: bindActionCreators(CALL_ADD_MESSAGES_INBOX, dispatch),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Messages as ComponentType<IProps>);

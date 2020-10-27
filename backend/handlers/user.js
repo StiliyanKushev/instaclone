@@ -8,6 +8,7 @@ const sharp = require('sharp');
 const UserFollow = require("../models/UserFollow");
 const userDirectItem = require("../models/UserDirectItem");
 const ChatMsg = require("../models/ChatMsg");
+const { success } = require("../passport/local-login");
 
 async function getSuggestedUsers(req,res,next){
     User.count().exec(async function (err, count) {
@@ -692,9 +693,55 @@ async function deleteDirectItem(req,res,next){
     })
 }
 
-function saveMessage(req,res,next){
-   ChatMsg(req.body.msg).save();
-   res.status(200);
+async function saveMessage(req,res,next){    
+    let author = await User.findOne({username: req.body.msg.author});
+
+    if(!author){
+        return res.status(200).json({
+            success:false,
+            message:'Could not save your message. No such user.'
+        })
+    }
+
+    req.body.msg.author = author;
+
+    ChatMsg(req.body.msg).save();
+    res.status(200);
+}
+
+async function getMessagesChunk(req,res,next){
+    let startIndex = Number(req.params.startIndex);
+    let stopIndex = Number(req.params.stopIndex);
+    
+    let limit = stopIndex - startIndex;
+    if(limit === 0) limit = 1;
+
+    ChatMsg.find({name:req.params.msgName}).skip(startIndex).limit(limit).sort({created: 'desc'}).exec(async (err,messages) => {
+        if(err){
+            console.log(err);
+            return res.status(200).json({
+                success:false,
+                messages:[]
+            })
+        }
+
+        let resMessages = [];
+
+        for(let msg of messages){
+            let author = await User.findById(msg.author)
+            let newMessage = {
+                author: author.username,
+                text: msg.text,
+            }
+
+            resMessages.push(newMessage);
+        }
+
+        return res.status(200).json({
+            success:true,
+            messages:resMessages
+        })
+    })
 }
 
 module.exports = {
@@ -714,5 +761,6 @@ module.exports = {
     addUserToDirectList,
     getDirectsChunk,
     deleteDirectItem,
-    saveMessage
+    saveMessage,
+    getMessagesChunk
 }

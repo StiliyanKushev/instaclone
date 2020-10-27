@@ -47,6 +47,24 @@ const inboxReducer = (state = inboxState, action:inboxTypes) => {
             } as IInboxState
         }
 
+        case "ADD_MESSAGES_INBOX":{
+            let converted:Array<IMessage> = [];
+
+            for(let msg of action.payload.messages){
+                converted.push({
+                    user: msg.author,
+                    text: msg.text,
+                })
+            }
+
+            let reversed = converted.reverse();
+
+            return {
+                ...state,
+                messages:[...reversed,...state.messages]
+            } as IInboxState
+        }
+
         case "ADD_MESSAGES_MESSAGE":{
             return {
                 ...state,

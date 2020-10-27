@@ -32,3 +32,7 @@ export function deleteUserFromDirect(username:string,userId:string,token:string)
 
     return post<typeof data,IGenericResponse>(data,`/feed/user/directs/delete/${username}`,token).then((res: any) => res.data);
 }
+
+export function getNewMessagesChunk(msgName:string,startIndex:number,stopIndex:number,userId:string,token:string){
+    return get<IGenericResponse>(`/feed/user/inbox/messages/${msgName}/${startIndex}/${stopIndex}/as/${userId}`,token).then((res: any) => res.data);
+}
