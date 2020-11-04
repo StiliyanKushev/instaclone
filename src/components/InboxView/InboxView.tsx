@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Grid, GridColumn, Icon, Segment, Header, Image, Button, Input, Form, Ref } from 'semantic-ui-react';
 import styles from './InboxView.module.css';
 
-import { CALL_TOGGLE_DIRECT, CALL_ADD_INBOX_DIRECTS, CALL_SELECT_DIRECT_ITEM, DELETE_DIRECT_ITEM, CALL_INPUT_MESSAGE, CALL_ADD_MESSAGES_MESSAGE, SAVE_MESSAGE_DB } from '../../actions/inboxActions';
+import { CALL_TOGGLE_DIRECT, CALL_ADD_INBOX_DIRECTS, CALL_SELECT_DIRECT_ITEM, DELETE_DIRECT_ITEM, CALL_INPUT_MESSAGE, CALL_ADD_MESSAGES_MESSAGE, SAVE_MESSAGE_DB, CALL_CONNECT_INBOX_SOCKET, CALL_CLEAR_MESSAGES } from '../../actions/inboxActions';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AppActions } from '../../actions/types/actions';
@@ -15,12 +15,12 @@ import { InfiniteLoader, AutoSizer, InfiniteLoaderChildProps, List, CellMeasurer
 import { getNewDirectsChunk } from '../../handlers/inbox';
 import { IDirectsChunkResponse, IMessage, IMessageDB } from '../../types/response';
 import { settings } from '../../settings';
-import io from "socket.io-client";
 import {createRef} from 'react';
 import $ from 'jquery';
 import Messages from '../../shared/Messages/Messages';
+import { RouteComponentProps } from 'react-router';
 
-type IProps = DispatchProps & ReduxProps;
+type IProps = DispatchProps & ReduxProps & RouteComponentProps;
 
 export interface DirectItem {
     name:string,
@@ -39,7 +39,6 @@ interface IState {
 class InboxView extends React.PureComponent<IProps, IState>{
     private cache: CellMeasurerCache;
     public state: IState = { hasMoreDirects:true, name:'', room:'' };
-    private currentSocket: any;
     private formRef = createRef<HTMLFormElement>();
 
     private get rowCount(): number {
@@ -58,9 +57,9 @@ class InboxView extends React.PureComponent<IProps, IState>{
     }
 
     public componentDidMount(){
-        this.currentSocket = io(settings.BASE_URL);
+        this.props.connectSocket();
 
-        this.currentSocket.on('message', (message:IMessage) => {
+        this.props.inbox?.currentSocket.on('message', (message:IMessage) => {
             this.props.addToMessages(message);
         });
     }
@@ -76,11 +75,12 @@ class InboxView extends React.PureComponent<IProps, IState>{
     }
 
     private handleDirectItemClick(index:number, row:DirectItem){
-        this.currentSocket.emit('exit', { room: this.state.room }, (error:string) => {
+        this.props.inbox?.currentSocket.emit('exit', { room: this.state.room }, (error:string) => {
             if(error) {
                 alert(error);
             }
         });
+        this.props.CLEAR_MESSAGES();
         this.props.SELECT_DIRECT_ITEM(index,row);
     }
 
@@ -143,7 +143,7 @@ class InboxView extends React.PureComponent<IProps, IState>{
     private inputSend(e: React.FormEvent<HTMLFormElement>){
         e.preventDefault();
         if(this.props.inbox?.inputMessage) {
-            this.currentSocket.emit('sendMessage', this.props.inbox?.inputMessage, () => this.props.setInputVal(''));
+            this.props.inbox?.currentSocket.emit('sendMessage', this.props.inbox?.inputMessage, () => this.props.setInputVal(''));
             this.props.saveMessageToDb({author: this.props.auth?.username, name: this.msgDbName, text: this.props.inbox?.inputMessage} as IMessageDB,this.props.auth?.userId as string, this.props.auth?.token as string);
         }
     }
@@ -159,7 +159,7 @@ class InboxView extends React.PureComponent<IProps, IState>{
 
     private onchatLoad(){
         this.setState({name: this.props.auth?.username as string,room: this.room}, () => {
-            this.currentSocket.emit('join', { name: this.state.name, room: this.state.room }, (error:string) => {
+            this.props.inbox?.currentSocket.emit('join', { name: this.state.name, room: this.state.room }, (error:string) => {
                 if(error) {
                     alert(error);
                 }
@@ -282,7 +282,9 @@ const mapStateToProps = (state: AppState): ReduxProps => ({
 })
 
 interface DispatchProps {
+    connectSocket: () => void,
     CALL_TOGGLE_DIRECT: () => void,
+    CLEAR_MESSAGES: () => void,
     ADD_INBOX_DIRECTS: (directs:Array<DirectItem>) => void,
     SELECT_DIRECT_ITEM: (index:number,item:DirectItem) => void,
     DELETE_DIRECT_ITEM: (username:string, userId:string, token:string) => void,
@@ -296,6 +298,8 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): Disp
     ADD_INBOX_DIRECTS: bindActionCreators(CALL_ADD_INBOX_DIRECTS, dispatch),
     SELECT_DIRECT_ITEM: bindActionCreators(CALL_SELECT_DIRECT_ITEM, dispatch),
     DELETE_DIRECT_ITEM: bindActionCreators(DELETE_DIRECT_ITEM, dispatch),
+    CLEAR_MESSAGES: bindActionCreators(CALL_CLEAR_MESSAGES, dispatch),
+    connectSocket: bindActionCreators(CALL_CONNECT_INBOX_SOCKET, dispatch),
     setInputVal: bindActionCreators(CALL_INPUT_MESSAGE, dispatch),
     addToMessages: bindActionCreators(CALL_ADD_MESSAGES_MESSAGE, dispatch),
     saveMessageToDb: bindActionCreators(SAVE_MESSAGE_DB, dispatch),

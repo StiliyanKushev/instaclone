@@ -5,6 +5,14 @@ import { saveUserToDirect, deleteUserFromDirect, saveMessageToDb } from '../hand
 import { DirectItem } from '../components/InboxView/InboxView';
 import { IMessage, IMessageDB } from '../types/response';
 
+export const CALL_CONNECT_INBOX_SOCKET = (): AppActions => ({
+    type: 'SET_CONNECT_INBOX_SOCKET',
+});
+
+export const CALL_CLEAR_MESSAGES = (): AppActions => ({
+    type: 'SET_CLEAR_MESSAGES',
+});
+
 export const CALL_TOGGLE_DIRECT = (): AppActions => ({
     type: 'SET_TOGGLE_DIRECT',
 });

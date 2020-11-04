@@ -18,7 +18,7 @@ interface IState {
     hasMoreMessages: boolean,
 }
 
-class Messages extends React.PureComponent<IProps, IState> {
+class Messages extends React.Component<IProps, IState> {
     private cache: CellMeasurerCache;
     public state: IState = { hasMoreMessages: true, }
     private listRef: any;
@@ -26,6 +26,13 @@ class Messages extends React.PureComponent<IProps, IState> {
     private get rowCount(): number {
         let messages: any = this.props.inbox?.messages;
         return this.state.hasMoreMessages ? messages.length + 10 : messages.length;
+    }
+
+    
+    public componentDidUpdate(prevProps: IProps){
+        if(this.props.inbox?.currentDirectItemId !== prevProps.inbox?.currentDirectItemId){
+            this.setState({hasMoreMessages:true})
+        }
     }
 
     constructor(props: IProps) {
@@ -36,12 +43,6 @@ class Messages extends React.PureComponent<IProps, IState> {
             // fixedHeight: true,
             defaultHeight: 57,
         });
-    }
-
-    public componentDidUpdate(prevProps: IProps) {
-        if (prevProps.inbox?.messages.length !== this.props.inbox?.messages.length && this.listRef) {
-            this.listRef.scrollToRow(this.props.inbox?.messages.length);
-        }
     }
 
     private renderRow({ index, key, style, parent }: any) {
@@ -121,6 +122,8 @@ class Messages extends React.PureComponent<IProps, IState> {
                                     className={styles.list}
                                     width={width}
                                     height={height}
+                                    scrollToIndex={(((this.props.inbox) as any).messages.length) - 1}
+                                    scrollToAlignment="end"
                                     deferredMeasurementCache={this.cache}
                                     rowHeight={this.cache.rowHeight}
                                     rowRenderer={this.renderRow.bind(this)}
@@ -140,8 +143,6 @@ const mapStateToProps = (state: AppState): ReduxProps => ({
     inbox: state.inbox,
     auth: state.auth,
 })
-
-
 
 interface DispatchProps {
     ADD_MESSAGES_INBOX: (messages: Array<IMessageDB>) => void,
