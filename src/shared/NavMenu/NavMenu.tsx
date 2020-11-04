@@ -76,6 +76,14 @@ class NavMenu extends React.Component<IProps>{
             this.props.toggleUserList();
         }
 
+        if(this.props.location.pathname !== '/inbox' && prevProps.location.pathname === '/inbox'){
+            this.props.inbox?.currentSocket.emit('exit', { room: "any" }, (error:string) => {
+                if(error) {
+                    alert(error);
+                }
+            });
+        }
+
         this.handleVisibility()
     }
 
@@ -196,6 +204,7 @@ const mapStateToProps = (state: AppState): ReduxProps => ({
     post: state.post,
     auth: state.auth,
     user: state.user,
+    inbox: state.inbox,
     navSearch: state.navSearch,
 })
 

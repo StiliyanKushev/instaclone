@@ -22,7 +22,12 @@ io.on('connect', (socket) => {
 
     socket.on('exit', ({ room }, callback) => {
       try {
-        socket.leave(room);
+        if(room !== 'any'){
+          socket.leave(room);
+        }
+        else{
+          socket.leaveAll();
+        }
         removeUser(socket.id);
       } catch {
         callback("Could not leave the room you were not in.")

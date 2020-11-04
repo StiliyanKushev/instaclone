@@ -14,6 +14,8 @@ const SET_DELETE_DIRECT_FAILURE = 'SET_DELETE_DIRECT_FAILURE';
 const ADD_MESSAGES_MESSAGE = 'ADD_MESSAGES_MESSAGE';
 const SET_INPUT_MESSAGE = 'SET_INPUT_MESSAGE';
 const ADD_MESSAGES_INBOX = 'ADD_MESSAGES_INBOX';
+const SET_CONNECT_INBOX_SOCKET = 'SET_CONNECT_INBOX_SOCKET';
+const SET_CLEAR_MESSAGES = 'SET_CLEAR_MESSAGES';
 
 export interface setToggleDirect {
     type: typeof SET_TOGGLE_DIRECT,
@@ -109,8 +111,18 @@ export type addMessagesInbox = {
     }
 }
 
+export type connectSocket = {
+    type: typeof SET_CONNECT_INBOX_SOCKET,
+}
+
+export type clearMessages = {
+    type: typeof SET_CLEAR_MESSAGES,
+}
+
 export type inboxTypes = 
 setInputMessage |
+clearMessages |
+connectSocket |
 addMessagesMsg |
 addMessagesInbox |
 setHandleDirectSelectionSuccess |

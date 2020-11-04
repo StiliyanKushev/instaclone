@@ -40,6 +40,7 @@
     "react-scripts": "^3.4.3",
     "react-toastify": "^6.0.5",
     "react-virtualized": "^9.21.2",
+    "react-virtualized-chatbox": "0.0.4",
     "react-visibility-sensor": "^5.1.1",
     "redux-thunk": "^2.3.0",
     "semantic-ui-css": "^2.4.1",

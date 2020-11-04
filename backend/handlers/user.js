@@ -695,18 +695,20 @@ async function deleteDirectItem(req,res,next){
 
 async function saveMessage(req,res,next){    
     let author = await User.findOne({username: req.body.msg.author});
-
+    console.log("here");
     if(!author){
         return res.status(200).json({
             success:false,
             message:'Could not save your message. No such user.'
         })
     }
-
     req.body.msg.author = author;
-
-    ChatMsg(req.body.msg).save();
-    res.status(200);
+    await ChatMsg(req.body.msg).save();
+    console.log(req.body.msg.text);
+    res.status(200).json({
+        success:true,
+        message: 'Done'
+    });
 }
 
 async function getMessagesChunk(req,res,next){
