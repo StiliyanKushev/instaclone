@@ -28,6 +28,7 @@ const UserView = React.lazy(() => import('./components/UserView/UserView'));
 const PostPageView = React.lazy(() => import('./components/PostPageView/PostPageView'));
 const ExploreView = React.lazy(() => import('./components/ExploreView/ExploreView'));
 const InboxView = React.lazy(() => import('./components/InboxView/InboxView'));
+const ChatView = React.lazy(() => import('./shared/ChatView/ChatView'));
 
 type IProps = ReduxProps & OtherReduxProps;
 
@@ -81,6 +82,7 @@ class App extends React.Component<IProps,any> {
                 <CustomRoute exact path='/profile/:name' component={UserView} {...this.privateOnly}/>
                 <CustomRoute exact path='/post/:id' component={PostPageView} {...this.privateOnly}/>
                 <CustomRoute exact path='/explore' component={ExploreView} {...this.privateOnly}/>
+                <CustomRoute exact path='/inbox/chat/:name' component={ChatView} {...this.privateOnly}/>
                 <CustomRoute exact path='/inbox' component={InboxView} {...this.privateOnly}/>
 
                 <Route exact path='/404' component={Error404}/>

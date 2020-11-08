@@ -9,10 +9,14 @@ import { getNewMessagesChunk } from '../../handlers/inbox';
 import { bindActionCreators } from 'redux';
 import { AppActions } from '../../actions/types/actions';
 import { ThunkDispatch } from 'redux-thunk';
-import { CALL_ADD_MESSAGES_INBOX } from '../../actions/inboxActions';
+import { CALL_ADD_MESSAGES_INBOX, CALL_CLEAR_MESSAGES } from '../../actions/inboxActions';
 import Message from '../Message/Message';
 
-type IProps = ReduxProps & DispatchProps;
+interface ParentProps {
+    onUpdate: () => void,
+}
+
+type IProps = ReduxProps & DispatchProps & ParentProps;
 
 interface IState {
     hasMoreMessages: boolean,
@@ -31,6 +35,8 @@ class Messages extends React.Component<IProps, IState> {
     
     public componentDidUpdate(prevProps: IProps){
         if(this.props.inbox?.currentDirectItemId !== prevProps.inbox?.currentDirectItemId){
+            this.props.onUpdate();
+            this.props.CLEAR_MESSAGES();
             this.setState({hasMoreMessages:true})
         }
     }
@@ -146,10 +152,12 @@ const mapStateToProps = (state: AppState): ReduxProps => ({
 
 interface DispatchProps {
     ADD_MESSAGES_INBOX: (messages: Array<IMessageDB>) => void,
+    CLEAR_MESSAGES: () => void,
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): DispatchProps => ({
     ADD_MESSAGES_INBOX: bindActionCreators(CALL_ADD_MESSAGES_INBOX, dispatch),
+    CLEAR_MESSAGES: bindActionCreators(CALL_CLEAR_MESSAGES, dispatch),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Messages as ComponentType<IProps>);

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Container, Grid, GridColumn, Icon, Segment, Header, Image, Button, Input, Form, Ref } from 'semantic-ui-react';
+import { Container, Grid, GridColumn, Icon, Segment, Header, Image } from 'semantic-ui-react';
 import styles from './InboxView.module.css';
 
-import { CALL_TOGGLE_DIRECT, CALL_ADD_INBOX_DIRECTS, CALL_SELECT_DIRECT_ITEM, DELETE_DIRECT_ITEM, CALL_INPUT_MESSAGE, CALL_ADD_MESSAGES_MESSAGE, SAVE_MESSAGE_DB, CALL_CONNECT_INBOX_SOCKET, CALL_CLEAR_MESSAGES } from '../../actions/inboxActions';
+import { CALL_TOGGLE_DIRECT, CALL_ADD_INBOX_DIRECTS, CALL_SELECT_DIRECT_ITEM, DELETE_DIRECT_ITEM, CALL_INPUT_MESSAGE, CALL_ADD_MESSAGES_MESSAGE, SAVE_MESSAGE_DB, CALL_CONNECT_INBOX_SOCKET } from '../../actions/inboxActions';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AppActions } from '../../actions/types/actions';
@@ -15,10 +15,9 @@ import { InfiniteLoader, AutoSizer, InfiniteLoaderChildProps, List, CellMeasurer
 import { getNewDirectsChunk } from '../../handlers/inbox';
 import { IDirectsChunkResponse, IMessage, IMessageDB } from '../../types/response';
 import { settings } from '../../settings';
-import {createRef} from 'react';
-import $ from 'jquery';
-import Messages from '../../shared/Messages/Messages';
 import { RouteComponentProps } from 'react-router';
+import { withRouter } from 'react-router-dom';
+import ChatView from '../../shared/ChatView/ChatView';
 
 type IProps = DispatchProps & ReduxProps & RouteComponentProps;
 
@@ -39,7 +38,6 @@ interface IState {
 class InboxView extends React.PureComponent<IProps, IState>{
     private cache: CellMeasurerCache;
     public state: IState = { hasMoreDirects:true, name:'', room:'' };
-    private formRef = createRef<HTMLFormElement>();
 
     private get rowCount(): number {
         let directs: any = this.props.inbox?.directs;
@@ -64,6 +62,24 @@ class InboxView extends React.PureComponent<IProps, IState>{
         });
     }
 
+    private handleDirectItemClick(index:number, row:DirectItem){
+        // on desktop scale
+        if(window.innerWidth >= 1000){
+            if(row._id === this.props.inbox?.currentDirectItemId) return;
+            this.props.inbox?.currentSocket.emit('exit', { room: this.state.room }, (error:string) => {
+                if(error) {
+                    alert(error);
+                }
+            });
+            this.props.SELECT_DIRECT_ITEM(index,row);
+        }
+        // on mobile scale
+        else{
+            this.props.SELECT_DIRECT_ITEM(index,row);
+            this.props.history.push('/inbox/chat/' + row.name);
+        }
+    }
+
     private get room(): string {
         let usr1 = this.props.auth?.username as string;
         let usr2 = this.props.inbox?.currentUsername as string;
@@ -74,14 +90,11 @@ class InboxView extends React.PureComponent<IProps, IState>{
         return res.trim();
     }
 
-    private handleDirectItemClick(index:number, row:DirectItem){
-        this.props.inbox?.currentSocket.emit('exit', { room: this.state.room }, (error:string) => {
-            if(error) {
-                alert(error);
-            }
-        });
-        this.props.CLEAR_MESSAGES();
-        this.props.SELECT_DIRECT_ITEM(index,row);
+
+    private onLoadCb() {
+        this.setState({name: this.props.auth?.username as string,room: this.room}, () => {
+            this.props.inbox?.currentSocket.emit('join', { name: this.state.name, room: this.state.room }, (error:string) => {});
+        })
     }
 
     private renderRow({ index, key, style, parent }: any) {
@@ -140,47 +153,6 @@ class InboxView extends React.PureComponent<IProps, IState>{
         })
     };
 
-    private inputSend(e: React.FormEvent<HTMLFormElement>){
-        e.preventDefault();
-        if(this.props.inbox?.inputMessage) {
-            this.props.inbox?.currentSocket.emit('sendMessage', this.props.inbox?.inputMessage, () => this.props.setInputVal(''));
-            this.props.saveMessageToDb({author: this.props.auth?.username, name: this.msgDbName, text: this.props.inbox?.inputMessage} as IMessageDB,this.props.auth?.userId as string, this.props.auth?.token as string);
-        }
-    }
-
-    private get msgDbName() {
-        let names = [this.props.auth?.username.toLowerCase(), this.props.inbox?.currentUsername.toLowerCase()];
-            names.sort();
-            if(names[0] && names[1]){
-                return names[0] + names[1];
-            }
-            else return '';
-    }
-
-    private onchatLoad(){
-        this.setState({name: this.props.auth?.username as string,room: this.room}, () => {
-            this.props.inbox?.currentSocket.emit('join', { name: this.state.name, room: this.state.room }, (error:string) => {
-                if(error) {
-                    alert(error);
-                }
-            });
-        })
-    }
-
-    private handleDeleteClick(){
-        this.props.DELETE_DIRECT_ITEM(this.props.inbox?.currentUsername as string,this.props.auth?.userId as string,this.props.auth?.token as string);
-    }
-
-    private handleSendIcon(e:Event){
-        e.preventDefault();
-        e.stopPropagation();
-        $(this.formRef.current as any).on('submit', (ee:Event) => {
-            ee.preventDefault();
-        })
-        this.inputSend(e as any);
-        $(this.formRef.current as any).submit();
-    }
-
     public render(){
         return (
             <div id={styles.viewContainer} className='view-container'>
@@ -191,9 +163,7 @@ class InboxView extends React.PureComponent<IProps, IState>{
                         }
                     `}</style>
                 </Helmet>
-                {
-                    this.props.inbox?.toggledDirect && <DirectPopup />
-                }
+                {this.props.inbox?.toggledDirect && <DirectPopup />}
                 <Container className={styles.uiContainer}>
                     <Grid className={styles.grid}>
                         <GridColumn width='6' className={styles.firstCol}>
@@ -232,33 +202,7 @@ class InboxView extends React.PureComponent<IProps, IState>{
                         <GridColumn width='9' className={styles.secondCol}>
                             {
                                 this.props.inbox?.currentUserId ? (
-                                    <>
-                                        <Segment onLoad={this.onchatLoad.bind(this)} className={styles.contentTopSegment} attached='top'>
-                                            <Image className={styles.contentImg} src={`${settings.BASE_URL}/feed/photo/user/${this.props.inbox?.currentUsername}`}></Image> <Header className={styles.contentUsername} size='small'>{this.props.inbox?.currentUsername}</Header>
-                                            <div className={styles.contentBtns}>
-                                                    <Button onClick={this.handleDeleteClick.bind(this)} color='red' size='mini'>Delete</Button>
-                                            </div>
-                                        </Segment>
-                                        <Segment className={styles.contentBottomSegment} attached='bottom'>
-                                            <div className={styles.chatContent}>
-                                                <Messages />
-                                            </div>
-                                            <div className={styles.inputSendContainer}>
-                                                <Ref innerRef={this.formRef}>
-                                                    <Form onSubmit={this.inputSend.bind(this)}>
-                                                        <Input
-                                                            value={this.props.inbox?.inputMessage}
-                                                            onChange={e => this.props.setInputVal(e.target.value)}
-                                                            className={styles.inputSend}
-                                                            //icon={{ name: 'send', circular: true, link: true }}
-                                                            icon={<Icon link circular name='send' onClick={this.handleSendIcon.bind(this)} />}
-                                                            placeholder='Search...'
-                                                            />
-                                                    </Form>
-                                                </Ref>
-                                            </div>
-                                        </Segment>
-                                    </>
+                                    <ChatView onLoad={this.onLoadCb.bind(this)} />
                                 ) :
 
                                 (
@@ -284,7 +228,6 @@ const mapStateToProps = (state: AppState): ReduxProps => ({
 interface DispatchProps {
     connectSocket: () => void,
     CALL_TOGGLE_DIRECT: () => void,
-    CLEAR_MESSAGES: () => void,
     ADD_INBOX_DIRECTS: (directs:Array<DirectItem>) => void,
     SELECT_DIRECT_ITEM: (index:number,item:DirectItem) => void,
     DELETE_DIRECT_ITEM: (username:string, userId:string, token:string) => void,
@@ -298,11 +241,10 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): Disp
     ADD_INBOX_DIRECTS: bindActionCreators(CALL_ADD_INBOX_DIRECTS, dispatch),
     SELECT_DIRECT_ITEM: bindActionCreators(CALL_SELECT_DIRECT_ITEM, dispatch),
     DELETE_DIRECT_ITEM: bindActionCreators(DELETE_DIRECT_ITEM, dispatch),
-    CLEAR_MESSAGES: bindActionCreators(CALL_CLEAR_MESSAGES, dispatch),
     connectSocket: bindActionCreators(CALL_CONNECT_INBOX_SOCKET, dispatch),
     setInputVal: bindActionCreators(CALL_INPUT_MESSAGE, dispatch),
     addToMessages: bindActionCreators(CALL_ADD_MESSAGES_MESSAGE, dispatch),
     saveMessageToDb: bindActionCreators(SAVE_MESSAGE_DB, dispatch),
 })
 
-export default connect(mapStateToProps,mapDispatchToProps)(InboxView as ComponentType<IProps>);
+export default withRouter(connect(mapStateToProps,mapDispatchToProps)(InboxView as ComponentType<IProps>));
