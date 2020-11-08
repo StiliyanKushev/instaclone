@@ -101,6 +101,7 @@ const inboxReducer = (state = inboxState, action:inboxTypes) => {
             state.directCurrentIndex = action.payload.index;
             return { 
                 ...state,
+                messages: [],
                 currentUsername: action.payload.direct.name,
                 currentUserId: action.payload.direct.userId,
                 currentDirectItemId: action.payload.direct._id,

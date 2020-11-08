@@ -131,6 +131,23 @@
         background: rgba(51,51,51,0.1) !important;
         cursor: pointer !important;
     }
+    .contentTopSegment{
+        margin-top: 4rem !important;
+    }
+
+    .contentBtns{
+        display: none !important;
+    }
+
+    .contentBottomSegment {
+        height: calc(100% - 60px - 2.7rem) !important;
+    }
+}
+
+@media screen and (max-width:625px){
+    .contentTopSegment{
+        margin-top: 3.5rem !important;
+    }
 }
 
 @media screen and (max-width:500px){
