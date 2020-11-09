@@ -1,12 +1,19 @@
+// IMPORT STYLES
+import styles from './DirectPopup.module.css';
+
+// IMPORT REACT RELATED
 import React, { ComponentType } from 'react';
 import { Dimmer, Segment, Icon, Header, Input, Container, Image, InputOnChangeData, Placeholder } from 'semantic-ui-react';
-import styles from './DirectPopup.module.css';
-import { AppActions } from '../../actions/types/actions';
-import { ThunkDispatch } from 'redux-thunk';
-import { CALL_TOGGLE_DIRECT, CALL_UPDATE_SELECTION_DIRECT, CALL_START_SEARCH_DIRECT, CALL_CLEAN_QUERY_DIRECT, CALL_FINISH_SEARCH_DIRECT, CALL_HANDLE_DIRECT_SELECTION } from '../../actions/inboxActions';
-import { bindActionCreators } from 'redux';
+
+// IMPORT REDUX RELATED
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
+import { AppActions } from '../../actions/types/actions';
 import { ReduxProps, AppState } from '../../reducers/index';
+import { CALL_TOGGLE_DIRECT, CALL_UPDATE_SELECTION_DIRECT, CALL_START_SEARCH_DIRECT, CALL_CLEAN_QUERY_DIRECT, CALL_FINISH_SEARCH_DIRECT, CALL_HANDLE_DIRECT_SELECTION } from '../../actions/inboxActions';
+
+// IMPORT OTHER
 import axios from 'axios';
 import { settings } from '../../settings';
 import { DirectItem } from '../../components/InboxView/InboxView';

@@ -1,23 +1,33 @@
-import React from 'react';
-import { Container, Grid, GridColumn, Icon, Segment, Header, Image } from 'semantic-ui-react';
+// IMPORT STYLES
 import styles from './InboxView.module.css';
 
-import { CALL_TOGGLE_DIRECT, CALL_ADD_INBOX_DIRECTS, CALL_SELECT_DIRECT_ITEM, DELETE_DIRECT_ITEM, CALL_INPUT_MESSAGE, CALL_ADD_MESSAGES_MESSAGE, SAVE_MESSAGE_DB, CALL_CONNECT_INBOX_SOCKET } from '../../actions/inboxActions';
+// IMPORT REACT RELATED
+import React from 'react';
+import { Container, Grid, GridColumn, Icon, Segment, Header, Image } from 'semantic-ui-react';
+import { InfiniteLoader, AutoSizer, InfiniteLoaderChildProps, List, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
+import { withRouter } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router';
+
+// IMPORT REDUX RELATED
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AppActions } from '../../actions/types/actions';
-import { connect } from 'react-redux';
-import { ComponentType } from 'react';
-import { Helmet } from 'react-helmet';
 import { AppState, ReduxProps } from '../../reducers/index';
-import DirectPopup from '../../shared/DirectPopup/DirectPopup';
-import { InfiniteLoader, AutoSizer, InfiniteLoaderChildProps, List, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
-import { getNewDirectsChunk } from '../../handlers/inbox';
-import { IDirectsChunkResponse, IMessage, IMessageDB } from '../../types/response';
+import { CALL_TOGGLE_DIRECT, CALL_ADD_INBOX_DIRECTS, CALL_SELECT_DIRECT_ITEM, DELETE_DIRECT_ITEM, CALL_INPUT_MESSAGE, CALL_ADD_MESSAGES_MESSAGE, SAVE_MESSAGE_DB, CALL_CONNECT_INBOX_SOCKET } from '../../actions/inboxActions';
+
+// IMPORT VALIDATION
+
+// IMPORT OTHER
+import { Helmet } from 'react-helmet';
+import { ComponentType } from 'react';
 import { settings } from '../../settings';
-import { RouteComponentProps } from 'react-router';
-import { withRouter } from 'react-router-dom';
 import ChatView from '../../shared/ChatView/ChatView';
+import { getNewDirectsChunk } from '../../handlers/inbox';
+import DirectPopup from '../../shared/DirectPopup/DirectPopup';
+import { IDirectsChunkResponse, IMessage, IMessageDB } from '../../types/response';
+
+
 
 type IProps = DispatchProps & ReduxProps & RouteComponentProps;
 

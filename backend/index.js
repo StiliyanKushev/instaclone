@@ -11,7 +11,6 @@ const io = socketio(http);
 
 io.on('connect', (socket) => {
     socket.on('join', ({ name, room }, callback) => {
-      console.log(name,room);
       const { error, user } = addUser({ id: socket.id, name, room });
   
       if(error) return callback(error);
@@ -40,10 +39,7 @@ io.on('connect', (socket) => {
     socket.on('sendMessage', (message, callback) => {
       const user = getUser(socket.id);
 
-      console.log(user);
-
       if(!user){
-        console.log(socket.id);
         return callback("User not found");
       }
   

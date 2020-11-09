@@ -1,20 +1,29 @@
+// IMPORT STYLES
+import styles from '../UserView/UserView.module.css';
+
+// IMPORT REACT RELATED
 import React from 'react';
+import {ComponentType} from 'react';
 import { Segment, Container } from 'semantic-ui-react';
 import { InfiniteLoader, WindowScroller, InfiniteLoaderChildProps, AutoSizer, Grid, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
-import styles from '../UserView/UserView.module.css';
-import IGenericResponse from '../../types/response';
+
+// IMPORT REDUX RELATED
+import { connect } from 'react-redux';
+import { AppActions } from '../../actions/types/actions';
+import { ThunkDispatch } from 'redux-thunk';
 import { IPostsListGrid } from '../../reducers/postReducer';
 import { IOtherPost, IPost } from '../../shared/PostsPartial/PostsPartial';
-import UserPostCell from '../../shared/UserPostCell/UserPostCell';
-import { AppState, ReduxProps } from '../../reducers/index';
-import { ThunkDispatch } from 'redux-thunk';
-import { AppActions } from '../../actions/types/actions';
 import { bindActionCreators } from 'redux';
-import {ComponentType} from 'react';
-import { connect } from 'react-redux';
+import { AppState, ReduxProps } from '../../reducers/index';
 import { ADD_EXPLORER_POSTS_ROW_LIST } from '../../actions/postActions';
-import { getExploreChunck } from '../../handlers/post';
+
+// IMPORT VALIDATION
+
+// IMPORT OTHER
 import { Helmet } from 'react-helmet';
+import IGenericResponse from '../../types/response';
+import { getExploreChunck } from '../../handlers/post';
+import UserPostCell from '../../shared/UserPostCell/UserPostCell';
 
 type IProps = ReduxProps & DispatchProps;
 

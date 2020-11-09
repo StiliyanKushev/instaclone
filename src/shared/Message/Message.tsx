@@ -1,7 +1,12 @@
-import React from 'react';
-import { IMessage } from '../../types/response';
-import { Header } from 'semantic-ui-react';
+// IMPORT STYLES
 import styles from './Message.module.css';
+
+// IMPORT REACT RELATED
+import React from 'react';
+import { Header } from 'semantic-ui-react';
+
+// IMPORT VALIDATION
+import { IMessage } from '../../types/response';
 
 interface IParentProps {
     currentRow: IMessage,

@@ -1,16 +1,25 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { ComponentType } from 'react';
-import { ReduxProps, AppState } from '../../reducers/index';
-import { InfiniteLoader, AutoSizer, List, InfiniteLoaderChildProps, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
-import { IMessage, IMessageDB, IMessagesChunkResponse } from '../../types/response';
+// IMPORT STYLES
 import styles from './Messages.module.css';
-import { getNewMessagesChunk } from '../../handlers/inbox';
+
+// IMPORT REACT RELATED
+import React from 'react';
+import { ComponentType } from 'react';
+import { InfiniteLoader, AutoSizer, List, InfiniteLoaderChildProps, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
+
+// IMPORT REDUX RELATED
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { AppActions } from '../../actions/types/actions';
 import { ThunkDispatch } from 'redux-thunk';
+import { AppActions } from '../../actions/types/actions';
+import { ReduxProps, AppState } from '../../reducers/index';
 import { CALL_ADD_MESSAGES_INBOX, CALL_CLEAR_MESSAGES } from '../../actions/inboxActions';
+
+// IMPORT VALIDATION
+import { IMessage, IMessageDB, IMessagesChunkResponse } from '../../types/response';
+
+// IMPORT OTHER
 import Message from '../Message/Message';
+import { getNewMessagesChunk } from '../../handlers/inbox';
 
 interface ParentProps {
     onUpdate: () => void,
