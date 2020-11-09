@@ -10,7 +10,6 @@ import { InfiniteLoader, AutoSizer, List, InfiniteLoaderChildProps, CellMeasurer
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-<<<<<<< HEAD
 import { AppActions } from '../../actions/types/actions';
 import { ReduxProps, AppState } from '../../reducers/index';
 import { CALL_ADD_MESSAGES_INBOX, CALL_CLEAR_MESSAGES } from '../../actions/inboxActions';
@@ -19,9 +18,6 @@ import { CALL_ADD_MESSAGES_INBOX, CALL_CLEAR_MESSAGES } from '../../actions/inbo
 import { IMessage, IMessageDB, IMessagesChunkResponse } from '../../types/response';
 
 // IMPORT OTHER
-=======
-import { CALL_ADD_MESSAGES_INBOX, CALL_CLEAR_MESSAGES } from '../../actions/inboxActions';
->>>>>>> master
 import Message from '../Message/Message';
 import { getNewMessagesChunk } from '../../handlers/inbox';
 

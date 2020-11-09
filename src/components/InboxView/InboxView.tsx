@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // IMPORT STYLES
 import styles from './InboxView.module.css';
 
@@ -11,20 +10,11 @@ import { RouteComponentProps } from 'react-router';
 
 // IMPORT REDUX RELATED
 import { connect } from 'react-redux';
-=======
-import React from 'react';
-import { Container, Grid, GridColumn, Icon, Segment, Header, Image } from 'semantic-ui-react';
-import styles from './InboxView.module.css';
-
-import { CALL_TOGGLE_DIRECT, CALL_ADD_INBOX_DIRECTS, CALL_SELECT_DIRECT_ITEM, DELETE_DIRECT_ITEM, CALL_INPUT_MESSAGE, CALL_ADD_MESSAGES_MESSAGE, SAVE_MESSAGE_DB, CALL_CONNECT_INBOX_SOCKET } from '../../actions/inboxActions';
->>>>>>> master
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AppActions } from '../../actions/types/actions';
 import { AppState, ReduxProps } from '../../reducers/index';
 import { CALL_TOGGLE_DIRECT, CALL_ADD_INBOX_DIRECTS, CALL_SELECT_DIRECT_ITEM, DELETE_DIRECT_ITEM, CALL_INPUT_MESSAGE, CALL_ADD_MESSAGES_MESSAGE, SAVE_MESSAGE_DB, CALL_CONNECT_INBOX_SOCKET } from '../../actions/inboxActions';
-
-// IMPORT VALIDATION
 
 // IMPORT OTHER
 import { Helmet } from 'react-helmet';
@@ -34,17 +24,7 @@ import ChatView from '../../shared/ChatView/ChatView';
 import { getNewDirectsChunk } from '../../handlers/inbox';
 import DirectPopup from '../../shared/DirectPopup/DirectPopup';
 import { IDirectsChunkResponse, IMessage, IMessageDB } from '../../types/response';
-<<<<<<< HEAD
 
-
-
-=======
-import { settings } from '../../settings';
-import { RouteComponentProps } from 'react-router';
-import { withRouter } from 'react-router-dom';
-import ChatView from '../../shared/ChatView/ChatView';
-
->>>>>>> master
 type IProps = DispatchProps & ReduxProps & RouteComponentProps;
 
 export interface DirectItem {
