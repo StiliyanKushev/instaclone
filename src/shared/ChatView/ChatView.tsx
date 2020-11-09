@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // IMPORT STYLES
 import styles from './ChatView.module.css';
 
@@ -29,27 +28,6 @@ import { Helmet } from 'react-helmet';
 import { settings } from '../../settings';
 import Messages from '../Messages/Messages';
 import { DirectItem } from '../../components/InboxView/InboxView';
-=======
-import React from 'react';
-import { Segment, Image, Button, Ref, Form, Input, Icon, Header } from 'semantic-ui-react';
-import Messages from '../Messages/Messages';
-import styles from './ChatView.module.css';
-import { createRef } from 'react';
-import $ from 'jquery';
-import { AppState, ReduxProps } from '../../reducers/index';
-import { DirectItem } from '../../components/InboxView/InboxView';
-import { IMessageDB } from '../../types/response';
-import { ThunkDispatch } from 'redux-thunk';
-import { AppActions } from '../../actions/types/actions';
-import { bindActionCreators } from 'redux';
-import { CALL_TOGGLE_DIRECT, CALL_ADD_INBOX_DIRECTS, CALL_SELECT_DIRECT_ITEM, DELETE_DIRECT_ITEM, CALL_INPUT_MESSAGE, SAVE_MESSAGE_DB, CALL_CONNECT_INBOX_SOCKET } from '../../actions/inboxActions';
-import { connect } from 'react-redux';
-import {ComponentType} from 'react';
-import { settings } from '../../settings';
-import { Helmet } from 'react-helmet';
-import { RouteComponentProps } from 'react-router-dom';
-import { withRouter } from 'react-router';
->>>>>>> master
 
 interface ParentProps {
     onLoad: () => void,
