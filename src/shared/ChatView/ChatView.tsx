@@ -66,7 +66,7 @@ class ChatView extends React.PureComponent<IProps, IState>{
             this.props.inbox?.currentSocket.emit('sendMessage', this.props.inbox?.inputMessage, (err:string) => {        
                 if(err){
                     this.props.inbox?.currentSocket.emit('join', { name: this.props.auth?.username as string, room: this.room }, (error:string) => {});
-                    this.inputSend(e,true);
+                    this.inputSend(e,false);
                 }
                 else{
                     this.props.setInputVal('');
