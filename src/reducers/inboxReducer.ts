@@ -59,10 +59,6 @@ const inboxReducer = (state = inboxState, action:inboxTypes) => {
             return{
                 ...state,
                 message:"Cleared messages",
-                // directCurrentIndex:-1,
-                // currentUsername:'',
-                // currentUserId:'',
-                // currentDirectItemId:'',
             } as IInboxState
         }
 
@@ -114,6 +110,9 @@ const inboxReducer = (state = inboxState, action:inboxTypes) => {
 
         case "SET_HANDLE_DIRECT_SELECTION_SUCCESS": {
             state.directs = [action.payload.direct,...state.directs]
+            if(state.directCurrentIndex !== -1){
+                state.directCurrentIndex++;
+            }
             return {
                 ...state,
                 error:false,

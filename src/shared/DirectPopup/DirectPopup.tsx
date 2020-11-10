@@ -95,8 +95,8 @@ class DirectPopup extends React.PureComponent<IProps, any>{
                     }
                     {   !this.props.inbox?.loading && 
 
-                        this.props.inbox?.results.map(item => (
-                            <Container onClick={(e:any) => this.handleSelectItem.bind(this)(e,item)} className={styles.directItemContainer}>
+                        this.props.inbox?.results.map((item, index) => (
+                            <Container key={index} onClick={(e:any) => this.handleSelectItem.bind(this)(e,item)} className={styles.directItemContainer}>
                                 <Image src={`${settings.BASE_URL}/feed/photo/user/${item?.name}`} className={styles.directItemImg}></Image>
                                 <div className={styles.directItemContent}>
                                     <Header className={styles.directItemUsername} size='small'>{item.name}</Header>
