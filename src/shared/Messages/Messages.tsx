@@ -48,7 +48,6 @@ class Messages extends React.Component<IProps, IState> {
             this.props.CLEAR_MESSAGES();
             if(!this.state.hasMoreMessages){
                 this.setState({hasMoreMessages:true});
-                console.log('here');
             }
         }
     }
@@ -94,7 +93,6 @@ class Messages extends React.Component<IProps, IState> {
     };
 
     private fetchMessages = ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => {
-        console.log(startIndex,stopIndex);
         return getNewMessagesChunk(this.msgDbName, startIndex, stopIndex, this.props.auth?.userId as string, this.props.auth?.token as string).then((res: IMessagesChunkResponse) => {
             if (res.success) {
                 if (res.messages.length === 0) {
