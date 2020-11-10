@@ -58,7 +58,11 @@ const inboxReducer = (state = inboxState, action:inboxTypes) => {
             state.messages = [];
             return{
                 ...state,
-                message:"Cleared messages"
+                message:"Cleared messages",
+                // directCurrentIndex:-1,
+                // currentUsername:'',
+                // currentUserId:'',
+                // currentDirectItemId:'',
             } as IInboxState
         }
 

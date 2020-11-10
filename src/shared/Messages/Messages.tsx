@@ -42,11 +42,14 @@ class Messages extends React.Component<IProps, IState> {
     }
 
     
-    public componentDidUpdate(prevProps: IProps){
+    public componentDidUpdate(prevProps: IProps, prevState: IState){
         if(this.props.inbox?.currentDirectItemId !== prevProps.inbox?.currentDirectItemId){
             this.props.onUpdate();
             this.props.CLEAR_MESSAGES();
-            this.setState({hasMoreMessages:true})
+            if(!this.state.hasMoreMessages){
+                this.setState({hasMoreMessages:true});
+                console.log('here');
+            }
         }
     }
 
@@ -91,6 +94,7 @@ class Messages extends React.Component<IProps, IState> {
     };
 
     private fetchMessages = ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => {
+        console.log(startIndex,stopIndex);
         return getNewMessagesChunk(this.msgDbName, startIndex, stopIndex, this.props.auth?.userId as string, this.props.auth?.token as string).then((res: IMessagesChunkResponse) => {
             if (res.success) {
                 if (res.messages.length === 0) {
@@ -117,6 +121,10 @@ class Messages extends React.Component<IProps, IState> {
     }
 
     public render() {
+        if(this.props.inbox?.messages.length === 0 && !this.state.hasMoreMessages){
+            return ''
+        }
+        else
         return (
             <InfiniteLoader
                 isRowLoaded={this.isRowLoaded.bind(this)}

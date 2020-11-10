@@ -559,6 +559,14 @@ async function isUserValid(req,res,next){
     }
 }
 
+function getMsgDbName(n1,n2){
+    let names = [n1.toLowerCase(), n2.toLowerCase()].sort();
+    if(n1 && n2){
+        return names[0] + names[1];
+    }
+    else return '';
+}
+
 async function addUserToDirectList(req,res,next){
     let username = req.params.username;
 
@@ -591,13 +599,14 @@ async function addUserToDirectList(req,res,next){
             if(!isAlreadyThere){
                 new userDirectItem({forUser:user,asUser:asUserItem}).save().then(async (userItem) => {
                     let name = await User.findById(userItem.asUser);
+                    let lastMsg = await ChatMsg.find({name: getMsgDbName(asUserItem.username,user.username)}).sort({created: 'desc'}).limit(1);
                     return res.status(200).json({
                         success:true,
                         messege: 'User added to direct.',
                         direct: {
                             name:name.username,
                             _id: userItem.id,
-                            lastMsg: 'todotodotodo',
+                            lastMsg: lastMsg[0] ? lastMsg[0].text.slice(0,20) + '...' : '',
                             userId: name._id,
                         }
                     })
@@ -645,10 +654,11 @@ async function getDirectsChunk(req,res,next){
 
         for(let direct of directs){
             let asUserName = await User.findById(direct.asUser)
+            let lastMsg = await ChatMsg.find({name: getMsgDbName(givenUser.username,asUserName.username)}).sort({created: 'desc'}).limit(1);
             let newDirect = {
                 name: asUserName.username,
                 _id: direct.id,
-                lastMsg: 'todotodotodo',
+                lastMsg: lastMsg[0] ? lastMsg[0].text.slice(0,20) + '...' : '',
                 userId: asUserName._id,
             }
 
