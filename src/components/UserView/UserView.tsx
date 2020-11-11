@@ -74,6 +74,7 @@ class UserView extends React.Component<IProps, IState> {
         this.setupAvatarHandlerUpload = this.setupAvatarHandlerUpload.bind(this);
         this.setFetchFunction = this.setFetchFunction.bind(this);
         this.setUserData = this.setUserData.bind(this);
+        this.handleMessageClick = this.handleMessageClick.bind(this);
 
         (async () => {if(!await this.isUserValid()){
             this.props.history.push('/404')
@@ -92,8 +93,7 @@ class UserView extends React.Component<IProps, IState> {
 
     private resetImgSrc(){
         let date = new Date();
-        let user = this.props.auth?.username;
-        $(this.userImageRef.current as HTMLImageElement).attr("src", `${settings.BASE_URL}/feed/photo/user/${user}?` + date.getTime());
+        $(this.userImageRef.current as HTMLImageElement).attr("src", `${settings.BASE_URL}/feed/photo/user/${this.urlUsername}?` + date.getTime());
     }
 
     private setUserData(){
@@ -110,8 +110,25 @@ class UserView extends React.Component<IProps, IState> {
         this.resetImgSrc();
     }
 
+    
     public componentWillUnmount() {
         $('#global-file-input').unbind('change')
+    }
+
+    private handleMessageClick(){
+        //let userToChat = this.urlUsername;
+        // TODO pls
+        /**
+         * Check if a direct with that name is already there
+         * - if yes then select it
+         * - if not add it somehow
+         */
+
+         /**
+          * Checking should be done by looping all of them and looking for the 'name' propery
+          * 
+          * [*] If the directs haven't been initialzed before then load the url, wait for 'hasMoreDirects == false' and then check
+          */
     }
 
     private onRouteChanged(prevProps: RouteComponentProps) {
@@ -288,7 +305,7 @@ class UserView extends React.Component<IProps, IState> {
                                                 {
                                                     this.urlUsername !== this.props.auth?.username && (
                                                         this.props.user?.isCurrentUserFollowed ?
-                                                        <Grid.Column className={styles.userSettingsBtns} floated='right'><Button onClick={() => {}} secondary>Messege</Button><Button onClick={this.unfollowUser.bind(this)} primary icon='remove user'></Button></Grid.Column>
+                                                        <Grid.Column className={styles.userSettingsBtns} floated='right'><Button onClick={this.handleMessageClick} secondary>Messege</Button><Button onClick={this.unfollowUser.bind(this)} primary icon='remove user'></Button></Grid.Column>
                                                         :
                                                         <Grid.Column className={styles.userSettingsBtns} floated='right'><Button onClick={this.followUser.bind(this)} primary>Follow</Button></Grid.Column>
                                                     )
@@ -304,7 +321,7 @@ class UserView extends React.Component<IProps, IState> {
                                                 {
                                                     this.urlUsername !== this.props.auth?.username && (
                                                         this.props.user?.isCurrentUserFollowed ?
-                                                            <React.Fragment><Button size='mini' className={styles.editBtn2} onClick={() => {}} secondary>Messege</Button><Button className={styles.settingsBtn2} size='mini' onClick={this.unfollowUser.bind(this)} primary icon='remove user'/></React.Fragment>
+                                                            <React.Fragment><Button size='mini' className={styles.editBtn2} onClick={this.handleMessageClick} secondary>Messege</Button><Button className={styles.settingsBtn2} size='mini' onClick={this.unfollowUser.bind(this)} primary icon='remove user'/></React.Fragment>
                                                         :
                                                         <Button size='mini' className={styles.editBtn3} onClick={this.followUser.bind(this)} primary>Follow</Button>
                                                     )
