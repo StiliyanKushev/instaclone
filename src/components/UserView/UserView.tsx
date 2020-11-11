@@ -263,11 +263,13 @@ class UserView extends React.Component<IProps, IState> {
     }
 
     private onActionCallback(didFollow:boolean){
-        if(didFollow){
-            this.props.incrementFollowing()
-        }
-        else{
-            this.props.decrementFollowing()
+        if(this.urlUsername === this.props.auth?.username as string){
+            if(didFollow){
+                this.props.incrementFollowing()
+            }
+            else{
+                this.props.decrementFollowing()
+            }
         }
     }
 
