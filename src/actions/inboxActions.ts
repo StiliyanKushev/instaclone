@@ -1,7 +1,7 @@
 import { AppActions } from './types/actions';
 import { Dispatch } from 'react';
 import IGenericResponse from '../types/response';
-import { saveUserToDirect, deleteUserFromDirect, saveMessageToDb } from '../handlers/inbox';
+import { saveUserToDirect, deleteUserFromDirect, saveMessageToDb, sendPrepareDataInbox } from '../handlers/inbox';
 import { DirectItem } from '../components/InboxView/InboxView';
 import { IMessage, IMessageDB } from '../types/response';
 
@@ -19,14 +19,21 @@ export const CALL_TOGGLE_DIRECT = (): AppActions => ({
 
 export const CALL_CLEAN_QUERY_DIRECT = (): AppActions => ({
     type: 'CLEAN_QUERY_DIRECT',
-})
+});
 
 export const CALL_START_SEARCH_DIRECT = (query: string): AppActions => ({
     type: 'START_SEARCH_DIRECT',
     payload: {
         query,
     }
-})
+});
+
+export const CALL_PREPARE_INBOX = (username:string): AppActions => ({
+    type: 'SET_PREPARE_INBOX',
+    payload: {
+        username
+    }
+});
 
 export const CALL_FINISH_SEARCH_DIRECT = (results: Array<DirectItem>): AppActions => ({
     type: 'FINISH_SEARCH_DIRECT',
@@ -94,6 +101,26 @@ export const DELETE_DIRECT_ITEM = (username: string, userId: string, token: stri
         }
         else {
             dispatch(CALL_DELETE_DIRECT_FAILURE(res.messege));
+        }
+    });
+}
+
+export const CALL_SEND_PREPARE_DATA_INBOX_SUCCESS = (message: string): AppActions => ({
+    type: 'SET_SEND_PREPARE_DATA_INBOX_SUCCESS',
+    payload: {
+        message
+    }
+});
+
+export const CALL_SEND_PREPARE_DATA_INBOX = (otherUsername: string, username:string, userId:string, token:string) => (dispatch: Dispatch<AppActions>) => {
+    let promise: Promise<IGenericResponse> = sendPrepareDataInbox(otherUsername, username, userId, token);
+    promise.then((res: IGenericResponse) => {
+        if (res.success) {
+            dispatch(CALL_SEND_PREPARE_DATA_INBOX_SUCCESS(res.messege));
+        }
+        else {
+            // internal error
+            console.log(res.messege);
         }
     });
 }

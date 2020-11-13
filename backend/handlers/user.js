@@ -597,7 +597,10 @@ async function addUserToDirectList(req,res,next){
             
             // add it now
             if(!isAlreadyThere){
-                new userDirectItem({forUser:user,asUser:asUserItem}).save().then(async (userItem) => {
+                let last = await userDirectItem.findOne({forUser:user}).sort({index: 'desc'});
+                let lastIndex = last ? last.index : -1;
+                let calculatedIndex = lastIndex + 1;
+                new userDirectItem({forUser:user,asUser:asUserItem,index: calculatedIndex}).save().then(async (userItem) => {
                     let name = await User.findById(userItem.asUser);
                     let lastMsg = await ChatMsg.find({name: getMsgDbName(asUserItem.username,user.username)}).sort({created: 'desc'}).limit(1);
                     return res.status(200).json({
@@ -641,7 +644,7 @@ async function getDirectsChunk(req,res,next){
 
     let givenUser = await User.findById(req.params.userId);
 
-    userDirectItem.find({forUser:givenUser}).skip(startIndex).limit(limit).sort({date: 'asc'}).exec(async (err,directs) => {
+    userDirectItem.find({forUser:givenUser}).skip(startIndex).limit(limit).sort({index: 'desc'}).exec(async (err,directs) => {
         if(err){
             console.log(err);
             return res.status(200).json({
@@ -754,6 +757,44 @@ async function getMessagesChunk(req,res,next){
     })
 }
 
+async function postPrepareDataInbox(req,res,next){
+    let otherUsername = req.body.otherUsername;
+    let username = req.params.username;
+    //let userId = req.body.userId;
+
+    let forUser = await User.findOne({username});
+    let asUser = await User.findOne({username:otherUsername});
+
+    if(!forUser || !asUser){
+        return res.status(200).json({
+            success:false,
+            message:'The user does not exist.'
+        })
+    }
+
+    let item = await userDirectItem.findOne({forUser,asUser});
+
+    if(item){
+        //move it to the first
+        let last = await userDirectItem.findOne({forUser}).sort({index: 'desc'});
+        let lastIndex = last ? last.index : -1;
+        let calculatedIndex = lastIndex + 1;
+        item.index = calculatedIndex;
+        await item.save();
+        return res.status(200).json({
+            success:true,
+            message:'moved to first',
+        })
+    }
+    else {
+        //add it to the first
+        //req.username = otherUsername;
+        let newReq = {...req}
+        newReq.params.username = otherUsername;
+        addUserToDirectList(newReq,res,next);
+    }
+}
+
 module.exports = {
     sendAvatar,
     getSuggestedUsers,
@@ -772,5 +813,6 @@ module.exports = {
     getDirectsChunk,
     deleteDirectItem,
     saveMessage,
-    getMessagesChunk
+    getMessagesChunk,
+    postPrepareDataInbox
 }

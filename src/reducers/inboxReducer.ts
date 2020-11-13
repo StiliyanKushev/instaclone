@@ -22,6 +22,9 @@ export interface IInboxState {
     inputMessage: string,
 
     currentSocket:any, // too lazy to find the type in the docs lol,
+
+    preparedInbox: string,
+    preparedInboxDone: boolean,
 }
 
 const inboxState:IInboxState = {
@@ -42,6 +45,9 @@ const inboxState:IInboxState = {
     inputMessage: '',
     
     currentSocket: null,
+
+    preparedInbox: '',
+    preparedInboxDone: true,
 }
 
 const inboxReducer = (state = inboxState, action:inboxTypes) => {
@@ -192,6 +198,24 @@ const inboxReducer = (state = inboxState, action:inboxTypes) => {
                 ...state,
                 error:true,
                 message: action.payload.message
+            } as IInboxState
+        }
+
+        case 'SET_PREPARE_INBOX':{
+            return {
+                ...state,
+                directs: [],
+                preparedInbox: action.payload.username,
+                preparedInboxDone: false,
+            } as IInboxState
+        }
+
+        case 'SET_SEND_PREPARE_DATA_INBOX_SUCCESS':{
+            return {
+                ...state,
+                preparedInbox: '',
+                preparedInboxDone: true,
+                message: action.payload.message,
             } as IInboxState
         }
 

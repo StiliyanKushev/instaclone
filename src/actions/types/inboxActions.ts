@@ -16,6 +16,9 @@ const SET_INPUT_MESSAGE = 'SET_INPUT_MESSAGE';
 const ADD_MESSAGES_INBOX = 'ADD_MESSAGES_INBOX';
 const SET_CONNECT_INBOX_SOCKET = 'SET_CONNECT_INBOX_SOCKET';
 const SET_CLEAR_MESSAGES = 'SET_CLEAR_MESSAGES';
+const SET_PREPARE_INBOX = 'SET_PREPARE_INBOX';
+const SET_SEND_PREPARE_DATA_INBOX = 'SET_SEND_PREPARE_DATA_INBOX';
+const SET_SEND_PREPARE_DATA_INBOX_SUCCESS = 'SET_SEND_PREPARE_DATA_INBOX_SUCCESS';
 
 export interface setToggleDirect {
     type: typeof SET_TOGGLE_DIRECT,
@@ -48,12 +51,18 @@ export interface setHandleDirectSelectionFailure {
         message: string
     }
 }
-
 export interface setHandleDirectSelectionSuccess {
     type: typeof SET_HANDLE_DIRECT_SELECTION_SUCCESS,
     payload: {
         message: string,
         direct: DirectItem
+    }
+}
+
+export interface setSendPrepareDataInboxSuccess {
+    type: typeof SET_SEND_PREPARE_DATA_INBOX_SUCCESS,
+    payload: {
+        message: string,
     }
 }
 
@@ -119,7 +128,19 @@ export type clearMessages = {
     type: typeof SET_CLEAR_MESSAGES,
 }
 
+export type prepareInbox = {
+    type: typeof SET_PREPARE_INBOX,
+    payload: {
+        username: string,
+    }
+}
+
+export type sendPrepareDataInbox = {
+    type: typeof SET_SEND_PREPARE_DATA_INBOX,
+}
+
 export type inboxTypes = 
+prepareInbox |
 setInputMessage |
 clearMessages |
 connectSocket |
@@ -127,6 +148,8 @@ addMessagesMsg |
 addMessagesInbox |
 setHandleDirectSelectionSuccess |
 setHandleDirectSelectionFailure |
+setSendPrepareDataInboxSuccess |
+sendPrepareDataInbox |
 setDeleteDirectSuccess |
 setDeleteDirectFailure |
 setSelectDirectItem |

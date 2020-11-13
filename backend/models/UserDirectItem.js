@@ -5,6 +5,7 @@ const REQUIRED_VALIDATION_MESSAGE = '{PATH} is required'
 let userDirectItemSchema = new mongoose.Schema({
     forUser: {type:mongoose.Schema.Types.ObjectId,ref:'User',required:REQUIRED_VALIDATION_MESSAGE},
     asUser: {type:mongoose.Schema.Types.ObjectId,ref:'User',required:REQUIRED_VALIDATION_MESSAGE},
+    index: {type:Number, required: REQUIRED_VALIDATION_MESSAGE},
 });
 
 let userDirectItem = mongoose.model('UserDirectItem',userDirectItemSchema);

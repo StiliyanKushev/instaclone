@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const authCheck = require('../config/auth-check');
 const {getExploreChunk,renewOtherPosts,getOtherPosts,getPost,getCommentsFromComment,createPost,getPopularFromAllPost,commentPost,likePost,likeComment,getCommentsFromPost,getLikesFromPost,getLikesFromComment} = require('../handlers/posts');
-const {getMessagesChunk,saveMessage,deleteDirectItem,getDirectsChunk,addUserToDirectList, isUserValid,getUserSearch,getUserFollowers,getUserFollowing,userFollow,userUnfollow,getUserData,userSavePost,getUserPostsRecent,getUserPostsPopular,getUserPostsSaved,sendAvatar,getSuggestedUsers} = require('../handlers/user');
+const {postPrepareDataInbox,getMessagesChunk,saveMessage,deleteDirectItem,getDirectsChunk,addUserToDirectList, isUserValid,getUserSearch,getUserFollowers,getUserFollowing,userFollow,userUnfollow,getUserData,userSavePost,getUserPostsRecent,getUserPostsPopular,getUserPostsSaved,sendAvatar,getSuggestedUsers} = require('../handlers/user');
 const multer = require('multer'); 
 const User = require('../models/User');
 const Post = require('../models/Post');
@@ -79,5 +79,6 @@ router.get('/user/directs/:startIndex/:stopIndex/as/:userId',authCheck, getDirec
 router.post('/user/directs/delete/:username', authCheck, deleteDirectItem)
 router.post('/user/inbox/save-message/', authCheck, saveMessage)
 router.get('/user/inbox/messages/:msgName/:startIndex/:stopIndex/as/:userId', authCheck, getMessagesChunk)
+router.post('/user/inbox/prepare/:username', authCheck, postPrepareDataInbox)
 
 module.exports = router;

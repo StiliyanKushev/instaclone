@@ -32,6 +32,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { ICreator } from '../../types/auth';
 import UsersList from '../../shared/UsersList/UsersList';
 import axios from 'axios';
+import { CALL_PREPARE_INBOX } from '../../actions/inboxActions';
 
 export interface IUserData {
     posts: number,
@@ -116,19 +117,15 @@ class UserView extends React.Component<IProps, IState> {
     }
 
     private handleMessageClick(){
-        //let userToChat = this.urlUsername;
-        // TODO pls
-        /**
-         * Check if a direct with that name is already there
-         * - if yes then select it
-         * - if not add it somehow
-         */
-
-         /**
-          * Checking should be done by looping all of them and looking for the 'name' propery
-          * 
-          * [*] If the directs haven't been initialzed before then load the url, wait for 'hasMoreDirects == false' and then check
-          */
+        // on desktop scale
+        if(window.innerWidth >= 1000){
+            this.props.prepareInbox(this.urlUsername);
+            this.props.history.push('/inbox');
+        }
+        // on mobile scale
+        else{
+            this.props.history.push(`/inbox/chat/${this.urlUsername}`);
+        }
     }
 
     private onRouteChanged(prevProps: RouteComponentProps) {
@@ -396,6 +393,7 @@ interface DispatchProps {
     clearUserData: () => void,
     incrementFollowing: () => void,
     decrementFollowing: () => void,
+    prepareInbox: (username:string) => void,
     toggleUserLikes: (fetchFunction:(startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:Array<ICreator>}>) => void,
 }
 
@@ -410,6 +408,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): Disp
     toggleUserLikes:bindActionCreators(TOGGLE_USERS_LIST,dispatch),
     incrementFollowing: bindActionCreators(SET_USER_INCREMENT_FOLLOWING,dispatch),
     decrementFollowing: bindActionCreators(SET_USER_DECREMENT_FOLLOWING,dispatch),
+    prepareInbox: bindActionCreators(CALL_PREPARE_INBOX,dispatch),
 })
 
 export default withRouter(withCookies(connect(mapStateToProps, mapDispatchToProps)(UserView as ComponentType<IProps>)));

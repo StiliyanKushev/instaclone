@@ -14,7 +14,7 @@ import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AppActions } from '../../actions/types/actions';
 import { AppState, ReduxProps } from '../../reducers/index';
-import { CALL_TOGGLE_DIRECT, CALL_ADD_INBOX_DIRECTS, CALL_SELECT_DIRECT_ITEM, DELETE_DIRECT_ITEM, CALL_INPUT_MESSAGE, CALL_ADD_MESSAGES_MESSAGE, SAVE_MESSAGE_DB, CALL_CONNECT_INBOX_SOCKET } from '../../actions/inboxActions';
+import { CALL_TOGGLE_DIRECT, CALL_ADD_INBOX_DIRECTS, CALL_SELECT_DIRECT_ITEM, DELETE_DIRECT_ITEM, CALL_INPUT_MESSAGE, CALL_ADD_MESSAGES_MESSAGE, SAVE_MESSAGE_DB, CALL_CONNECT_INBOX_SOCKET, CALL_SEND_PREPARE_DATA_INBOX } from '../../actions/inboxActions';
 
 // IMPORT OTHER
 import { Helmet } from 'react-helmet';
@@ -39,11 +39,12 @@ interface IState {
     hasMoreDirects: boolean,
     name:string,
     room:string,
+    shouldSelectFirst: boolean,
 }
 
 class InboxView extends React.PureComponent<IProps, IState>{
     private cache: CellMeasurerCache;
-    public state: IState = { hasMoreDirects:true, name:'', room:'' };
+    public state: IState = { hasMoreDirects:true, name:'', room:'', shouldSelectFirst:false, };
 
     private get rowCount(): number {
         let directs: any = this.props.inbox?.directs;
@@ -66,6 +67,19 @@ class InboxView extends React.PureComponent<IProps, IState>{
         this.props.inbox?.currentSocket.on('message', (message:IMessage) => {
             this.props.addToMessages(message);
         });
+
+        if(this.props.inbox?.preparedInbox){
+            this.handlePrepared();
+        }
+    }
+
+    private handlePrepared(){
+        let inbox = this.props.inbox;
+        let auth = this.props.auth;
+        // make a call to the backend
+        this.props.sendPreparedDataToBackend(inbox?.preparedInbox as string,auth?.username as string,auth?.userId as string,auth?.token as string);
+        // once added select it (open the chat)
+        this.setState({shouldSelectFirst:true});
     }
 
     private handleDirectItemClick(index:number, row:DirectItem){
@@ -151,6 +165,10 @@ class InboxView extends React.PureComponent<IProps, IState>{
                 }
                 else {
                     this.props.ADD_INBOX_DIRECTS(res.directs);
+                    if(this.state.shouldSelectFirst){
+                        this.props.SELECT_DIRECT_ITEM(0,this.props.inbox?.directs[0] as DirectItem);
+                        this.setState({shouldSelectFirst: false});
+                    }
                 }
             }
             else {
@@ -176,33 +194,38 @@ class InboxView extends React.PureComponent<IProps, IState>{
                             <Segment className={styles.directTopSegment} attached='top' textAlign='center'><Header className={styles.directHeader} size='medium'>Direct</Header><Icon onClick={this.handleDirectClick.bind(this)} className={styles.directBtn} size='big' name='edit outline'></Icon></Segment>
                             <Segment className={styles.directBottomSegment} attached='bottom'>
                             <Container className={styles.directItemContainerEmpty}></Container>
-                                <InfiniteLoader
-                                    isRowLoaded={this.isRowLoaded.bind(this)}
-                                    loadMoreRows={this.fetchDirects.bind(this)}
-                                    rowCount={this.rowCount}
-                                    minimumBatchSize={10}
-                                    threshold={15}>
-                                    {({ onRowsRendered,registerChild }: InfiniteLoaderChildProps) => (
-                                            <AutoSizer className={styles.AutoSizer} onResize={this.handleResize.bind(this)}>
-                                                {({ width, height }) => {
-                                                    return (
-                                                        <List
-                                                            ref={registerChild}
-                                                            onRowsRendered={onRowsRendered}
-                                                            className={styles.commentsList}
-                                                            width={width}
-                                                            height={height}
-                                                            deferredMeasurementCache={this.cache}
-                                                            rowHeight={this.cache.rowHeight}
-                                                            rowRenderer={this.renderRow.bind(this)}
-                                                            rowCount={this.rowCount}
-                                                            overscanRowCount={3}
-                                                        />
-                                                    );
-                                                }}
-                                            </AutoSizer>
-                                        )}
-                                </InfiniteLoader>
+                                {
+                                    this.props.inbox?.preparedInboxDone && (
+                                        <InfiniteLoader
+                                            isRowLoaded={this.isRowLoaded.bind(this)}
+                                            loadMoreRows={this.fetchDirects.bind(this)}
+                                            rowCount={this.rowCount}
+                                            minimumBatchSize={10}
+                                            threshold={15}>
+                                            {({ onRowsRendered,registerChild }: InfiniteLoaderChildProps) => (
+                                                    <AutoSizer className={styles.AutoSizer} onResize={this.handleResize.bind(this)}>
+                                                        {({ width, height }) => {
+                                                            return (
+                                                                <List
+                                                                    ref={registerChild}
+                                                                    onRowsRendered={onRowsRendered}
+                                                                    className={styles.commentsList}
+                                                                    width={width}
+                                                                    height={height}
+                                                                    deferredMeasurementCache={this.cache}
+                                                                    rowHeight={this.cache.rowHeight}
+                                                                    rowRenderer={this.renderRow.bind(this)}
+                                                                    rowCount={this.rowCount}
+                                                                    overscanRowCount={3}
+                                                                />
+                                                            );
+                                                        }}
+                                                    </AutoSizer>
+                                                )}
+                                        </InfiniteLoader>
+                                    )
+                                }
+                                
                             </Segment>
                         </GridColumn>
                         <GridColumn width='9' className={styles.secondCol}>
@@ -240,6 +263,7 @@ interface DispatchProps {
     setInputVal: (value:string) => void,
     addToMessages: (msg: IMessage) => void,
     saveMessageToDb: (msg: IMessageDB, userId: string, token: string) => void,
+    sendPreparedDataToBackend: (otherUsername: string, username:string, userId:string, token:string) => void,
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): DispatchProps => ({
@@ -251,6 +275,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): Disp
     setInputVal: bindActionCreators(CALL_INPUT_MESSAGE, dispatch),
     addToMessages: bindActionCreators(CALL_ADD_MESSAGES_MESSAGE, dispatch),
     saveMessageToDb: bindActionCreators(SAVE_MESSAGE_DB, dispatch),
+    sendPreparedDataToBackend: bindActionCreators(CALL_SEND_PREPARE_DATA_INBOX, dispatch),
 })
 
 export default withRouter(connect(mapStateToProps,mapDispatchToProps)(InboxView as ComponentType<IProps>));

@@ -184,6 +184,7 @@
     align-content: center;
     display: flex;
     justify-content: center;
+    margin-bottom: 4rem !important;
 }
 
 .vgrid::-webkit-scrollbar{
