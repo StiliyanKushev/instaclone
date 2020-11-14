@@ -117,15 +117,8 @@ class UserView extends React.Component<IProps, IState> {
     }
 
     private handleMessageClick(){
-        // on desktop scale
-        if(window.innerWidth >= 1000){
-            this.props.prepareInbox(this.urlUsername);
-            this.props.history.push('/inbox');
-        }
-        // on mobile scale
-        else{
-            this.props.history.push(`/inbox/chat/${this.urlUsername}`);
-        }
+        this.props.prepareInbox(this.urlUsername);
+        this.props.history.push('/inbox');
     }
 
     private onRouteChanged(prevProps: RouteComponentProps) {

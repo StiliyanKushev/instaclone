@@ -168,6 +168,11 @@ class InboxView extends React.PureComponent<IProps, IState>{
                     if(this.state.shouldSelectFirst){
                         this.props.SELECT_DIRECT_ITEM(0,this.props.inbox?.directs[0] as DirectItem);
                         this.setState({shouldSelectFirst: false});
+                        
+                        // on mobile scale
+                        if(window.innerWidth < 1000){
+                            this.props.history.push(`/inbox/chat/${this.props.inbox?.directs[0].name}`)
+                        }
                     }
                 }
             }
