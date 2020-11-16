@@ -12,26 +12,23 @@ export function uploadPost(form: FormData,username:string,token:string) {
 }
 
 export function likePost(postId:string,userId:string,token:string){
-    let data = {
-        userId
-    }
-
+    let data = { userId }
     return post<typeof data,IGenericResponse>(data,`/feed/posts/${postId}/like`,token).then((res:any) => res.data);
 }
 
-export function savePost(postId:string,userId:string,token:string){
-    let data = {
-        userId
-    }
 
+export function deletePost(postId:string,userId:string,token:string){
+    let data = { userId }
+    return post<typeof data,IGenericResponse>(data,`/feed/posts/delete/${postId}`,token).then((res:any) => res.data);
+}
+
+export function savePost(postId:string,userId:string,token:string){
+    let data = { userId }
     return post<typeof data,IGenericResponse>(data,`/feed/user/save-post/${postId}`,token).then((res:any) => res.data);
 }
 
 export function likeComment(commentId:string,userId:string,token:string){
-    let data = {
-        userId
-    }
-
+    let data = { userId }
     return post<typeof data,IGenericResponse>(data,`/feed/comments/${commentId}/like`,token).then((res:any) => res.data);
 }
 

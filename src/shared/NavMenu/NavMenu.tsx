@@ -175,9 +175,6 @@ class NavMenu extends React.Component<IProps>{
                         <Link className={styles.LinkContainer} to={`/explore`}>
                             <Icon className={`${styles.iconBtn} compass ${this.isCurrentPath('/explore')}`} size='big'></Icon>
                         </Link>
-                        <Link className={styles.LinkContainer} to={`/feed`}>
-                            <Icon className={`${styles.iconBtn} heart ${this.isCurrentPath('/feed')}`} size='big'></Icon>
-                        </Link>
                         <Link className={styles.LinkContainer} to={`/profile/${this.props.auth?.username}`}>
                             <Icon className={`${styles.iconBtn} user circle ${this.isCurrentPath(`/profile/${this.props.auth?.username}`)}`} size='big'></Icon>
                         </Link>

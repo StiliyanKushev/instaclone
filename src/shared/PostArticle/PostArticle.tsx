@@ -16,10 +16,10 @@ import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AppState, ReduxProps } from "../../reducers";
 import { TOGGLE_USERS_LIST } from '../../actions/userActions';
-import { ADD_COMMENTS_POST, TOGGLE_MORE_COMMENT, TOGGLE_MORE_COMMENT_NO_FETCH } from '../../actions/postActions';
+import { ADD_COMMENTS_POST, TOGGLE_MORE_COMMENT, TOGGLE_MORE_COMMENT_NO_FETCH, CALL_POST_DELETE } from '../../actions/postActions';
 
 // IMPORT ROUTER RELETED
-import { Link } from "react-router-dom";
+import { Link, withRouter } from 'react-router-dom';
 
 // IMPORT TYPES
 import { ICreator } from '../../types/auth';
@@ -35,6 +35,7 @@ import { IPostComment } from '../PostsPartial/PostsPartial';
 import PostComment from "../PostComment/PostComment";
 import SubComments from '../SubComments/SubComments';
 import $ from 'jquery';
+import { RouteComponentProps } from 'react-router';
 
 interface IState {
     comment: string;
@@ -47,13 +48,24 @@ interface IParentProps {
     handleComment: (comment: string,replyCommentId?: string) => void,
 }
 
-type IProps = IParentProps & ReduxProps & ReactCookieProps & DispatchProps;
+type IProps = IParentProps & ReduxProps & ReactCookieProps & DispatchProps & RouteComponentProps;
 
 class PostArticle extends React.PureComponent<IProps, IState> {
     public state: IState = { comment: "", hasMoreComments: true };
     private cache: CellMeasurerCache;
 
     private commentInputElRef = createRef<HTMLInputElement>();
+
+    private get isCreator(){
+        let creator = this.props.post?.fullViewPostData.creator.username;
+        let current = this.props.auth?.username;
+
+        if(creator === current && creator){
+            return true;
+        }
+
+        return false;
+    }
 
     private get rowCount(): number {
         let comments: any = this.props.post?.fullViewPostData.commentsList;
@@ -144,6 +156,17 @@ class PostArticle extends React.PureComponent<IProps, IState> {
         }
         else{
             toast.error('Comment has to be at least 5 chars long.');
+        }
+    }
+
+    private async handleDelete(){
+        let res = await this.props.deletePost(-1,this.props.post?.fullViewPostData._id as string,this.props.auth?.userId as string,this.props.auth?.token as string);
+        if((res as unknown) as boolean){
+            toast.success("Post Removed");
+            this.props.history.push('/');
+        }
+        else{
+            toast.error("There was an error removing the post");
         }
     }
 
@@ -290,6 +313,9 @@ class PostArticle extends React.PureComponent<IProps, IState> {
                                         {this.props.post?.fullViewPostData.creator.username}
                                     </Header>
                                 </Link>
+                                {
+                                    this.isCreator && <Icon onClick={this.handleDelete.bind(this)} className={styles.removePostBtn} color='red' size='big' name='remove circle'></Icon>
+                                }
                             </Segment>
                             <Segment attached className={styles.commentsContainer}>
                                 <InfiniteLoader
@@ -489,15 +515,17 @@ interface DispatchProps {
     ADD_COMMENTS_POST: (comments: Array<IPostComment>) => void,
     toggleMoreComment: (startIndex:number,stopIndex:number,commentId:string,commentIndex:number,userId:string,token:string) => void,
     toggleUserLikes: (fetchFunction:(startIndex:number,stopIndex:number) => Promise<IGenericResponse & {likes:Array<ICreator>}>) => void,
-    toggleMoreCommentNoFetch: (commentIndex:number) => void
+    toggleMoreCommentNoFetch: (commentIndex:number) => void,
+    deletePost: (postIndex:number,postId: string, userId: string, token: string) => void,
 }
 
 const mapDispatchToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
     toggleUserLikes:bindActionCreators(TOGGLE_USERS_LIST,dispatch),
     ADD_COMMENTS_POST:bindActionCreators(ADD_COMMENTS_POST,dispatch),
     toggleMoreComment:bindActionCreators(TOGGLE_MORE_COMMENT,dispatch),
-    toggleMoreCommentNoFetch:bindActionCreators(TOGGLE_MORE_COMMENT_NO_FETCH,dispatch)
+    toggleMoreCommentNoFetch:bindActionCreators(TOGGLE_MORE_COMMENT_NO_FETCH,dispatch),
+    deletePost: bindActionCreators(CALL_POST_DELETE, dispatch),
 })
 
 
-export default withCookies(connect(mapStateToProps, mapDispatchToProps)(PostArticle as ComponentType<IProps>));
+export default withRouter(withCookies(connect(mapStateToProps, mapDispatchToProps)(PostArticle as ComponentType<IProps>)));

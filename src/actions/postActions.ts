@@ -2,7 +2,7 @@ import { IPost } from './../shared/PostsPartial/PostsPartial';
 import { AppActions } from "./types/actions";
 import { Dispatch } from "react";
 import IGenericResponse from "../types/response";
-import { uploadPost, commentPost, likePost, likeComment, getSubComments, getPostData, getOtherPosts, renewOtherPost, savePost } from '../handlers/post';
+import { uploadPost, commentPost, likePost, likeComment, getSubComments, getPostData, getOtherPosts, renewOtherPost, savePost, deletePost } from '../handlers/post';
 import { IPostComment, IOtherPost } from '../shared/PostsPartial/PostsPartial';
 import { IPostCommentResponse, ICommentsChunkResponse } from '../types/response';
 
@@ -429,3 +429,31 @@ export const ADD_EXPLORER_POSTS_ROW_LIST = (posts: Array<Array<IOtherPost>>):App
         posts
     }
 })
+
+export const CALL_POST_DELETE_SUCCESS = (postIndex:number,messege:string):AppActions => ({
+    type: 'SET_POST_DELETE_SUCCESS',
+    payload: {
+        postIndex,
+        messege,
+    }
+})
+
+export const CALL_POST_DELETE_FAILURE = (messege:string):AppActions => ({
+    type: 'SET_POST_DELETE_FAILURE',
+    payload: {
+        messege,
+    }
+})
+
+export const CALL_POST_DELETE = (postIndex:number,postId:string,userId:string,token:string) => async (dispatch:Dispatch<AppActions>) => {
+    let res:IGenericResponse = await deletePost(postId,userId,token);
+
+    if(res.success){
+        dispatch(CALL_POST_DELETE_SUCCESS(postIndex,res.messege));
+        return true;
+    }
+    else{
+        dispatch(CALL_POST_DELETE_FAILURE(res.messege));
+        return false;
+    }
+}

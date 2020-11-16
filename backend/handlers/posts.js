@@ -851,6 +851,28 @@ async function getExploreChunk(req,res,next){
         })
     })
 }
+
+function deletePost(req,res,next){
+    let postId = req.params.postId;
+
+    Post.findById(postId).then(async post => {
+        if(post){
+
+            await Post.deleteOne(post);
+
+            return res.status(200).json({
+                success:true,
+                messege:'post deleted'
+            })
+        }
+        
+        return res.status(200).json({
+            success:false,
+            messege:'post not deleted'
+        })
+    });
+}
+
 module.exports = {
     createPost,
     getPopularFromAllPost,
@@ -864,5 +886,6 @@ module.exports = {
     getCommentsFromComment,
     getOtherPosts,
     renewOtherPosts,
-    getExploreChunk
+    getExploreChunk,
+    deletePost
 }

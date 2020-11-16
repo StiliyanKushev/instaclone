@@ -11,7 +11,7 @@ import { Segment, Image, Header, Menu, Item, Icon, Form, Button, Placeholder, Pl
 import { AppState, ReduxProps } from '../../reducers';
 import { connect } from 'react-redux';
 import { AppActions } from '../../actions/types/actions';
-import { COMMENT_POST, LIKE_POST, SAVE_POST, TOGGLE_FULL_POST_VIEW, CALL_FULL_POST_SAVE_SUCCESS, CALL_FULL_POST_LIKE_SUCCESS } from '../../actions/postActions';
+import { COMMENT_POST, LIKE_POST, SAVE_POST, TOGGLE_FULL_POST_VIEW, CALL_FULL_POST_SAVE_SUCCESS, CALL_FULL_POST_LIKE_SUCCESS, CALL_POST_DELETE } from '../../actions/postActions';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
 import { TOGGLE_USERS_LIST } from '../../actions/userActions';
@@ -43,6 +43,27 @@ class Post extends React.PureComponent<IProps, IState> {
 
     public componentDidUpdate() {
         this.props.measure();
+    }
+
+    private get isCreator(){
+        let creator = this.props.post?.homePosts[this.props.postIndex].creator.username;
+        let current = this.props.auth?.username;
+
+        if(creator === current && creator){
+            return true;
+        }
+
+        return false;
+    }
+
+    private async handleDelete(){
+        let res = await this.props.deletePost(this.props.postIndex,this.props.post?.homePosts[this.props.postIndex]._id as string,this.props.auth?.userId as string,this.props.auth?.token as string);
+        if((res as unknown) as boolean){
+            toast.success("Post Removed");
+        }
+        else{
+            toast.error("There was an error removing the post");
+        }
     }
 
     private handleComment() {
@@ -191,6 +212,9 @@ class Post extends React.PureComponent<IProps, IState> {
                         <Link to={`/profile/${this.props.post?.homePosts[this.props.postIndex].creator.username}`}>
                             <Header size='small' className={styles.headerName} as='span'>{this.props.post?.homePosts[this.props.postIndex].creator.username}</Header>
                         </Link>
+                        {
+                            this.isCreator && <Icon onClick={this.handleDelete.bind(this)} className={styles.removePostBtn} color='red' size='big' name='remove circle'></Icon>
+                        }
                     </Segment>
                     <div className={styles.imageContainer}>
                         <Image onLoad={this.props.measure} className={styles.image} src={`data:${this.props.post?.homePosts[this.props.postIndex].source.contentType};base64,${Buffer.from(this.props.post?.homePosts[this.props.postIndex].source.data).toString('base64')}`} />
@@ -262,6 +286,7 @@ interface DispatchProps {
     toggleFullView: (postIndex: number) => void,
     likeFullView: (messenge: string, force: boolean) => void,
     saveFullView: (messenge: string, force: boolean) => void,
+    deletePost: (postIndex:number,postId: string, userId: string, token: string) => void,
     toggleUserLikes: (fetchFunction: (startIndex: number, stopIndex: number) => Promise<IGenericResponse & { likes: Array<ICreator> }>) => void,
 }
 
@@ -272,7 +297,8 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): Disp
     save: bindActionCreators(SAVE_POST, dispatch),
     saveFullView: bindActionCreators(CALL_FULL_POST_SAVE_SUCCESS, dispatch),
     toggleFullView: bindActionCreators(TOGGLE_FULL_POST_VIEW, dispatch),
-    toggleUserLikes: bindActionCreators(TOGGLE_USERS_LIST, dispatch)
+    toggleUserLikes: bindActionCreators(TOGGLE_USERS_LIST, dispatch),
+    deletePost: bindActionCreators(CALL_POST_DELETE, dispatch),
 })
 
 export default React.memo(connect(mapStateToProps, mapDispatchToProps)(Post as ComponentType<any>));

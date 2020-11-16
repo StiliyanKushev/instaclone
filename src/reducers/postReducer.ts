@@ -345,7 +345,7 @@ const postReducer = (state = postState, action:postActionTypes) => {
             }
 
             if(action.payload.didFetch === true){    
-                // update the isliked value of the post
+                // update the isSaved value of the post
                 state.fullViewPostData.isSaved = !state.fullViewPostData.isSaved;
                 homeAction(state.fullViewPostData.isSaved);
             }
@@ -433,12 +433,10 @@ const postReducer = (state = postState, action:postActionTypes) => {
                 state.fullViewPostData.commentsList[action.payload.commentIndex].moreToggled = true;
                 state.fullViewPostData.commentsList[action.payload.commentIndex].subComments = action.payload.comments;
             }
-            else{
-                if(state.fullViewPostData.commentsList[action.payload.commentIndex].moreToggled && state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber === 0 && action.payload.comments === undefined){
-                    state.fullViewPostData.commentsList[action.payload.commentIndex].moreToggled = false;
-                    state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber = state.fullViewPostData.commentsList[action.payload.commentIndex].maxChildCommentsNumber;
-                    state.fullViewPostData.commentsList[action.payload.commentIndex].subComments = [] as any;
-                }
+            else if(state.fullViewPostData.commentsList[action.payload.commentIndex].moreToggled && state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber === 0 && action.payload.comments === undefined){
+                state.fullViewPostData.commentsList[action.payload.commentIndex].moreToggled = false;
+                state.fullViewPostData.commentsList[action.payload.commentIndex].childCommentsNumber = state.fullViewPostData.commentsList[action.payload.commentIndex].maxChildCommentsNumber;
+                state.fullViewPostData.commentsList[action.payload.commentIndex].subComments = [] as any;
             }
 
             return {
@@ -493,6 +491,44 @@ const postReducer = (state = postState, action:postActionTypes) => {
             }
             return {
                 ...state,
+            } as IPostState
+        }
+
+        case 'SET_POST_DELETE_SUCCESS':{
+            if(action.payload.postIndex !== -1)
+            state.homePosts.splice(action.payload.postIndex,1);
+            
+            // else we are calling it from post article (then just redirect)
+            if(action.payload.postIndex === -1 && state.fullViewPostIndex !== -1){
+                if(state.fullViewToggled){
+                    state.currentReplyingComment = -1;
+    
+                    // close expanded replies from sub comments
+                    for(let parentComment of state.fullViewPostData.commentsList){
+                        parentComment.childCommentsNumber = parentComment.maxChildCommentsNumber;
+                        parentComment.moreToggled = false;
+                        parentComment.subComments = [] as any;
+                    }
+    
+                    state.fullViewPostData = emptyFullViewPostData;
+                }
+    
+                state.fullViewToggled = !state.fullViewToggled
+                state.fullViewPostIndex = -1
+            }
+
+            return {
+                ...state,
+                error: false,
+                messege: action.payload.messege,
+            } as IPostState
+        }
+
+        case 'SET_POST_DELETE_FAILURE':{
+            return {
+                ...state,
+                messege: action.payload.messege,
+                error: true,
             } as IPostState
         }
 

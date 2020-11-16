@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const authCheck = require('../config/auth-check');
-const {getExploreChunk,renewOtherPosts,getOtherPosts,getPost,getCommentsFromComment,createPost,getPopularFromAllPost,commentPost,likePost,likeComment,getCommentsFromPost,getLikesFromPost,getLikesFromComment} = require('../handlers/posts');
+const {deletePost,getExploreChunk,renewOtherPosts,getOtherPosts,getPost,getCommentsFromComment,createPost,getPopularFromAllPost,commentPost,likePost,likeComment,getCommentsFromPost,getLikesFromPost,getLikesFromComment} = require('../handlers/posts');
 const {postPrepareDataInbox,getMessagesChunk,saveMessage,deleteDirectItem,getDirectsChunk,addUserToDirectList, isUserValid,getUserSearch,getUserFollowers,getUserFollowing,userFollow,userUnfollow,getUserData,userSavePost,getUserPostsRecent,getUserPostsPopular,getUserPostsSaved,sendAvatar,getSuggestedUsers} = require('../handlers/user');
 const multer = require('multer'); 
 const User = require('../models/User');
@@ -47,7 +47,7 @@ router.get('/photo/post/:id',(req,res,next) => {
 router.get('/posts/get/all/popular/:startIndex/:stopIndex/as/:userId',authCheck,getPopularFromAllPost)
 router.get('/posts/:id/get/as/:userId',authCheck,getPost)
 router.post('/posts/create',authCheck,upload.single('image'),createPost)
-// router.delete('/posts/:id/delete',authCheck,deletePost)
+router.post('/posts/delete/:postId',authCheck,deletePost)
 router.get('/posts/:id/comments/:startIndex/:stopIndex/as/:userId',authCheck,getCommentsFromPost)
 router.get('/posts/:id/likes/:startIndex/:stopIndex/as/:userId',authCheck,getLikesFromPost)
 router.post('/posts/:id/comment',authCheck,commentPost)

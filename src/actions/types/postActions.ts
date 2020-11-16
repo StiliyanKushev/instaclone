@@ -32,8 +32,25 @@ const SET_SAVE_OTHER_POSTS = 'SET_SAVE_OTHER_POSTS';
 const SET_RENEW_OTHER_POSTS = 'SET_RENEW_OTHER_POSTS';
 const RESET_POST_UPLOADED = 'RESET_POST_UPLOADED';
 const ADD_EXPLORER_POSTS_ROW_LIST = 'ADD_EXPLORER_POSTS_ROW_LIST';
+const SET_POST_DELETE_SUCCESS = 'SET_POST_DELETE_SUCCESS';
+const SET_POST_DELETE_FAILURE = 'SET_POST_DELETE_FAILURE';
 
-export interface resetPostUploaded{
+export interface postDeleteSuccess {
+    type: typeof SET_POST_DELETE_SUCCESS,
+    payload: {
+        postIndex: number,
+        messege: string,
+    }
+}
+
+export interface postDeleteFailure {
+    type: typeof SET_POST_DELETE_FAILURE,
+    payload: {
+        messege: string,
+    }
+}
+
+export interface resetPostUploaded {
     type: typeof RESET_POST_UPLOADED,
 }
 
@@ -291,6 +308,8 @@ setPostLikeSuccess |
 resetPostUploaded |
 setRenewOtherPost |
 setSaveOtherPosts |
+postDeleteSuccess |
+postDeleteFailure |
 addCommentsPost |
 setPostLoading | 
 addPostsHome |
