@@ -6,7 +6,7 @@ import selfie3 from '../../assets/selfie3.png';
 
 // IMPORT REACT RELETED
 import React, { createRef, FormEvent, ComponentType } from 'react';
-import { Image, Grid, Header, Form, Button, Segment, Icon, Divider, Ref } from 'semantic-ui-react';
+import { Image, Grid, Header, Form, Button, Segment, Ref } from 'semantic-ui-react';
 import { withCookies, ReactCookieProps } from 'react-cookie';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 
@@ -130,11 +130,6 @@ class RegisterView extends React.Component<IProps,IRegisterState> {
                         <Header className={`logo-text ${styles.header}`} as="h1">Instaclone</Header>
 
                         <Segment>
-                            <Button fluid size='small' color='facebook'><Icon name='facebook' />Facebook login</Button>
-                            <Divider horizontal>
-                            Or
-                            </Divider>
-
                             <Form id='register-form' onSubmit={this.handleSubmit.bind(this)}>
                                 <Form.Field>
                                     <Form.Input 

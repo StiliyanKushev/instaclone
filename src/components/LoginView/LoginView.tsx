@@ -6,7 +6,7 @@ import SideImage from '../../assets/image-login.png';
 import { withCookies, ReactCookieProps } from 'react-cookie';
 import React, { FormEvent, ComponentType } from 'react';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { Image, Grid, Header, Form, Button, Segment, Icon, Divider } from 'semantic-ui-react';
+import { Image, Grid, Header, Form, Button, Segment } from 'semantic-ui-react';
 
 // IMPORT REDUX RELETED
 import { connect } from 'react-redux';
@@ -101,11 +101,7 @@ class LoginView extends React.Component<IProps,ILoginState>{
                             </Form.Field>
 
                             <Segment>
-                            <Button loading={this.props.auth?.isLoading} form='login-form' type='submit' fluid color="twitter">Login</Button>
-                                    <Divider horizontal>
-                                        Or
-                                    </Divider>
-                                    <Button fluid size='mini' color='facebook'><Icon name='facebook'/>Facebook login</Button>
+                                <Button loading={this.props.auth?.isLoading} form='login-form' type='submit' fluid color="twitter">Login</Button>      
                             </Segment>
 
                             <Segment>
