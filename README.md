@@ -1,44 +1,33 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Instaclone
 
-## Available Scripts
+"Instaclone" is my take on creating a somewhat close to the original copy of the famous app "Instagram" using React + NodeJS.
 
-In the project directory, you can run:
+## Preview
 
-### `npm start`
+![](ReadmeAssets\demo.gif)
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Libraries and techniques used
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+- [React Semantic UI](https://react.semantic-ui.com)
 
-### `npm test`
+  Used for speeding up the development of my app. It has a similar style to Instagram, and it's also very responsive, and easy to set-up.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- [React-Virtualized](https://github.com/bvaughn/react-virtualized)
 
-### `npm run build`
+  I wanted my project to be as efficient as possible, when it comes to loading lots of data while scrolling. Like the original, I'm using a library to help "cache" and "virtualize" my components using clever ways of rendering only things that are needed.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- [React Router](https://reactrouter.com/)
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+  Navigating through the many routes of my app is done seamlessly using react router. Easy to set-up and powerful way to help the user get wherever he wants.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- [SocketIO](https://socket.io/)
 
-### `npm run eject`
+  When creating the project, I imagined having some type of chat available to the user, and some real time communication to other profiles. Using sockets, for managing chat messages and rooms was nothing more than easy.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- [Express](https://expressjs.com/)
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  Obviously, my app needed to handle a good amount of calls, for performing multiple tasks such as creating posts, commenting, saving, you name it. And what a better way to construct my backend then using the almighty express.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- [Mongoose](https://mongoosejs.com/)
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+  When it comes to saving stuff in a database, I went with mongoose. It has a very simple and straightforward implementation, and I'm also very familiar with it. 
