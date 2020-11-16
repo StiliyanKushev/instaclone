@@ -4,7 +4,7 @@
 
 ## Preview
 
-![](ReadmeAssets\demo.gif)
+![demogif](ReadmeAssets/demo.gif)
 
 ## Libraries and techniques used
 
