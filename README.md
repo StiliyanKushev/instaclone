@@ -2,7 +2,7 @@
 
 "Instaclone" is my take on creating a somewhat close to the original copy of the famous app "Instagram" using React + NodeJS.
 
-## Preview
+## Preview (note: file browser popup didn't get recorded)
 
 ![demogif](ReadmeAssets/demo.gif)
 
