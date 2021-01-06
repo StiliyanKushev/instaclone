@@ -22,7 +22,7 @@
     "@types/react-router-dom": "^5.1.5",
     "@types/react-virtualized": "^9.21.10",
     "@types/socket.io-client": "^1.4.34",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "jquery": "^3.5.1",
     "lodash": "^4.17.20",
     "node-sass": "^4.14.1",
