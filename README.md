@@ -1,6 +1,6 @@
 # Instaclone
 
-"Instaclone" is my take on creating a somewhat close to the original copy of the famous app "Instagram" using React + NodeJS.
+"Instaclone" is my take on creating a somewhat close to the original copy of the famous app "Instagram" using React + NodeJS (v14.18.2).
 
 ## Preview (note: file browser popup didn't get recorded)
 
