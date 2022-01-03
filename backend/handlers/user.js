@@ -131,28 +131,16 @@ async function getUserPostsRecent(req,res,next){
     let givenUser = await User.find({username:req.params.userId});
 
     Post.count({creator:givenUser}).exec(async function (err, count) {
-        let limit = stopIndex - startIndex
-        
         if(startIndex >= count){
             return res.status(200).json({
                 success:true,
                 posts:[]
             })
         }
-
-        if(stopIndex >= count){
-            limit = count - startIndex
-        }
-
-        Post.find({creator:givenUser}).skip(startIndex).limit(limit).sort({date: 'asc'}).exec(async (err,posts) => {
-            if(err){
-                console.log(err);
-                return res.status(200).json({
-                    success:false,
-                    posts:[]
-                })
-            }
-
+        Post.paginate(
+            {creator:givenUser},
+            {sort: '-createdAt', offset: startIndex, limit: stopIndex - startIndex}).then(async function(pagi) {
+            let posts = pagi.docs;
             let newPosts = [];
 
             for(let post of posts){
@@ -167,6 +155,12 @@ async function getUserPostsRecent(req,res,next){
                 success:true,
                 posts:newPosts,
             })
+        }).catch(err => {
+            console.log(err);
+            return res.status(200).json({
+                success:false,
+                posts:[]
+            })
         })
     })
 }
@@ -177,15 +171,8 @@ async function getUserPostsPopular(req,res,next){
 
     let givenUser = await User.find({username:req.params.userId});
 
-    Post.find({creator:givenUser}).skip(startIndex).limit(stopIndex - startIndex).sort({likesCount:'desc'}).exec(async (err,posts) => {
-        if(err){
-            console.log(err);
-            return res.status(200).json({
-                success:false,
-                posts:[]
-            })
-        }
-
+    Post.paginate({creator:givenUser}, {sort: { likesCount: -1 }, offset: startIndex, limit: stopIndex - startIndex}).then(async function(pagi) {
+        let posts = pagi.docs;
         let newPosts = [];
 
         for(let post of posts){
@@ -199,6 +186,12 @@ async function getUserPostsPopular(req,res,next){
         return res.status(200).json({
             success:true,
             posts:newPosts,
+        })
+    }).catch(err => {
+        console.log(err);
+        return res.status(200).json({
+            success:false,
+            posts:[]
         })
     })
 }

@@ -1,6 +1,9 @@
-import { IPost, IPostComment } from './../shared/PostsPartial/PostsPartial';
-import { postActionTypes } from "../actions/types/postActions";
-import { IOtherPost } from '../shared/PostsPartial/PostsPartial';
+import { postActionTypes } from '../actions/types/postActions';
+import {
+    IOtherPost,
+    IPost,
+    IPostComment,
+} from '../shared/PostsPartial/PostsPartial';
 
 export type IFullViewPostCommentList = Array<IPostComment & {isDescription?:boolean}>;
 export type IFullViewPostData = IPost & {commentsList:IFullViewPostCommentList};
@@ -312,9 +315,6 @@ const postReducer = (state = postState, action:postActionTypes) => {
     
                 // update the isliked value of the post
                 state.fullViewPostData.isLiked = !state.fullViewPostData.isLiked;
-            }
-            else{
-                console.log('here')
             }
 
             return {

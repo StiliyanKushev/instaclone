@@ -1,30 +1,45 @@
-// IMPORT STYLES
-import styles from './PostPageView.module.css';
-
 // IMPORT REACT RELETED
-import React from 'react';
-import {ComponentType} from 'react';
+import React, { ComponentType } from 'react';
 
 // IMPORT REDUX RELETED
 import { connect } from 'react-redux';
-import { AppActions } from '../../actions/types/actions';
-import { ThunkDispatch } from 'redux-thunk';
-import { bindActionCreators } from 'redux';
-import { AppState, ReduxProps } from '../../reducers';
-import { FETCH_FULL_POST_VIEW_AND_SAVE, COMMENT_FULL_POST, LIKE_FULL_POST, FETCH_OTHER_POSTS, CALL_OTHER_POST_DATA_LOADING_DONE, RENEW_OTHER_POSTS, SAVE_FULL_POST } from '../../actions/postActions';
-
 // IMPORT ROUTER RELETED
-import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
+import {
+    Link,
+    RouteComponentProps,
+    withRouter,
+} from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
+import {
+    Divider,
+    Grid,
+    Header,
+    Segment,
+} from 'semantic-ui-react';
 
-// IMPORT TYPES
-import { IPostComment } from '../../shared/PostsPartial/PostsPartial';
+import {
+    CALL_OTHER_POST_DATA_LOADING_DONE,
+    COMMENT_FULL_POST,
+    FETCH_FULL_POST_VIEW_AND_SAVE,
+    FETCH_OTHER_POSTS,
+    LIKE_FULL_POST,
+    RENEW_OTHER_POSTS,
+    SAVE_FULL_POST,
+} from '../../actions/postActions';
+import { AppActions } from '../../actions/types/actions';
+import {
+    AppState,
+    ReduxProps,
+} from '../../reducers';
 import { IPostsListGrid } from '../../reducers/postReducer';
-
 // IMPORT OTHER
 import PostArticle from '../../shared/PostArticle/PostArticle';
+// IMPORT TYPES
+import { IPostComment } from '../../shared/PostsPartial/PostsPartial';
 import UsersList from '../../shared/UsersList/UsersList';
-import { Divider, Segment, Grid, Header } from 'semantic-ui-react';
-
+// IMPORT STYLES
+import styles from './PostPageView.module.css';
 
 type IProps = ReduxProps & DispatchProps & RouteComponentProps;
 
@@ -120,7 +135,6 @@ class PostPageView extends React.PureComponent<IProps>{
                 <Divider horizontal>Other posts from {this.props.post?.fullViewPostData.creator.username}</Divider>
                 <div className={styles.centerContent}>
                     <Grid centered columns='3' className={styles.imagesGrid} doubling stackable>
-                        
                         {
                             this.props.post?.fullViewOtherPosts.map((post:{ likesCount: number, source: { data: any; contentType: string; }, _id: string },i:number) => {
                                 return (
@@ -158,7 +172,6 @@ interface DispatchProps {
     fetchOtherPosts: (otherId:string,userId:string,token:string) => void,
     CALL_OTHER_POST_DATA_LOADING_DONE: () => void,
     renewOtherPost:(id:string,index:number,others:IPostsListGrid,userId:string,token:string) => void,
-
 };
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AppActions>): DispatchProps => ({

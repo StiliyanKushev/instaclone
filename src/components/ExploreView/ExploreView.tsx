@@ -1,29 +1,43 @@
-// IMPORT STYLES
-import styles from '../UserView/UserView.module.css';
-
 // IMPORT REACT RELATED
-import React from 'react';
-import {ComponentType} from 'react';
-import { Segment, Container } from 'semantic-ui-react';
-import { InfiniteLoader, WindowScroller, InfiniteLoaderChildProps, AutoSizer, Grid, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
-
-// IMPORT REDUX RELATED
-import { connect } from 'react-redux';
-import { AppActions } from '../../actions/types/actions';
-import { ThunkDispatch } from 'redux-thunk';
-import { IPostsListGrid } from '../../reducers/postReducer';
-import { IOtherPost, IPost } from '../../shared/PostsPartial/PostsPartial';
-import { bindActionCreators } from 'redux';
-import { AppState, ReduxProps } from '../../reducers/index';
-import { ADD_EXPLORER_POSTS_ROW_LIST } from '../../actions/postActions';
+import React, { ComponentType } from 'react';
 
 // IMPORT VALIDATION
-
 // IMPORT OTHER
 import { Helmet } from 'react-helmet';
-import IGenericResponse from '../../types/response';
+// IMPORT REDUX RELATED
+import { connect } from 'react-redux';
+import {
+    AutoSizer,
+    CellMeasurer,
+    CellMeasurerCache,
+    Grid,
+    InfiniteLoader,
+    InfiniteLoaderChildProps,
+    WindowScroller,
+} from 'react-virtualized';
+import { bindActionCreators } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
+import {
+    Container,
+    Segment,
+} from 'semantic-ui-react';
+
+import { ADD_EXPLORER_POSTS_ROW_LIST } from '../../actions/postActions';
+import { AppActions } from '../../actions/types/actions';
 import { getExploreChunck } from '../../handlers/post';
+import {
+    AppState,
+    ReduxProps,
+} from '../../reducers/index';
+import { IPostsListGrid } from '../../reducers/postReducer';
+import {
+    IOtherPost,
+    IPost,
+} from '../../shared/PostsPartial/PostsPartial';
 import UserPostCell from '../../shared/UserPostCell/UserPostCell';
+import IGenericResponse from '../../types/response';
+// IMPORT STYLES
+import styles from '../UserView/UserView.module.css';
 
 type IProps = ReduxProps & DispatchProps;
 

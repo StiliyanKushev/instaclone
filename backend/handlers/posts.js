@@ -825,7 +825,7 @@ async function getExploreChunk(req,res,next){
             limit = count - startIndex
         }
 
-        Post.find().skip(startIndex).limit(limit).sort({date: 'asc'}).exec(async (err,posts) => {
+        Post.find().skip(startIndex).limit(limit).exec(async (err,posts) => {
             if(err){
                 console.log(err);
                 return res.status(200).json({
