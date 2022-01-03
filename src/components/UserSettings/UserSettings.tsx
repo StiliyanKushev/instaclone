@@ -1,26 +1,30 @@
-// IMPORT STYLES
-import styles from './UserSettings.module.css';
-
 // IMPORT REACT RELATED
 import React, { ComponentType } from 'react';
-import { Dimmer, Menu, Segment, Header } from 'semantic-ui-react';
 
-
+import { connect } from 'react-redux';
 // IMPORT REDUX RELATED
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { AppActions } from '../../actions/types/actions';
-import { LOGOUT_AUTH } from '../../actions/authActions';
+import { toast } from 'react-toastify';
+import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import {bindActionCreators} from 'redux';
+import {
+    Dimmer,
+    Header,
+    Menu,
+    Segment,
+} from 'semantic-ui-react';
 
+import { LOGOUT_AUTH } from '../../actions/authActions';
+import { SET_INBOX_DATA_CLEAR } from '../../actions/inboxActions';
+import { SET_POST_DATA_CLEAR } from '../../actions/postActions';
+import { AppActions } from '../../actions/types/actions';
+import { SET_USER_DATA_CLEAR } from '../../actions/userActions';
+import { clearUser } from '../../handlers/serializationData';
 // IMPORT OTHER
 import ChangePassword from '../ChangePassword/ChangePassword';
 import ReportBug from '../ReportBug/ReportBug';
-import { clearUser } from '../../handlers/serializationData';
-import { toast } from 'react-toastify';
-import { SET_POST_DATA_CLEAR } from '../../actions/postActions';
-import { SET_USER_DATA_CLEAR } from '../../actions/userActions';
+// IMPORT STYLES
+import styles from './UserSettings.module.css';
 
 interface IProps extends DispatchProps {
     handleClose: Function
@@ -47,6 +51,7 @@ class UserSettings extends React.Component<IProps,IState> {
         //clear data from global state
         this.props.clearPostData();
         this.props.clearUserData();
+        this.props.clearInboxData();
     }
 
     render() {
@@ -102,12 +107,14 @@ interface DispatchProps {
     logout: () => void,
     clearPostData: () => void,
     clearUserData: () => void,
+    clearInboxData: () => void,
 }
 
 const mapDispathToProps = (dispatch:ThunkDispatch<any,any,AppActions>):DispatchProps => ({
     logout: bindActionCreators(LOGOUT_AUTH,dispatch),
     clearPostData: bindActionCreators(SET_POST_DATA_CLEAR,dispatch),
     clearUserData: bindActionCreators(SET_USER_DATA_CLEAR,dispatch),
+    clearInboxData: bindActionCreators(SET_INBOX_DATA_CLEAR,dispatch),
 })
 
 export default connect(null,mapDispathToProps)(UserSettings as ComponentType<IProps>);

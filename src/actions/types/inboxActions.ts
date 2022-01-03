@@ -1,5 +1,10 @@
 import { DirectItem } from '../../components/InboxView/InboxView';
-import { IMessage, IMessageDB } from '../../types/response';
+import {
+    IMessage,
+    IMessageDB,
+} from '../../types/response';
+
+const SET_INBOX_CLEAR = 'SET_INBOX_CLEAR';
 const SET_TOGGLE_DIRECT = 'SET_TOGGLE_DIRECT';
 const CLEAN_QUERY_DIRECT = 'CLEAN_QUERY_DIRECT';
 const START_SEARCH_DIRECT = 'START_SEARCH_DIRECT';
@@ -139,7 +144,12 @@ export type sendPrepareDataInbox = {
     type: typeof SET_SEND_PREPARE_DATA_INBOX,
 }
 
+export type setInboxClear = {
+    type: typeof SET_INBOX_CLEAR
+}
+
 export type inboxTypes = 
+setInboxClear |
 prepareInbox |
 setInputMessage |
 clearMessages |

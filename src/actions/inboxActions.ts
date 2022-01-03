@@ -1,9 +1,17 @@
-import { AppActions } from './types/actions';
 import { Dispatch } from 'react';
-import IGenericResponse from '../types/response';
-import { saveUserToDirect, deleteUserFromDirect, saveMessageToDb, sendPrepareDataInbox } from '../handlers/inbox';
+
 import { DirectItem } from '../components/InboxView/InboxView';
-import { IMessage, IMessageDB } from '../types/response';
+import {
+    deleteUserFromDirect,
+    saveMessageToDb,
+    saveUserToDirect,
+    sendPrepareDataInbox,
+} from '../handlers/inbox';
+import IGenericResponse, {
+    IMessage,
+    IMessageDB,
+} from '../types/response';
+import { AppActions } from './types/actions';
 
 export const CALL_CONNECT_INBOX_SOCKET = (): AppActions => ({
     type: 'SET_CONNECT_INBOX_SOCKET',
@@ -27,6 +35,10 @@ export const CALL_START_SEARCH_DIRECT = (query: string): AppActions => ({
         query,
     }
 });
+
+export const SET_INBOX_DATA_CLEAR = ():AppActions => ({
+    type: 'SET_INBOX_CLEAR',
+})
 
 export const CALL_PREPARE_INBOX = (username:string): AppActions => ({
     type: 'SET_PREPARE_INBOX',

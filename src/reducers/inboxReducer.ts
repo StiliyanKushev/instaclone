@@ -1,8 +1,9 @@
+import io from 'socket.io-client';
+
 import { inboxTypes } from '../actions/types/inboxActions';
 import { DirectItem } from '../components/InboxView/InboxView';
-import { IMessage } from '../types/response';
 import { settings } from '../settings';
-import io from "socket.io-client";
+import { IMessage } from '../types/response';
 
 export interface IInboxState {
     toggledDirect: boolean,
@@ -52,6 +53,12 @@ const inboxState:IInboxState = {
 
 const inboxReducer = (state = inboxState, action:inboxTypes) => {
     switch (action.type) {
+        case 'SET_INBOX_CLEAR':{
+            return {
+                ...inboxState
+            } as IInboxState;
+        }
+
         case "SET_CONNECT_INBOX_SOCKET":{
             state.currentSocket = io(settings.BASE_URL);
             return {
