@@ -2,6 +2,8 @@
 
 "Instaclone" is my take on creating a somewhat close to the original copy of the famous app "Instagram" using React + NodeJS (v14.18.2).
 
+## <h3 align="center">[http://instaclone.ml/](http://instaclone.ml/ "Live View")</h3>
+
 ## Preview (note: file browser popup didn't get recorded)
 
 ![demogif](ReadmeAssets/demo.gif)
