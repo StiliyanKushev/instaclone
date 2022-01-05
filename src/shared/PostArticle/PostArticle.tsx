@@ -1,41 +1,74 @@
-// IMPORT STYLES
-import styles from "./PostArticle.module.css";
-
 // IMPORT REACT RELETED
-import React from "react";
-import { toast } from 'react-toastify';
-import {createRef} from 'react';
-import { ComponentType } from 'react';
-import { ReactCookieProps, withCookies } from 'react-cookie';
-import { Grid, Image, Segment, Header, Menu, Item, Icon, Form, Button, Placeholder, PlaceholderImage, Ref } from 'semantic-ui-react';
-import { List, AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, InfiniteLoaderChildProps } from "react-virtualized";
+import React, {
+    ComponentType,
+    createRef,
+} from 'react';
 
+import $ from 'jquery';
+import {
+    ReactCookieProps,
+    withCookies,
+} from 'react-cookie';
 // IMPORT REDUX RELETED
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
+import { RouteComponentProps } from 'react-router';
+// IMPORT ROUTER RELETED
+import {
+    Link,
+    withRouter,
+} from 'react-router-dom';
+import { toast } from 'react-toastify';
+import {
+    AutoSizer,
+    CellMeasurer,
+    CellMeasurerCache,
+    InfiniteLoader,
+    InfiniteLoaderChildProps,
+    List,
+} from 'react-virtualized';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { AppState, ReduxProps } from "../../reducers";
+import {
+    Button,
+    Form,
+    Grid,
+    Header,
+    Icon,
+    Image,
+    Item,
+    Menu,
+    Placeholder,
+    PlaceholderImage,
+    Ref,
+    Segment,
+} from 'semantic-ui-react';
+
+import {
+    ADD_COMMENTS_POST,
+    CALL_POST_DELETE,
+    TOGGLE_MORE_COMMENT,
+    TOGGLE_MORE_COMMENT_NO_FETCH,
+} from '../../actions/postActions';
+import { AppActions } from '../../actions/types/actions';
 import { TOGGLE_USERS_LIST } from '../../actions/userActions';
-import { ADD_COMMENTS_POST, TOGGLE_MORE_COMMENT, TOGGLE_MORE_COMMENT_NO_FETCH, CALL_POST_DELETE } from '../../actions/postActions';
-
-// IMPORT ROUTER RELETED
-import { Link, withRouter } from 'react-router-dom';
-
+import {
+    getNewCommentsChunk,
+    getUserLikesFromPost,
+} from '../../handlers/post';
+import {
+    AppState,
+    ReduxProps,
+} from '../../reducers';
+// IMPORT OTHER
+import { settings } from '../../settings';
 // IMPORT TYPES
 import { ICreator } from '../../types/auth';
-import { ICommentsChunkResponse } from '../../types/response';
-import { AppActions } from '../../actions/types/actions';
-import IGenericResponse from '../../types/response';
-
-
-// IMPORT OTHER
-import { settings } from "../../settings";
-import { getNewCommentsChunk, getUserLikesFromPost } from '../../handlers/post';
+import IGenericResponse, { ICommentsChunkResponse } from '../../types/response';
+import PostComment from '../PostComment/PostComment';
 import { IPostComment } from '../PostsPartial/PostsPartial';
-import PostComment from "../PostComment/PostComment";
 import SubComments from '../SubComments/SubComments';
-import $ from 'jquery';
-import { RouteComponentProps } from 'react-router';
+// IMPORT STYLES
+import styles from './PostArticle.module.css';
 
 interface IState {
     comment: string;
@@ -232,7 +265,7 @@ class PostArticle extends React.PureComponent<IProps, IState> {
     }
 
     private handleShare() {
-        let urlText = `http://localhost:3000/post/${this.props.post?.fullViewPostData._id}`;
+        let urlText = `${settings.BASE_URL}/post/${this.props.post?.fullViewPostData._id}`;
         if(this.copyTextToClipboard(urlText)){
             toast.success("Copied to clipboard.");
         }

@@ -13,7 +13,7 @@ let storage = multer.diskStorage({
         cb(null, file.fieldname + '-' + Date.now()) 
     } 
 }); 
-let upload = multer({ storage: storage }); 
+let upload = multer({ storage: storage });
 
 router.get('/photo/user/:username',(req,res,next) => {
     let username = req.params.username;
