@@ -297,7 +297,7 @@ class UserView extends React.Component<IProps, IState> {
                                                 {
                                                     this.urlUsername !== this.props.auth?.username && (
                                                         this.props.user?.isCurrentUserFollowed ?
-                                                        <Grid.Column className={styles.userSettingsBtns} floated='right'><Button onClick={this.handleMessageClick} secondary>Messege</Button><Button onClick={this.unfollowUser.bind(this)} primary icon='remove user'></Button></Grid.Column>
+                                                        <Grid.Column className={styles.userSettingsBtns} floated='right'><Button onClick={this.handleMessageClick} secondary>Message</Button><Button onClick={this.unfollowUser.bind(this)} primary icon='remove user'></Button></Grid.Column>
                                                         :
                                                         <Grid.Column className={styles.userSettingsBtns} floated='right'><Button onClick={this.followUser.bind(this)} primary>Follow</Button></Grid.Column>
                                                     )
@@ -313,7 +313,7 @@ class UserView extends React.Component<IProps, IState> {
                                                 {
                                                     this.urlUsername !== this.props.auth?.username && (
                                                         this.props.user?.isCurrentUserFollowed ?
-                                                            <React.Fragment><Button size='mini' className={styles.editBtn2} onClick={this.handleMessageClick} secondary>Messege</Button><Button className={styles.settingsBtn2} size='mini' onClick={this.unfollowUser.bind(this)} primary icon='remove user'/></React.Fragment>
+                                                            <React.Fragment><Button size='mini' className={styles.editBtn2} onClick={this.handleMessageClick} secondary>Message</Button><Button className={styles.settingsBtn2} size='mini' onClick={this.unfollowUser.bind(this)} primary icon='remove user'/></React.Fragment>
                                                         :
                                                         <Button size='mini' className={styles.editBtn3} onClick={this.followUser.bind(this)} primary>Follow</Button>
                                                     )
