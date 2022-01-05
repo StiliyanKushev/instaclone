@@ -265,7 +265,11 @@ class PostArticle extends React.PureComponent<IProps, IState> {
     }
 
     private handleShare() {
-        let urlText = `${settings.BASE_URL}/post/${this.props.post?.fullViewPostData._id}`;
+        const hostName = window.location.hostname.includes('localhost') ?
+                         window.location.hostname + ':3000':
+                         window.location.hostname;
+        
+        let urlText = `http://${hostName}/post/${this.props.post?.fullViewPostData._id}`;
         if(this.copyTextToClipboard(urlText)){
             toast.success("Copied to clipboard.");
         }
