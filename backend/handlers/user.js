@@ -222,6 +222,10 @@ async function getUserPostsSaved(req,res,next){
 
         for(let modl of savedPostsModls){
             let currentPost = await Post.findById(modl.post);
+
+            // user removed the post
+            if(currentPost == null) continue;
+
             newPosts.push({
                 _id:currentPost.id,
                 likesCount:currentPost.likesCount,
