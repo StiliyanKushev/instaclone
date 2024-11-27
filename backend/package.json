@@ -15,7 +15,7 @@
     "cors": "2.8.4",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
-    "jsonwebtoken": "8.3.0",
+    "jsonwebtoken": "9.0.0",
     "mongoose": "^6.1.4",
     "mongoose-paginate-v2": "^1.4.2",
     "mongoose-paginator": "^0.2.5",
